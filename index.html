@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>華語貪食蛇：課文大冒險</title>
+    <title>華語貪食蛇</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap'); /* Handwriting font */
@@ -18,9 +18,7 @@
             --bg-color: #FDF6E3;        /* Warm Cream */
             --text-color: #264653;      /* Dark Slate Blue */
             --card-bg: #FFFFFF;         
-            --bonus-color: #FFD166;     
-            --bomb-color: #264653;      
-            --grid-line: #E0F7FA;       
+            --locked-color: #999;       /* Locked score color */
         }
 
         body {
@@ -40,31 +38,10 @@
             background-size: 20px 20px;
         }
 
-        /* Fullscreen specific styles */
-        body.fullscreen-mode {
-            justify-content: center;
-            background-color: #F0EAD6; 
-        }
-        
-        body.fullscreen-mode .subtitle,
-        body.fullscreen-mode h1,
-        body.fullscreen-mode .footer {
-            display: none; 
-        }
-
-        .subtitle {
-            color: #7D8597; 
-            font-size: 1.2rem; /* Larger font */
-            margin-bottom: -5px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
-        }
-
         h1 {
             color: var(--secondary-color);
             margin: 5px 0 10px 0;
-            font-size: 2.2rem; /* Larger font */
+            font-size: 2.2rem; 
             text-align: center;
             font-family: 'Gaegu', cursive, 'Noto Sans TC', sans-serif;
         }
@@ -77,7 +54,7 @@
             box-shadow: 0 10px 20px rgba(38, 70, 83, 0.15);
             border: 6px solid #FFF;
             width: 95%;
-            max-width: 600px; /* Increased max width for tablet */
+            max-width: 600px; 
             box-sizing: border-box;
         }
 
@@ -88,9 +65,9 @@
             display: block;
             touch-action: none;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
-            width: 100%; /* Responsive width */
-            height: auto; /* Maintain aspect ratio */
-            aspect-ratio: 1 / 1; /* Square */
+            width: 100%; 
+            height: auto; 
+            aspect-ratio: 1 / 1; 
         }
 
         #ui-layer {
@@ -114,7 +91,7 @@
             text-align: center;
             pointer-events: auto;
             width: 90%; 
-            max-width: 450px; /* Wider modal */
+            max-width: 450px; 
             max-height: 96%; 
             overflow-y: auto; 
             box-shadow: 0 15px 30px rgba(38, 70, 83, 0.2);
@@ -162,10 +139,6 @@
             from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
             to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
-        
-        #leaderboard-modal.screen {
-            animation: popInFixed 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
 
         .hidden {
             display: none !important;
@@ -175,8 +148,8 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 24px; /* Larger touch targets */
-            font-size: 1.1rem; /* Larger font */
+            padding: 12px 24px; 
+            font-size: 1.1rem; 
             border-radius: 30px;
             cursor: pointer;
             font-family: 'Noto Sans TC', sans-serif;
@@ -205,7 +178,7 @@
             color: var(--text-color);
             border: 2px solid var(--text-color);
             padding: 8px 14px;
-            font-size: 1.4rem; /* Larger icons */
+            font-size: 1.4rem; 
             min-width: 50px;
             box-shadow: none;
         }
@@ -215,7 +188,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 600px; /* Match game container */
+            max-width: 600px; 
             margin-bottom: 8px;
             padding: 0 5px;
             box-sizing: border-box;
@@ -226,17 +199,17 @@
             color: var(--text-color);
             display: flex;
             flex-direction: column;
-            font-size: 1.1rem; /* Larger font */
+            font-size: 1.1rem; 
             line-height: 1.4;
         }
         
         #lives {
             color: var(--accent-color); 
-            font-size: 1.4rem; /* Larger hearts */
+            font-size: 1.4rem; 
             letter-spacing: 3px;
         }
 
-        #level {
+        #level-info {
             color: var(--accent-color);
             font-weight: bold;
             transition: transform 0.2s;
@@ -256,20 +229,20 @@
         }
 
         #current-sentence-display {
-            margin-top: 15px; /* Back to bottom, add margin top */
+            margin-top: 15px; 
             margin-bottom: 5px;
-            min-height: 70px; /* Taller */
+            min-height: 70px; 
             padding: 12px 20px;
             background: #fff;
             border-radius: 15px;
             border: 3px dashed var(--secondary-color);
             width: 95%; 
-            max-width: 600px; /* Match canvas */
+            max-width: 600px; 
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem; /* Larger text */
+            font-size: 1.6rem; 
             color: #ccc; 
             font-weight: bold;
             line-height: 1.5;
@@ -285,7 +258,7 @@
             top: -12px;
             background: var(--secondary-color);
             border-radius: 50%;
-            width: 40px; /* Larger button */
+            width: 40px; 
             height: 40px;
             padding: 0;
             font-size: 1.2rem;
@@ -297,12 +270,12 @@
         }
 
         .char-eaten { color: var(--secondary-color); transition: color 0.3s; }
-        .char-current { color: var(--accent-color); text-decoration: underline; font-size: 2.0rem; font-weight: 900; } /* Larger current char */
+        .char-current { color: var(--accent-color); text-decoration: underline; font-size: 2.0rem; font-weight: 900; } 
         .char-pending { color: #BBB; }
 
         select, input[type="text"] {
             padding: 12px 16px; 
-            font-size: 1.1rem; /* Larger font */
+            font-size: 1.1rem; 
             border-radius: 12px;
             border: 2px solid var(--secondary-color);
             margin-bottom: 5px; 
@@ -318,14 +291,9 @@
             border-color: var(--primary-color);
         }
         
-        input[type="text"] {
-            text-align: center;
-            font-weight: bold;
-        }
-
         #online-status-bar {
             width: 100%;
-            max-width: 600px; /* Match game container */
+            max-width: 600px; 
             margin-bottom: 10px;
             font-size: 1rem;
             color: #555;
@@ -349,7 +317,7 @@
         
         .leaderboard-container {
             width: 100%;
-            max-height: 400px; /* Taller */
+            max-height: 400px; 
             overflow-y: auto;
             margin: 15px 0;
             border: 1px solid #eee;
@@ -360,7 +328,7 @@
         table.leaderboard-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 1.05rem; /* Larger font */
+            font-size: 1.05rem; 
         }
         
         table.leaderboard-table th {
@@ -379,53 +347,34 @@
             color: var(--text-color);
         }
 
-        table.leaderboard-table th:nth-child(1), table.leaderboard-table td:nth-child(1) { width: 15%; } /* Rank */
-        table.leaderboard-table th:nth-child(2), table.leaderboard-table td:nth-child(2) { width: 35%; text-align: left; padding-left: 15px; } /* Name */
-        table.leaderboard-table th:nth-child(3), table.leaderboard-table td:nth-child(3) { width: 25%; } /* Score */
-        table.leaderboard-table th:nth-child(4), table.leaderboard-table td:nth-child(4) { width: 25%; font-size: 0.9em; } /* Lesson */
+        table.leaderboard-table tr:nth-child(even) { background-color: #f9f9f9; }
         
-        table.leaderboard-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        
-        table.leaderboard-table tr:nth-child(1) td { background-color: #FFF8E1; color: #D4AF37; font-weight: bold; }
-        table.leaderboard-table tr:nth-child(2) td { background-color: #F5F5F5; color: #A9A9A9; font-weight: bold; }
-        table.leaderboard-table tr:nth-child(3) td { background-color: #FFF0E6; color: #CD7F32; font-weight: bold; }
-
-        /* Pause Overlay */
+        /* New CSS for centering pause overlay */
         #pause-overlay {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.7);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(3px);
-            z-index: 10;
-            border-radius: 10px;
+            z-index: 15;
+            background-color: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(2px);
         }
-        
+
         .pause-text {
-            font-size: 3.5rem; /* Larger */
+            font-size: 3.5rem; 
             font-weight: bold;
             color: var(--text-color);
             text-shadow: 2px 2px white;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             padding: 15px 40px;
             border-radius: 25px;
             border: 4px solid var(--primary-color);
         }
 
-        #mobile-hint {
-            margin-top: 15px;
-            color: #7D8597;
-            font-size: 1rem;
-            text-align: center;
-            background: rgba(255,255,255,0.6);
-            padding: 8px 20px;
-            border-radius: 20px;
-        }
-        
         .footer {
             margin-top: 25px;
             color: #888;
@@ -454,39 +403,37 @@
             transition: opacity 0.3s, bottom 0.3s;
         }
 
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 50px;
-        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
         
+        /* Revived score animation */
+        .locked-score {
+            color: var(--locked-color) !important;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
         @media (max-width: 600px) {
             h1 { font-size: 1.5rem; }
-            .subtitle { font-size: 0.9rem; }
             #current-sentence-display { font-size: 1.3rem; }
-            #leaderboard-modal { width: 95%; padding: 10px; }
             table.leaderboard-table { font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Backdrop for modals -->
     <div id="backdrop" class="modal-backdrop hidden"></div>
 
-    <div class="subtitle">學華語向前走第二冊</div>
-    <h1>🐍 課文貪食蛇：課文大冒險</h1>
+    <h1>🐍 華語貪食蛇 🐍</h1>
 
     <div id="top-controls">
         <div id="score-info">
-            <div>得分: <span id="score">0</span> &nbsp;|&nbsp; 速度: <span id="level">1</span></div>
-            <div id="progress-container">進度: <span id="progress-current">0</span> / <span id="progress-total">0</span></div>
-            <div id="lives">❤️❤️❤️❤️❤️</div>
+            <div>得分: <span id="score-display"><span id="score">0</span></span> &nbsp;|&nbsp; <span id="level-info">關卡: 1</span></div>
+            <div id="progress-container">總進度: <span id="progress-current">0</span> / <span id="progress-total">0</span></div>
+            <div id="lives">❤️❤️❤️</div>
         </div>
         <div style="display: flex; gap: 5px;">
             <button class="control-btn" id="sound-btn" onclick="toggleSound()" title="聲音開關">🔊</button>
             <button class="control-btn" id="pause-btn" onclick="togglePause()" title="暫停遊戲">⏸️</button>
-            <button class="control-btn" id="fullscreen-btn" onclick="toggleFullscreen()" title="全螢幕">⛶</button>
             <button class="control-btn" id="exit-btn" onclick="triggerQuit()" title="回到首頁">🏠</button>
         </div>
     </div>
@@ -494,7 +441,6 @@
     <div id="online-status-bar">🟢 連線中...</div>
 
     <div id="game-container">
-        <!-- Canvas width/height increased to 600 for better resolution -->
         <canvas id="gameCanvas" width="600" height="600"></canvas>
         
         <div id="pause-overlay" class="hidden">
@@ -502,14 +448,19 @@
         </div>
 
         <div id="ui-layer">
-            <!-- Start Screen -->
             <div id="start-screen" class="screen">
                 <h2 id="start-title" style="margin: 0 0 10px 0; color: var(--primary-color); font-size: 1.8rem;">準備好了嗎？</h2>
-                
                 <label for="player-name" style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px;">你的名字：</label>
                 <input type="text" id="player-name" placeholder="請輸入名字 (例如: 小美)" maxlength="8">
                 
-                <label for="lesson-select" style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">選擇課程：</label>
+                <label for="speed-select" style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">遊戲速度：</label>
+                <select id="speed-select">
+                    <option value="2.5" selected>🐢 慢慢的 (適合初學)</option>
+                    <option value="4">🐇 普通速度 (有點刺激)</option>
+                    <option value="6">🐆 快快的 (超級挑戰)</option>
+                </select>
+
+                <label for="lesson-select" style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">選擇課程：學華語向前走 第二冊</label>
                 <div style="display: flex; gap: 5px; width: 100%; margin-bottom: 10px;">
                     <select id="lesson-select" style="margin-bottom: 0;">
                         <option value="1">第 1 課：新同學</option>
@@ -533,14 +484,9 @@
                     <button onclick="startGame()" style="flex:2;">開始遊戲 ▶️</button>
                     <button class="secondary" onclick="showLeaderboardModal()" style="flex:1;">🏆 排行榜</button>
                 </div>
-
-                <p style="font-size: 0.9rem; color: #7D8597; margin: 15px 0 0 0;">
-                    電腦：⬆️⬇️⬅️➡️ &nbsp;|&nbsp; 平板：👆 滑動螢幕<br>
-                    <span style="color: var(--accent-color);">提示：撞牆不會死掉，還有水果獎勵 🍎</span>
-                </p>
+                <p style="font-size: 0.9rem; color: #7D8597; margin: 15px 0 0 0;">電腦：WASD 或 ⬆️⬇️⬅️➡️ &nbsp;|&nbsp; 平板：👆 滑動螢幕</p>
             </div>
 
-            <!-- Quit Confirmation Modal (Inside UI Layer) -->
             <div id="quit-modal" class="screen hidden" style="z-index: 50;">
                 <h2 style="color: var(--accent-color); margin: 0 0 10px 0;">確定要離開嗎？</h2>
                 <p style="margin: 10px 0; font-size: 1.1rem;">目前的遊戲進度會消失喔！</p>
@@ -550,17 +496,23 @@
                 </div>
             </div>
 
-            <!-- Lesson Complete Screen -->
+            <!-- Revive Modal -->
+            <div id="revive-modal" class="screen hidden" style="z-index: 55;">
+                <h2 style="color: var(--accent-color); margin: 0 0 10px 0; font-size: 1.6rem;">💔 愛心用光了！</h2>
+                <p style="margin: 5px 0; font-size: 1.1rem;">別氣餒，我們把剩下的練習做完吧！</p>
+                <p style="color: var(--locked-color); font-size: 0.9rem; margin-bottom: 10px;">⚠️ 注意：復活後分數將停止累積</p>
+                <div style="margin-bottom: 15px; color: #555;">(還有 <span id="revive-remaining">0</span> 個句子)</div>
+                <button onclick="reviveGame()" style="font-size: 1.2rem; padding: 12px 30px; width: 100%;">💪 復活練習</button>
+                <button class="secondary" onclick="gameOver()" style="margin-top: 10px; font-size: 0.9rem;">結束練習並存檔</button>
+            </div>
+
             <div id="lesson-complete-screen" class="screen hidden">
                 <h2 style="margin: 0; color: var(--primary-color);">🎉 恭喜完成！</h2>
                 <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
-                    <p style="margin: 5px 0; font-size: 1.2rem; color: #555;">你已經複習完</p>
                     <p id="complete-lesson-name" style="font-size: 1.3rem; color: var(--secondary-color); font-weight: bold; margin: 5px 0;">第 X 課</p>
-                    <p style="margin: 5px 0 0 0;">所有的句子了！</p>
                     <p style="margin: 10px 0; font-size: 1.4rem;">總得分：<span id="complete-score" style="color: var(--accent-color); font-weight: 900;">0</span></p>
+                    <p id="revive-note" class="hidden" style="color: #888; font-size: 0.85rem;">(曾使用復活機制，得分已鎖定)</p>
                 </div>
-
-                <!-- Mini Leaderboard for Complete Screen -->
                 <div style="width:100%; margin-top:10px;">
                     <div style="font-size: 1rem; color: #555; font-weight: bold; margin-bottom: 5px;">🏆 歷史排行榜</div>
                     <div class="leaderboard-container" style="max-height: 120px;">
@@ -569,19 +521,16 @@
                         </table>
                     </div>
                 </div>
-                
                 <div id="lesson-nav-buttons" style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
                      <button id="btn-prev-lesson" class="secondary" style="flex: 1; font-size: 1rem;">⬅️ 上一課</button>
                      <button id="btn-next-lesson" class="secondary" style="flex: 1; font-size: 1rem;">下一課 ➡️</button>
                 </div>
-
                 <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 5px;">
                     <button onclick="resetGame()" style="flex: 1;">再複習一次 🔄</button>
                     <button class="secondary" onclick="showStartScreen()" style="flex: 1;">回首頁 🏠</button>
                 </div>
             </div>
 
-            <!-- Game Over Screen -->
             <div id="game-over-screen" class="screen hidden">
                 <h2 id="game-over-title" style="margin: 0; color: var(--text-color);">😲 遊戲結束！</h2>
                 <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
@@ -589,8 +538,6 @@
                     <p style="margin: 5px 0; font-size: 1.3rem;"><span id="game-over-name">你</span>的最終得分</p>
                     <p style="margin: 0; font-size: 3rem; color: var(--accent-color); font-weight: 900; line-height: 1;"><span id="final-score">0</span></p>
                 </div>
-                
-                <!-- Mini Leaderboard -->
                 <div style="width:100%; margin-top:10px;">
                     <div style="font-size: 1rem; color: #555; font-weight: bold; margin-bottom: 5px;">🏆 歷史排行榜</div>
                     <div class="leaderboard-container" style="max-height: 120px;">
@@ -599,7 +546,6 @@
                         </table>
                     </div>
                 </div>
-
                 <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
                     <button onclick="resetGame()" style="flex: 1;">再玩一次 🔄</button>
                     <button class="secondary" onclick="showStartScreen()" style="flex: 1;">換課文 📖</button>
@@ -608,34 +554,23 @@
         </div>
     </div>
 
-    <!-- Leaderboard Modal (Separate from UI Layer for Full Screen) -->
     <div id="leaderboard-modal" class="screen hidden">
         <h2 style="color: var(--secondary-color); margin: 0 0 10px 0; font-size: 1.8rem;">🏆 歷史榮譽榜</h2>
         <div class="leaderboard-container" style="max-height: 50vh;">
             <table class="leaderboard-table">
                 <thead>
                     <tr>
-                        <th>名次</th>
-                        <th>名字</th>
-                        <th>分數</th>
-                        <th>課程</th>
+                        <th>名次</th><th>名字</th><th>分數</th><th>課程</th>
                     </tr>
                 </thead>
-                <tbody id="leaderboard-body-modal">
-                    <!-- Populated by JS -->
-                </tbody>
+                <tbody id="leaderboard-body-modal"></tbody>
             </table>
         </div>
         <button class="secondary" onclick="hideLeaderboardModal()" style="margin-top: 15px; min-width: 150px;">關閉</button>
     </div>
 
-    <div id="current-sentence-display">
-        準備開始...
-        <button id="replay-btn" onclick="replayCurrentAudio()" title="重聽一次">🔊</button>
-    </div>
-    
+    <div id="current-sentence-display">準備開始...<button id="replay-btn" onclick="replayCurrentAudio()" title="重聽一次">🔊</button></div>
     <div id="mobile-hint">💡 提示：順序吃字組成句子，撞牆會從另一邊出來</div>
-    
     <div class="footer">Design by Sophia Wong</div>
     <div id="toast"></div>
 
@@ -643,9 +578,8 @@
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-    import { getFirestore, collection, doc, setDoc, addDoc, getDocs, onSnapshot, query, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+    import { getFirestore, collection, doc, setDoc, addDoc, getDocs, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-    // Provided globals
    const firebaseConfig = {
   apiKey: "AIzaSyBQI17CXEhD5mJhDCid-mt0cAL6qvdcAiA",
   authDomain: "chinses-snake-game.firebaseapp.com",
@@ -654,21 +588,15 @@
   messagingSenderId: "239140560404",
   appId: "1:239140560404:web:dd5ead9018a0f0e5ad5101"
 };
-    
-    // Fix: Sanitize appId to ensure it's a valid path segment (no slashes or dots)
     const rawAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
-    // Use a clean ID. If rawAppId contains paths, we just use the last segment or a hash-like replacement
-    // Here we replace any non-alphanumeric with _ to be safe
     const appId = rawAppId.split('/')[0].replace(/[^a-zA-Z0-9_-]/g, '_');
     
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    
     let currentUser = null;
-    let isOffline = false; // Flag to track if we should stop trying cloud ops
+    let isOffline = false;
 
-    // 1. Auth Logic
     const initAuth = async () => {
         try {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -676,27 +604,14 @@
             } else {
                 await signInAnonymously(auth);
             }
-        } catch (error) {
-            console.error("Auth Error (Switching to Offline):", error);
-            activateOfflineMode();
-        }
+        } catch (error) { activateOfflineMode(); }
     };
     initAuth();
 
     function activateOfflineMode() {
-        if(isOffline) return;
         isOffline = true;
         const listEl = document.getElementById('online-status-bar');
         if(listEl) listEl.innerText = "🔴 單機模式 (雲端功能暫停)";
-        
-        const modalBody = document.getElementById('leaderboard-body-modal');
-        if(modalBody) modalBody.innerHTML = `<tr><td colspan="4">無法連線，目前為單機模式。</td></tr>`;
-        
-        const gameoverBody = document.getElementById('leaderboard-body-gameover');
-        if(gameoverBody) gameoverBody.innerHTML = `<tr><td colspan="4">單機模式</td></tr>`;
-
-        const completeBody = document.getElementById('leaderboard-body-complete');
-        if(completeBody) completeBody.innerHTML = `<tr><td colspan="4">單機模式</td></tr>`;
     }
 
     onAuthStateChanged(auth, (user) => {
@@ -709,1365 +624,578 @@
         }
     });
 
-    // 2. Presence System (Online Status)
     function startPresenceSystem() {
         if (!currentUser || isOffline) return;
-        
-        try {
-            const presenceCol = collection(db, 'artifacts', appId, 'public', 'data', 'presence');
-            
-            onSnapshot(presenceCol, (snapshot) => {
-                const now = Date.now();
-                const activeThreshold = 60 * 1000 * 5; 
-                
-                const onlineData = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.name && data.lastSeen && (now - data.lastSeen < activeThreshold)) {
-                        onlineData.push({ name: data.name, lesson: data.lesson || '準備中' });
-                    }
-                });
-                
-                // Use a map to ensure unique users if duplicate names exist (though auth uid is key)
-                // Filter distinct names for display:
-                const uniquePlayers = [];
-                const seenNames = new Set();
-                onlineData.forEach(p => {
-                     if(!seenNames.has(p.name)) {
-                         seenNames.add(p.name);
-                         uniquePlayers.push(p);
-                     }
-                });
-
-                updateOnlineUI(uniquePlayers);
-            }, (error) => {
-                console.warn("Presence offline:", error.message);
-                activateOfflineMode();
+        const presenceCol = collection(db, 'artifacts', appId, 'public', 'data', 'presence');
+        onSnapshot(presenceCol, (snapshot) => {
+            const now = Date.now();
+            const activeThreshold = 60 * 1000 * 5; 
+            const onlineData = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                if (data.name && data.lastSeen && (now - data.lastSeen < activeThreshold)) {
+                    onlineData.push({ name: data.name, lesson: data.lesson || '準備中' });
+                }
             });
-        } catch (e) {
-            activateOfflineMode();
-        }
+            const uniquePlayers = [];
+            const seenNames = new Set();
+            onlineData.forEach(p => {
+                if(!seenNames.has(p.name)) { seenNames.add(p.name); uniquePlayers.push(p); }
+            });
+            updateOnlineUI(uniquePlayers);
+        }, () => activateOfflineMode());
     }
 
-    // Heartbeat function
     window.sendHeartbeat = async function(name, lesson) {
         if (isOffline || !currentUser || !name) return;
-        
         try {
             const presenceRef = doc(db, 'artifacts', appId, 'public', 'data', 'presence', currentUser.uid);
-            await setDoc(presenceRef, {
-                name: name,
-                lesson: lesson,
-                lastSeen: Date.now()
-            }, { merge: true });
-        } catch (e) {
-            if (e.code === 'permission-denied' || (e.message && e.message.includes('permissions'))) {
-                activateOfflineMode();
-            } else {
-                console.warn("Heartbeat warning (switching offline):", e.message);
-                activateOfflineMode();
-            }
-        }
+            await setDoc(presenceRef, { name, lesson, lastSeen: Date.now() }, { merge: true });
+        } catch (e) { activateOfflineMode(); }
     }
 
     function updateOnlineUI(players) {
         const listEl = document.getElementById('online-status-bar');
         if (!listEl) return;
-        
         if (players.length === 0) {
             listEl.innerHTML = "🟢 <b>在線同學：</b>目前只有你";
         } else {
-            // New Format: Name (Lesson)
-            const html = players.map(p => {
-                return `<span style="margin-right:15px; display:inline-block;"><span class="online-badge"></span>${p.name} <span style="font-size:0.8em; opacity:0.8; font-weight:normal;">(${p.lesson})</span></span>`;
-            }).join('');
+            const html = players.map(p => `<span style="margin-right:15px; display:inline-block;">${p.name} <span style="font-size:0.8em; opacity:0.8;">(${p.lesson})</span></span>`).join('');
             listEl.innerHTML = `🟢 <b>在線同學：</b> ` + html;
         }
     }
 
-    // 3. Leaderboard System
     window.saveScoreToCloud = async function(name, score, lessonName) {
         if (isOffline || !currentUser) return;
-        
         try {
             const lbCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
-            await addDoc(lbCol, {
-                name: name,
-                score: score,
-                lesson: lessonName,
-                timestamp: Date.now()
-            });
-            console.log("Score saved!");
-        } catch (e) {
-            if (e.code === 'permission-denied' || (e.message && e.message.includes('permissions'))) {
-                activateOfflineMode();
-            } else {
-                console.warn("Score save warning:", e.message);
-            }
-        }
+            await addDoc(lbCol, { name, score, lesson: lessonName, timestamp: Date.now() });
+        } catch (e) { activateOfflineMode(); }
     }
 
-    // Load leaderboard
     function loadLeaderboard() {
         if (isOffline) return;
-        
-        try {
-            const lbCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
-            onSnapshot(lbCol, (snapshot) => {
-                const scores = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.name && data.score != null) {
-                        scores.push(data);
-                    }
-                });
-                
-                scores.sort((a, b) => b.score - a.score);
-                const topScores = scores.slice(0, 10);
-                updateLeaderboardUI(topScores);
-            }, (error) => {
-                 console.warn("Leaderboard offline:", error.message);
-                 activateOfflineMode();
+        const lbCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+        onSnapshot(lbCol, (snapshot) => {
+            const scores = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                if (data.name && data.score != null) { scores.push(data); }
             });
-        } catch (e) {
-            activateOfflineMode();
-        }
+            scores.sort((a, b) => b.score - a.score);
+            updateLeaderboardUI(scores.slice(0, 10));
+        }, () => activateOfflineMode());
     }
 
     function updateLeaderboardUI(scores) {
         const createRows = (limit) => {
-            if (scores.length === 0) return `<tr><td colspan="4">尚無紀錄，快來當第一名！</td></tr>`;
+            if (scores.length === 0) return `<tr><td colspan="4">尚無紀錄</td></tr>`;
             return scores.slice(0, limit).map((s, i) => {
                 let rank = i + 1;
-                let medal = "";
-                if (rank === 1) medal = "🥇";
-                else if (rank === 2) medal = "🥈";
-                else if (rank === 3) medal = "🥉";
-                else medal = rank + ".";
-                
-                // --- MODIFIED: Simplify Lesson Name ---
-                let lessonDisplay = s.lesson || "-";
-                const match = lessonDisplay.match(/第\s*\d+\s*課/);
-                if (match) {
-                    lessonDisplay = match[0]; 
-                } else if (lessonDisplay.includes("全部")) {
-                    lessonDisplay = "全冊";
-                } else {
-                    lessonDisplay = lessonDisplay.split('：')[0];
-                    if (lessonDisplay.length > 6) lessonDisplay = lessonDisplay.substring(0, 5) + "..";
-                }
-                // -------------------------------------
-
-                return `
-                    <tr>
-                        <td>${medal}</td>
-                        <td style="font-weight:bold; color:var(--text-color);">${s.name}</td>
-                        <td style="color:var(--accent-color); font-weight:900;">${s.score}</td>
-                        <td style="font-size:0.8em; color:#666;">${lessonDisplay}</td>
-                    </tr>
-                `;
+                let medal = rank === 1 ? "🥇" : (rank === 2 ? "🥈" : (rank === 3 ? "🥉" : rank + "."));
+                let lessonDisplay = (s.lesson || "-").match(/第\s*\d+\s*課/)?.[0] || (s.lesson?.includes("全部") ? "全冊" : s.lesson?.split('：')[0]);
+                return `<tr><td>${medal}</td><td style="font-weight:bold;">${s.name}</td><td style="color:var(--accent-color); font-weight:900;">${s.score}</td><td>${lessonDisplay}</td></tr>`;
             }).join('');
         };
-
-        const modalBody = document.getElementById('leaderboard-body-modal');
-        if(modalBody) modalBody.innerHTML = createRows(20);
-
-        const gameoverBody = document.getElementById('leaderboard-body-gameover');
-        if(gameoverBody) gameoverBody.innerHTML = createRows(5);
-        
-        const completeBody = document.getElementById('leaderboard-body-complete');
-        if(completeBody) completeBody.innerHTML = createRows(5);
+        document.getElementById('leaderboard-body-modal').innerHTML = createRows(20);
+        document.getElementById('leaderboard-body-gameover').innerHTML = createRows(5);
+        document.getElementById('leaderboard-body-complete').innerHTML = createRows(5);
     }
-
 </script>
 
-<!-- Existing Game Logic Script -->
 <script>
-    // --- Safe Audio Context ---
+    // --- Audio Logic ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
-    if (AudioContext) {
-        try {
-            audioCtx = new AudioContext();
-        } catch(e) {
-            console.warn("AudioContext creation failed:", e);
-        }
-    }
+    try { audioCtx = new AudioContext(); } catch(e) {}
 
     function playTone(freq, type, duration) {
         if (!isSoundOn || !audioCtx) return;
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume().catch(e => console.warn("Audio resume failed", e));
-        }
-        
-        try {
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        } catch(e) {
-            console.warn("Play tone failed", e);
-        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
     }
+    const playEatSound = () => playTone(440, 'sine', 0.1);
+    const playBonusSound = () => { playTone(523, 'triangle', 0.1); setTimeout(() => playTone(659, 'triangle', 0.2), 100); };
+    const playLevelUpSound = () => { playTone(523, 'square', 0.1); setTimeout(() => playTone(783, 'square', 0.2), 200); };
+    const playCrashSound = () => playTone(150, 'sawtooth', 0.3);
+    const playErrorSound = () => playTone(150, 'sawtooth', 0.2);
+    const playHealSound = () => { playTone(400, 'sine', 0.1); setTimeout(() => playTone(600, 'sine', 0.2), 100); };
+    const playBombSound = () => { playTone(100, 'sawtooth', 0.1); setTimeout(() => playTone(80, 'sawtooth', 0.3), 100); };
 
-    function playEatSound() { playTone(440, 'sine', 0.1); }
-    function playBonusSound() { 
-        playTone(523.25, 'triangle', 0.1); // C5
-        setTimeout(() => playTone(659.25, 'triangle', 0.2), 100); // E5
-    }
-    function playLevelUpSound() {
-        playTone(523.25, 'square', 0.1); 
-        setTimeout(() => playTone(659.25, 'square', 0.1), 100); 
-        setTimeout(() => playTone(783.99, 'square', 0.2), 200); 
-    }
-    function playCrashSound() { playTone(150, 'sawtooth', 0.3); }
-    function playBombSound() { 
-        playTone(100, 'sawtooth', 0.1); 
-        setTimeout(() => playTone(80, 'sawtooth', 0.3), 50);
-    }
-
+    // --- Data ---
+    const fruitIcons = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑'];
     const rawLessonData = {
-        "1": [
-            "老師：今天，我們有兩個新同學。",
-            "老師：現在請他們介紹自己。",
-            "友朋：大家好，我叫方友朋，今年八歲。",
-            "友朋：我最喜歡跟爸爸一起游泳。",
-            "張莉：大家好，我叫張莉，今年七歲。",
-            "張莉：我比較喜歡看書。",
-            "大文：你們好，我叫李大文。",
-            "大文：很高興認識你們。",
-            "老師：歡迎你們來中文學校學華語。"
-        ],
-        "2": [
-            "大文：張莉，照片裡面的人是誰？",
-            "張莉：左邊是我外公，他以前是醫生。",
-            "張莉：右邊是我外婆。",
-            "大文：你爸爸媽媽做什麼工作？",
-            "張莉：我爸爸做生意，我媽媽幫他。",
-            "張莉：你爸爸媽媽呢?",
-            "大文：我爸爸在電腦公司上班。",
-            "大文：我媽媽在銀行工作。",
-            "大文：你以後想做什麼？",
-            "張莉：我以後想跟爸爸一樣。"
-        ],
-        "3": [
-            "大文：媽媽，你要去哪裡？",
-            "媽媽：我要去附近的超級市場買東西。",
-            "媽媽：你要跟我一起去嗎？",
-            "大文：要，我想去買巧克力冰淇淋。",
-            "大文：你今天要買什麼？",
-            "媽媽：我今天要買魚、牛肉、青菜，還要買米。",
-            "大文：我也可以買糖果嗎？",
-            "媽媽：我們去看一下吧！"
-        ],
-        "4": [
-            "文文：我想吃漢堡跟薯條。",
-            "文文：我們可不可以出去吃？",
-            "媽媽：今天先在家吃，週末再出去吃吧！",
-            "媽媽：今天晚餐想吃什麼？",
-            "大文：我想吃麵。文文，你呢？",
-            "文文：我想吃蛋炒飯，有湯嗎？",
-            "媽媽：我已經做了玉米湯。",
-            "大文：媽，我現在很餓，想快點吃晚飯，好嗎？"
-        ],
-        "5": [
-            "大文：你看！樹葉變黃了，秋天快到了。",
-            "張莉：可是草還是綠色的。",
-            "心美：秋天天氣很好。我覺得很舒服。",
-            "東明：春天也不錯。",
-            "大文：春天的時候，我們家院子有很多顏色的花。",
-            "大文：紅色的、白色的都有。",
-            "心美：我覺得紅色的花最漂亮。"
-        ],
-        "6": [
-            "大文：老師說農曆新年快到了。",
-            "爸爸：對，下個星期五是農曆新年。",
-            "大文：媽媽會去華人超市買年糕嗎？",
-            "爸爸：會，那天我們還要給爺爺奶奶拜年。",
-            "大文：太好了，爺爺每年都會給我紅包。",
-            "爸爸：如果在臺灣，我們還會貼春聯、放鞭炮。"
-        ],
-        "7": [
-            "爸爸：大文，該起床了！來不及了！",
-            "大文：我很累，還想睡覺。",
-            "爸爸：今天晚上早一點睡,現在趕快去刷牙、洗澡。",
-            "大文：我昨天晚上洗過澡了。",
-            "爸爸：還有，別忘了用肥皂洗臉。",
-            "大文：我知道了，要洗乾淨。"
-        ],
-        "8": [
-            "心美：昨天我爸爸的朋友送給我一隻狗。",
-            "心美：你們家有寵物嗎？",
-            "大文：有，我家有兩隻狗，我每天都帶牠們去散步。",
-            "心美：張莉，你養過狗嗎？",
-            "張莉：我沒養過狗，我去年養了一隻貓，可是上個月不見了。",
-            "友朋：我也養過貓，非常可愛，我每天都餵牠。",
-            "張莉：以後我想養一隻兔子。"
-        ],
-        "9": [
-            "友朋：東明，這是什麼？",
-            "東明：指南針，也叫指北針，它告訴我們南方和北方在哪裡。",
-            "友朋：音樂教室是什麼方向？",
-            "東明：音樂教室在北方，校門口在南方。",
-            "友朋：足球場在東方，還是西方？",
-            "東明：因為音樂教室在北方，所以足球場在東方。"
-        ],
-        "10": [
-            "心美：暑假的時候，我會去臺灣看外公、外婆。",
-            "張莉：你外公、外婆家在哪裡？",
-            "心美：他們本來住在臺北，退休以後，跟我的舅舅住在臺南。",
-            "張莉：你們每年都去看外公外婆嗎？",
-            "心美：我們每年都去看他們一次，你外公外婆住在哪裡？",
-            "張莉：我外公、外婆現在住在紐約，他們下個月會來看我們。",
-            "心美：我外公、外婆喜歡旅行，常常來看我們，也常去法國看阿姨。"
-        ],
-        "11": [
-            "心美：下個星期五，學校要帶我們去動物園玩。",
-            "心美哥哥：太好了！你可以看到你喜歡的大象和老虎。",
-            "心美：這一次我希望可以看到熊貓和猴子。",
-            "心美哥哥：對，以前我去的時候，動物園沒有熊貓。",
-            "爸爸：現在不但有熊貓，還有企鵝。",
-            "心美：我覺得熊貓胖胖的，真可愛！",
-            "心美哥哥：我喜歡長頸鹿，脖子長長的。"
-        ],
-        "12": [
-            "爸爸：大文，我現在要用網路給姑姑打電話。",
-            "大文：可以看到姑姑嗎？我很久沒跟姑姑說話了。",
-            "爸爸：可以看到她的影像，快一點過來。",
-            "姑姑：大文，你看起來瘦了。",
-            "大文：我沒瘦，我長高了。",
-            "姑姑：文文現在也跟你一起去學華語嗎?",
-            "大文：是啊！上中文課很有意思。",
-            "姑姑：你好好學華語，以後可以用網路給我寫信。",
-            "大文：沒問題，我一定會好好學華語。"
-        ]
+        "1": ["老師：今天，我們有兩個新同學。","老師：現在請他們介紹自己。","友朋：大家好，我叫方友朋，今年八歲。","友朋：我最喜歡跟爸爸一起游泳。","張莉：大家好，我叫張莉，今年七歲。","張莉：我比較喜歡看書。","大文：你們好，我叫李大文。","大文：很高興認識你們。","老師：歡迎你們來中文學校學華語。"],
+        "2": ["大文：張莉，照片裡面的人是誰？","張莉：左邊是我外公，他以前是醫生。","張莉：右邊是我外婆。","大文：你爸爸媽媽做什麼工作？","張莉：我爸爸做生意，我媽媽幫他。","張莉：你爸爸媽媽呢?","大文：我爸爸在電腦公司上班。","大文：我媽媽在銀行工作。","大文：你以後想做什麼？","張莉：我以後想跟爸爸一樣。"],
+        "3": ["大文：媽媽，你要去哪裡？","媽媽：我要去附近的超級市場買東西。","媽媽：你要跟我一起去嗎？","大文：要，我想去買巧克力冰淇淋。","大文：你今天要買什麼？","媽媽：我今天要買魚、牛肉、青菜，還要買米。","大文：我也可以買糖果嗎？","媽媽：我們去看一下吧！"],
+        "4": ["文文：我想吃漢堡跟薯條。","文文：我們可不可以出去吃？","媽媽：今天先在家吃，週末再出去吃吧！","媽媽：今天晚餐想吃什麼？","大文：我想吃麵。文文，你呢？","文文：我想吃蛋炒飯，有湯嗎？","媽媽：我已經做了玉米湯。","大文：媽，我現在很餓，想快點吃晚飯，好嗎？"],
+        "5": ["大文：你看！樹葉變黃了，秋天快到了。","張莉：可是草還是綠色的。","心美：秋天天氣很好。我覺得很舒服。","東明：春天也不錯。","大文：春天的時候，我們家院子有很多顏色的花。","大文：紅色的、白色的都有。","心美：我覺得紅色的花最漂亮。"],
+        "6": ["大文：老師說農曆新年快到了。","爸爸：對，下個星期五是農曆新年。","大文：媽媽會去華人超市買年糕嗎？","爸爸：會，那天我們還要給爺爺奶奶拜年。","大文：太好了，爺爺每年都會給我紅包。","爸爸：如果在臺灣，我們還會貼春聯、放鞭炮。"],
+        "7": ["爸爸：大文，該起床了！來不及了！","大文：我很累，還想睡覺。","爸爸：今天晚上早一點睡,現在趕快去刷牙、洗澡。","大文：我昨天晚上洗過澡了。","爸爸：還有，別忘了用肥皂洗臉。","大文：我知道了，要洗乾淨。"],
+        "8": ["心美：昨天我爸爸的朋友送給我一隻狗。","心美：你們家有寵物嗎？","大文：有，我家有兩隻狗，我每天都帶牠們去散步。","心美：張莉，你養過狗嗎？","張莉：我沒養過狗，我去年養了一隻貓，可是上個月不見了。","友朋：我也養過貓，非常可愛，我每天都餵牠。","張莉：以後我想養一隻兔子。"],
+        "9": ["友朋：東明，這是什麼？","東明：指南針，也叫指北針，它告訴我們南方和北方在哪裡。","友朋：音樂教室是什麼方向？","東明：音樂教室在北方，校門口在南方。","友朋：足球場在東方，還是西方？","東明：因為音樂教室在北方，所以足球場在東方。"],
+        "10": ["心美：暑假的時候，我會去臺灣看外公、外婆。","張莉：你外公、外婆家在哪裡？","心美：他們本來住在臺北，退休以後，跟我的舅舅住在臺南。","張莉：你們每年都去看外公外婆嗎？","心美：我們每年都去看他們一次，你外公外婆住在哪裡？","張莉：我外公、外婆現在住在紐約，他們下個月會來看我們。","心美：我外公、外婆喜歡旅行，常常來看我們，也常去法國看阿姨。"],
+        "11": ["心美：下個星期五，學校要帶我們去動物園玩。","心美哥哥：太好了！你可以看到你喜歡的大象和老虎。","心美：這一次我希望可以看到熊貓和猴子。","心美哥哥：對，以前我去的時候，動物園沒有熊貓。","爸爸：現在不但有熊貓，還有企鵝。","心美：我覺得熊貓胖胖的，真可愛！","心美哥哥：我喜歡長頸鹿，脖子長長的。"],
+        "12": ["爸爸：大文，我現在要用網路給姑姑打電話。","大文：可以看到姑姑嗎？我很久沒跟姑姑說話了。","爸爸：可以看到她的影像，快一點過來。","姑姑：大文，你看起來瘦了。","大文：我沒瘦，我長高了。","姑姑：文文現在也跟你一起去學華語嗎?","大文：是啊！上中文課很有意思。","姑姑：你好好學華語，以後可以用網路給我寫信。","大文：沒問題，我一定會好好學華語。"]
     };
-
     const lessonData = {};
-    for (let key in rawLessonData) {
-        lessonData[key] = rawLessonData[key].map(sentence => {
-            return sentence.replace(/^[^：]+：/, '');
-        });
-    }
+    for (let key in rawLessonData) { lessonData[key] = rawLessonData[key].map(s => s.replace(/^[^：]+：/, '')); }
 
     // --- Game Variables ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const scoreElement = document.getElementById('score');
-    const levelElement = document.getElementById('level');
     const livesElement = document.getElementById('lives');
     const progressCurrentElement = document.getElementById('progress-current');
     const progressTotalElement = document.getElementById('progress-total');
     const sentenceDisplay = document.getElementById('current-sentence-display');
-    
-    // Screens & Modals
     const startScreen = document.getElementById('start-screen');
-    const startTitle = document.getElementById('start-title');
     const gameOverScreen = document.getElementById('game-over-screen');
     const lessonCompleteScreen = document.getElementById('lesson-complete-screen');
     const quitModal = document.getElementById('quit-modal');
+    const reviveModal = document.getElementById('revive-modal');
     const leaderboardModal = document.getElementById('leaderboard-modal');
-    const modalBackdrop = document.getElementById('backdrop'); // Backdrop
-    
-    // Game Over Elements
-    const gameOverTitle = document.getElementById('game-over-title');
-    const gameOverName = document.getElementById('game-over-name');
-    const gameOverLesson = document.getElementById('game-over-lesson');
-    const finalScoreElement = document.getElementById('final-score');
-    
-    // Lesson Complete Elements
-    const completeLessonName = document.getElementById('complete-lesson-name');
-    const completeScore = document.getElementById('complete-score');
+    const modalBackdrop = document.getElementById('backdrop');
 
-    // Controls
-    const lessonSelect = document.getElementById('lesson-select');
-    const playerInput = document.getElementById('player-name');
-    const soundBtn = document.getElementById('sound-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const pauseOverlay = document.getElementById('pause-overlay');
+    // GRID SIZE CHANGE: Increased from 40 to 50, tileCount from 15 to 12 (600px width constant)
+    const gridSize = 50, tileCount = 12;
+    let speed, score, lives, heartRefillCount, isRevived = false;
+    let snake, foodItems, bonusItem, bombItem, heartItem;
+    let dx, dy, gameLoop, isGameRunning, isPaused, isTransitioning, playerName, heartbeatInterval;
+    let particles, popups, currentLessonSentences, availableIndices, sentencesCompleted, totalSentencesCount, currentSentence, charIndex, eatenSentenceChars, isSoundOn = true;
+    let comboCount = 0, comboTimer = 0;
+    let ouchTimer = 0; 
 
-    // Config
-    const gridSize = 30; // Increased size to make grid smaller (20x20)
-    const tileCount = canvas.width / gridSize;
-    let initialSpeed = 5;
-    let speed = initialSpeed;
-    
-    // State
-    let score = 0;
-    let lives = 5; 
-    let snake = [];
-    let food = { x: 10, y: 10, char: '' };
-    // Bonus Item with Icon
-    let bonusItem = { x: -1, y: -1, active: false, timer: 0, icon: '' }; 
-    const fruitIcons = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍉', '🍒', '🍑', '🍍', '🥝'];
-    
-    // Bomb Item
-    let bombItem = { x: -1, y: -1, active: false, timer: 0 };
-    
-    let dx = 0;
-    let dy = 0;
-    let gameLoop;
-    let isGameRunning = false;
-    let isPaused = false;
-    let isTransitioning = false;
-    let playerName = "";
-    let heartbeatInterval = null;
-    
-    // Particles & Popups
-    let particles = [];
-    let popups = []; 
-    
-    // Sentence Logic State
-    let currentLessonSentences = [];
-    let availableIndices = []; 
-    let sentencesCompleted = 0;
-    let totalSentencesCount = 0;
-    let activeLesson = "all";
-    let currentSentence = "";
-    let charIndex = 0;
-    let eatenSentenceChars = []; 
-    
-    // Sound State
-    let isSoundOn = true;
-
-    // --- Check URL Params Immediately ---
-    (function checkParams() {
+    (function init() {
         const urlParams = new URLSearchParams(window.location.search);
-        const lessonParam = urlParams.get('lesson');
-        if (lessonParam) {
-            const select = document.getElementById('lesson-select');
-            // Verify if lesson exists in select options
-            const option = select.querySelector(`option[value="${lessonParam}"]`);
-            if (option) {
-                select.value = lessonParam;
-                
-                // Visual Feedback
-                const lessonText = option.text.split('：')[0]; // Get "第 X 課"
-                if (startTitle) {
-                    startTitle.innerHTML = `挑戰：<span style="color:#E76F51">${lessonText}</span>`;
-                }
-                
-                // Auto Focus Name
-                if (playerInput) playerInput.focus();
-            }
+        if (urlParams.get('lesson')) {
+            document.getElementById('lesson-select').value = urlParams.get('lesson');
+            document.getElementById('start-title').innerHTML = `挑戰：第${urlParams.get('lesson')}課`;
         }
-        
-        // Auto-load player name from localStorage
         const savedName = localStorage.getItem('snake_player_name');
-        if (savedName) {
-            playerInput.value = savedName;
-        }
+        if (savedName) document.getElementById('player-name').value = savedName;
     })();
 
-    // --- Share Function ---
     window.shareLesson = function() {
         const lessonVal = document.getElementById('lesson-select').value;
-        const url = new URL(window.location.href);
-        url.searchParams.set('lesson', lessonVal);
-        
-        const tempInput = document.createElement("textarea");
-        tempInput.style.position = "absolute";
-        tempInput.style.left = "-9999px";
-        tempInput.value = url.toString();
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempInput);
-
-        showToast("已複製課程連結！傳給學生吧 📎");
+        const url = new URL(window.location.href); url.searchParams.set('lesson', lessonVal);
+        const temp = document.createElement("textarea"); temp.value = url.toString();
+        document.body.appendChild(temp); temp.select(); document.execCommand("copy");
+        document.body.removeChild(temp); showToast("已複製課程連結！");
     }
 
     function showToast(msg) {
-        const toast = document.getElementById("toast");
-        toast.innerText = msg;
-        toast.className = "show";
-        setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        const t = document.getElementById("toast"); t.innerText = msg; t.className = "show";
+        setTimeout(() => t.className = t.className.replace("show", ""), 3000);
     }
 
-    // --- Modal Functions ---
-    window.showLeaderboardModal = function() {
-        modalBackdrop.classList.remove('hidden');
-        leaderboardModal.classList.remove('hidden');
-    }
-    
-    window.hideLeaderboardModal = function() {
-        modalBackdrop.classList.add('hidden');
-        leaderboardModal.classList.add('hidden');
-    }
-
-    // --- Helper Function isPunctuation ---
-    function isPunctuation(char) {
-        return /[，。、？！：；「」『』\s,.?!:;"'()（）]/.test(char);
-    }
-
-    // --- Helper for Pronunciation Fixes ---
-    function getCorrectAudioText(char, index, sentence) {
-        if (char === '行') {
-            const prev = index > 0 ? sentence[index - 1] : '';
-            const next = index < sentence.length - 1 ? sentence[index + 1] : '';
-            if (prev === '銀' || next === '業') return '航'; 
-            return '形';
-        }
-        if (char === '覺') {
-            const prev = index > 0 ? sentence[index - 1] : '';
-            if (prev === '睡' || prev === '午') return '叫'; 
-            return '絕';
-        }
-        if (char === '樂') {
-            const prev = index > 0 ? sentence[index - 1] : '';
-            const next = index < sentence.length - 1 ? sentence[index + 1] : '';
-            if (prev === '音' || prev === '國' || next === '隊') return '月'; 
-            return '勒'; 
-        }
-        if (char === '長') {
-            const next = index < sentence.length - 1 ? sentence[index + 1] : '';
-            const prev = index > 0 ? sentence[index - 1] : '';
-            if (next === '高' || next === '大' || prev === '家' || prev === '師') return '掌'; 
-            return '常'; 
-        }
-        if (char === '假') {
-            const prev = index > 0 ? sentence[index - 1] : '';
-            if (prev === '暑' || prev === '寒' || prev === '放') return '架';
-            return '甲'; 
-        }
-        if (char === '得') {
-            const prev = index > 0 ? sentence[index - 1] : '';
-            const next = index < sentence.length - 1 ? sentence[index + 1] : '';
-            if (next === '到' || next === '分') return '德';
-            return '德';
-        }
-        if (char === '教') {
-            const next = index < sentence.length - 1 ? sentence[index + 1] : '';
-            if (next === '室' || next === '育' || next === '練') return '叫';
-            return '交';
-        }
-        if (char === '什') {
-            const next = index < sentence.length - 1 ? sentence[index + 1] : '';
-            if (next === '麼') return '神';
-            return '十';
-        }
-        if (char === '都') {
-            return '兜';
-        }
-        return char;
-    }
-
-    // --- Logic ---
     function initGame() {
         resetSnakePos();
-        score = 0;
-        lives = 5;
-        eatenSentenceChars = []; 
-        particles = [];
-        popups = [];
-        bonusItem = { x: -1, y: -1, active: false, timer: 0, icon: '' };
-        bombItem = { x: -1, y: -1, active: false, timer: 0 };
+        // SPEED CHANGE: set default based on select or default 2.5
+        const speedSelect = document.getElementById('speed-select');
+        speed = speedSelect ? parseFloat(speedSelect.value) : 2.5;
         
+        score = 0; lives = 3; heartRefillCount = 0; isRevived = false; isPaused = false; 
+        eatenSentenceChars = []; particles = []; popups = []; foodItems = [];
+        bonusItem = { x: -1, y: -1, active: false }; bombItem = { x: -1, y: -1, active: false }; heartItem = { x: -1, y: -1, active: false };
         scoreElement.innerText = score;
-        levelElement.innerText = 1;
-        levelElement.style.color = "";
-        updateLivesDisplay();
-        
-        speed = initialSpeed;
-        isTransitioning = false;
-        
-        loadSentences();
-        startNewSentence();
-        
-        // Reset combo
-        comboCount = 0;
-        comboTimer = 0;
+        scoreElement.parentElement.classList.remove('locked-score');
+        document.getElementById('revive-note').classList.add('hidden');
+        updateLivesDisplay(); isTransitioning = false; loadSentences(); startNewSentence();
+        ouchTimer = 0; 
     }
-    
-    function resetSnakePos() {
-        snake = [
-            { x: 10, y: 10 },
-            { x: 9, y: 10 },
-            { x: 8, y: 10 }
-        ];
-        dx = 1;
-        dy = 0;
-    }
+
+    function resetSnakePos() { snake = [{ x: 6, y: 6 }, { x: 5, y: 6 }, { x: 4, y: 6 }]; dx = 1; dy = 0; }
 
     function updateLivesDisplay() {
-        let hearts = "";
-        for(let i=0; i<lives; i++) hearts += "❤️";
-        for(let i=lives; i<5; i++) hearts += "🖤";
-        livesElement.innerText = hearts;
-    }
-
-    window.toggleSound = function() {
-        isSoundOn = !isSoundOn;
-        if (isSoundOn) {
-            soundBtn.innerText = "🔊";
-            soundBtn.style.opacity = "1";
-            if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-        } else {
-            soundBtn.innerText = "🔇";
-            soundBtn.style.opacity = "0.5";
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-            }
-        }
-    }
-
-    window.toggleFullscreen = function() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.log(`Error attempting to enable full-screen mode: ${err.message}`);
-            });
-            document.body.classList.add('fullscreen-mode');
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-                document.body.classList.remove('fullscreen-mode');
-            }
-        }
-    }
-
-    // Listener for fullscreen change (ESC key etc)
-    document.addEventListener('fullscreenchange', (event) => {
-        if (!document.fullscreenElement) {
-            document.body.classList.remove('fullscreen-mode');
-        } else {
-            document.body.classList.add('fullscreen-mode');
-        }
-    });
-
-    window.togglePause = function() {
-        if (!isGameRunning) return;
-        
-        isPaused = !isPaused;
-        if (isPaused) {
-            pauseBtn.innerText = "▶️";
-            pauseOverlay.classList.remove('hidden');
-        } else {
-            pauseBtn.innerText = "⏸️";
-            pauseOverlay.classList.add('hidden');
-        }
-    }
-
-    window.triggerQuit = function() {
-        if (!isGameRunning && startScreen.classList.contains('hidden') === false) return; 
-        if (isGameRunning && !isPaused) togglePause(); 
-        quitModal.classList.remove('hidden');
-    }
-
-    window.confirmQuit = function() {
-        quitModal.classList.add('hidden');
-        isGameRunning = false;
-        clearInterval(gameLoop);
-        clearInterval(heartbeatInterval);
-        isPaused = false;
-        pauseOverlay.classList.add('hidden');
-        pauseBtn.innerText = "⏸️"; 
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-        gameOverScreen.classList.add('hidden');
-        lessonCompleteScreen.classList.add('hidden');
-        startScreen.classList.remove('hidden');
-    }
-
-    window.cancelQuit = function() {
-        quitModal.classList.add('hidden');
-    }
-
-    // --- Enhanced Voice Logic for Cross-Platform Support ---
-    let targetVoice = null;
-
-    function initVoices() {
-        if (!('speechSynthesis' in window)) return;
-        
-        const voices = window.speechSynthesis.getVoices();
-        
-        // Priority: zh-TW -> zh-HK -> zh-CN -> any 'zh'
-        // This ensures Chinese pronunciation even on English OS
-        targetVoice = voices.find(v => v.lang.replace('_', '-').toLowerCase() === 'zh-tw') ||
-                      voices.find(v => v.lang.includes('zh-TW') || v.lang.includes('zh_TW')) ||
-                      voices.find(v => v.lang.includes('zh-HK') || v.lang.includes('zh_HK')) ||
-                      voices.find(v => v.lang.includes('zh-CN') || v.lang.includes('zh_CN')) ||
-                      voices.find(v => v.lang.toLowerCase().includes('zh'));
-    }
-
-    // Chrome loads voices asynchronously, so we listen for the event
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.onvoiceschanged = initVoices;
-        initVoices(); // Try immediately in case they are ready
-    }
-
-    function speakText(text) {
-        if (!isSoundOn) return;
-        if ('speechSynthesis' in window) {
-            // Try to init voices again if not found yet (sometimes needed for mobile)
-            if (!targetVoice) initVoices();
-
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            
-            // Explicitly set the Chinese voice object
-            // This is the key fix for English OS environments
-            if (targetVoice) {
-                utterance.voice = targetVoice;
-            }
-            
-            // Fallback language setting
-            utterance.lang = 'zh-TW'; 
-            utterance.rate = 0.85; 
-            window.speechSynthesis.speak(utterance);
-        }
-    }
-    
-    window.replayCurrentAudio = function() {
-        if (currentSentence) speakText(currentSentence);
-    }
-
-    function advanceToNextChar() {
-        while (charIndex < currentSentence.length && isPunctuation(currentSentence[charIndex])) {
-            charIndex++;
-        }
+        let h = ""; for(let i=0; i<lives; i++) h += "❤️"; for(let i=lives; i<3; i++) h += "🖤";
+        livesElement.innerText = h;
     }
 
     function loadSentences() {
-        activeLesson = lessonSelect.value;
-        currentLessonSentences = [];
-        if (activeLesson === "all") {
-            for (let key in lessonData) {
-                currentLessonSentences = currentLessonSentences.concat(lessonData[key]);
-            }
-        } else {
-            currentLessonSentences = lessonData[activeLesson];
-        }
-        availableIndices = currentLessonSentences.map((_, index) => index);
-        sentencesCompleted = 0;
-        totalSentencesCount = currentLessonSentences.length;
+        const val = document.getElementById('lesson-select').value;
+        currentLessonSentences = val === "all" ? [].concat(...Object.values(lessonData)) : lessonData[val];
+        availableIndices = currentLessonSentences.map((_, i) => i);
+        sentencesCompleted = 0; totalSentencesCount = currentLessonSentences.length;
         updateProgressDisplay();
     }
 
-    function updateProgressDisplay() {
-        progressCurrentElement.innerText = sentencesCompleted;
-        progressTotalElement.innerText = totalSentencesCount;
-    }
+    function updateProgressDisplay() { progressCurrentElement.innerText = sentencesCompleted; progressTotalElement.innerText = totalSentencesCount; }
 
     function startNewSentence() {
-        eatenSentenceChars = [];
-        if (availableIndices.length === 0) {
-            showLessonComplete();
-            return;
-        }
-        const poolIndex = Math.floor(Math.random() * availableIndices.length);
-        const sentenceIndex = availableIndices[poolIndex];
-        availableIndices.splice(poolIndex, 1);
-        currentSentence = currentLessonSentences[sentenceIndex];
-        charIndex = 0;
-        isTransitioning = false;
-        advanceToNextChar();
-        updateSentenceDisplay();
-        speakText(currentSentence);
-        createFood();
-        bonusItem.active = false;
-        bombItem.active = false;
-        
-        // Reset Combo on new sentence? Maybe not, keep flow
+        if (availableIndices.length === 0) { showLessonComplete(); return; }
+        const idx = Math.floor(Math.random() * availableIndices.length);
+        const sIdx = availableIndices[idx]; availableIndices.splice(idx, 1);
+        currentSentence = currentLessonSentences[sIdx]; charIndex = 0; isTransitioning = false;
+        while (charIndex < currentSentence.length && isPunctuation(currentSentence[charIndex])) charIndex++;
+        updateSentenceDisplay(); speakText(currentSentence); spawnFoods();
     }
-    
-    function showLessonComplete() {
-        isGameRunning = false;
-        clearInterval(gameLoop);
-        clearInterval(heartbeatInterval);
-        playLevelUpSound(); 
-        const lessonName = lessonSelect.options[lessonSelect.selectedIndex].text;
-        completeLessonName.innerText = lessonName;
-        completeScore.innerText = score;
-        
-        if(window.saveScoreToCloud) {
-            window.saveScoreToCloud(playerName, score, lessonName);
+
+    function spawnFoods() {
+        foodItems = []; if (charIndex >= currentSentence.length) return;
+        const target = currentSentence[charIndex];
+        const p1 = getFreePosition(); foodItems.push({ x: p1.x, y: p1.y, char: target, isCorrect: true });
+        for (let i = 0; i < 2; i++) {
+            let dist = target, safety = 0;
+            while ((dist === target || foodItems.some(f => f.char === dist)) && safety < 50) {
+                const rs = currentLessonSentences[Math.floor(Math.random() * currentLessonSentences.length)];
+                const rc = rs[Math.floor(Math.random() * rs.length)];
+                if (!isPunctuation(rc)) dist = rc; safety++;
+            }
+            const p = getFreePosition(); foodItems.push({ x: p.x, y: p.y, char: dist, isCorrect: false });
         }
+    }
 
-        const currentVal = lessonSelect.value;
-        const btnPrev = document.getElementById('btn-prev-lesson');
-        const btnNext = document.getElementById('btn-next-lesson');
-        const navContainer = document.getElementById('lesson-nav-buttons');
+    function getFreePosition() {
+        let p = { x: 0, y: 0 }, valid = false, attempts = 0;
+        while (!valid && attempts < 100) {
+            valid = true; p.x = Math.floor(Math.random() * tileCount); p.y = Math.floor(Math.random() * tileCount);
+            if (snake.some(s => s.x === p.x && s.y === p.y)) valid = false;
+            if (foodItems.some(f => f.x === p.x && f.y === p.y)) valid = false;
+            attempts++;
+        }
+        return p;
+    }
 
-        if (currentVal === 'all') {
-            navContainer.classList.add('hidden');
-        } else {
-            navContainer.classList.remove('hidden');
-            const currentNum = parseInt(currentVal);
-            if (currentNum > 1) {
-                btnPrev.classList.remove('hidden');
-                btnPrev.onclick = () => changeLesson(currentNum - 1);
+    function spawnHappyEffect(gx, gy, type) { // Grid coordinates, type: 'char', 'fruit', 'wrong', 'bomb'
+        let icons = [];
+        let count = 4;
+        let isExplosion = false;
+
+        if (type === 'fruit') {
+            icons = ['⭐', '✨', '🌟', '💫']; 
+        } else if (type === 'char') {
+            icons = ['❤️', '💖', '🥰', '😍']; 
+        } else if (type === 'wrong') {
+            icons = ['❌', '❓', '🌀', '😵'];
+        } else if (type === 'bomb') {
+            icons = ['💥', '🔥', '💨', '💀'];
+            count = 8; // More particles for explosion
+            isExplosion = true;
+        }
+        
+        for (let i = 0; i < count; i++) {
+            let vx, vy;
+            if (isExplosion) {
+                // Explosion spreads in all directions
+                vx = (Math.random() - 0.5) * 10; 
+                vy = (Math.random() - 0.5) * 10;
             } else {
-                btnPrev.classList.add('hidden');
+                // Others float upwards
+                vx = (Math.random() - 0.5) * 4; 
+                vy = -Math.random() * 2 - 2;    
             }
-            if (currentNum < 12) {
-                btnNext.classList.remove('hidden');
-                btnNext.onclick = () => changeLesson(currentNum + 1);
-            } else {
-                btnNext.classList.add('hidden');
-            }
-        }
-        lessonCompleteScreen.classList.remove('hidden');
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    }
 
-    function changeLesson(lessonNum) {
-        lessonSelect.value = lessonNum.toString();
-        startGame(); 
-    }
-
-    function updateSentenceDisplay() {
-        let html = '';
-        for (let i = 0; i < currentSentence.length; i++) {
-            let char = currentSentence[i];
-            if (i < charIndex) {
-                html += `<span class="char-eaten">${char}</span>`;
-            } else if (i === charIndex) {
-                html += `<span class="char-current">${char}</span>`;
-            } else {
-                html += `<span class="char-pending">${char}</span>`;
-            }
-        }
-        html += `<button id="replay-btn" onclick="replayCurrentAudio()" title="重聽一次">🔊</button>`;
-        sentenceDisplay.innerHTML = html;
-    }
-    
-    window.startGame = function() {
-        playerName = playerInput.value.trim();
-        if (!playerName) playerName = "小勇士";
-        
-        // Save Name
-        localStorage.setItem('snake_player_name', playerName);
-
-        // Get Current Lesson Text
-        let currentLessonVal = document.getElementById('lesson-select').value;
-        let lessonText = currentLessonVal === 'all' ? '全冊' : `第${currentLessonVal}課`;
-        
-        if(window.sendHeartbeat) {
-            window.sendHeartbeat(playerName, lessonText);
-            if (heartbeatInterval) clearInterval(heartbeatInterval);
-            heartbeatInterval = setInterval(() => window.sendHeartbeat(playerName, lessonText), 30000);
-        }
-
-        startScreen.classList.add('hidden');
-        gameOverScreen.classList.add('hidden');
-        lessonCompleteScreen.classList.add('hidden');
-        isPaused = false;
-        pauseOverlay.classList.add('hidden');
-        pauseBtn.innerText = "⏸️";
-        isTransitioning = false;
-        
-        // Resume audio context
-        if(audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-
-        initGame();
-        isGameRunning = true;
-        clearInterval(gameLoop);
-        gameLoop = setInterval(drawGame, 1000 / speed);
-    }
-
-    window.showStartScreen = function() {
-        gameOverScreen.classList.add('hidden');
-        lessonCompleteScreen.classList.add('hidden');
-        startScreen.classList.remove('hidden');
-        isGameRunning = false;
-        clearInterval(heartbeatInterval);
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    }
-
-    window.resetGame = function() {
-        startGame();
-    }
-
-    function createFood() {
-        if (charIndex < currentSentence.length) {
-            food.char = currentSentence[charIndex];
-            let valid = false;
-            let attempts = 0;
-            while (!valid && attempts < 100) {
-                valid = true;
-                food.x = Math.floor(Math.random() * tileCount);
-                food.y = Math.floor(Math.random() * tileCount);
-                snake.forEach(part => {
-                    if (part.x === food.x && part.y === food.y) valid = false;
-                });
-                attempts++;
-            }
-        } else {
-            food.x = -1; 
-            food.y = -1;
-        }
-    }
-
-    function manageBonus() {
-        if (!bonusItem.active && !isTransitioning) {
-            if (Math.random() < 0.02) { 
-                let valid = false;
-                let attempts = 0;
-                while (!valid && attempts < 50) {
-                    valid = true;
-                    bonusItem.x = Math.floor(Math.random() * tileCount);
-                    bonusItem.y = Math.floor(Math.random() * tileCount);
-                    snake.forEach(part => { if (part.x === bonusItem.x && part.y === bonusItem.y) valid = false; });
-                    if (bonusItem.x === food.x && bonusItem.y === food.y) valid = false;
-                    if (bombItem.active && bonusItem.x === bombItem.x && bonusItem.y === bombItem.y) valid = false;
-                    attempts++;
-                }
-                if (valid) {
-                    bonusItem.active = true;
-                    bonusItem.timer = 100; 
-                    bonusItem.icon = fruitIcons[Math.floor(Math.random() * fruitIcons.length)]; 
-                }
-            }
-        } else if (bonusItem.active) {
-            bonusItem.timer--;
-            if (bonusItem.timer <= 0) {
-                bonusItem.active = false;
-            }
-        }
-
-        if (!bombItem.active && !isTransitioning) {
-            if (Math.random() < 0.015) {
-                let valid = false;
-                let attempts = 0;
-                while (!valid && attempts < 50) {
-                    valid = true;
-                    bombItem.x = Math.floor(Math.random() * tileCount);
-                    bombItem.y = Math.floor(Math.random() * tileCount);
-                    snake.forEach(part => { if (part.x === bombItem.x && part.y === bombItem.y) valid = false; });
-                    if (bombItem.x === food.x && bombItem.y === food.y) valid = false;
-                    if (bonusItem.active && bombItem.x === bonusItem.x && bombItem.y === bonusItem.y) valid = false;
-                    attempts++;
-                }
-                if (valid) {
-                    bombItem.active = true;
-                    bombItem.timer = 150; 
-                }
-            }
-        } else if (bombItem.active) {
-            bombItem.timer--;
-            if (bombItem.timer <= 0) {
-                bombItem.active = false;
-            }
-        }
-    }
-
-    function spawnParticles(x, y, color) {
-        for (let i = 0; i < 12; i++) {
             particles.push({
-                x: x * gridSize + gridSize/2,
-                y: y * gridSize + gridSize/2,
-                vx: (Math.random() - 0.5) * 8,
-                vy: (Math.random() - 0.5) * 8,
+                x: gx * gridSize + 25, // Center x
+                y: gy * gridSize + 25, // Center y
+                vx: vx,
+                vy: vy,
                 life: 1.0,
-                color: color
+                content: icons[Math.floor(Math.random() * icons.length)]
             });
-        }
-    }
-
-    function updateAndDrawParticles() {
-        for (let i = particles.length - 1; i >= 0; i--) {
-            let p = particles[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            p.life -= 0.05;
-            
-            if (p.life <= 0) {
-                particles.splice(i, 1);
-            } else {
-                ctx.globalAlpha = p.life;
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1.0;
-            }
-        }
-    }
-
-    function spawnPopup(x, y, text, color) {
-        popups.push({
-            x: x * gridSize + gridSize/2,
-            y: y * gridSize,
-            text: text,
-            life: 1.0,
-            color: color
-        });
-    }
-
-    function updateAndDrawPopups() {
-        ctx.font = "bold 16px 'Noto Sans TC'";
-        ctx.textAlign = "center";
-        
-        for (let i = popups.length - 1; i >= 0; i--) {
-            let p = popups[i];
-            p.y -= 1.0; 
-            p.life -= 0.02; 
-            
-            if (p.life <= 0) {
-                popups.splice(i, 1);
-            } else {
-                ctx.globalAlpha = p.life;
-                ctx.fillStyle = p.color;
-                ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
-                ctx.shadowBlur = 4;
-                ctx.fillText(p.text, p.x, p.y);
-                ctx.shadowBlur = 0; 
-                ctx.globalAlpha = 1.0;
-            }
-        }
-    }
-
-    // Combo Variables
-    let comboCount = 0;
-    let comboTimer = 0;
-
-    function drawGame() {
-        if (!isGameRunning || isPaused) return;
-
-        moveSnake();
-        manageBonus();
-        
-        // Update combo timer
-        if (comboTimer > 0) comboTimer--;
-        else comboCount = 0; // Reset combo if time runs out
-
-        if (checkCollision()) {
-            handleCollision();
-            return;
-        }
-
-        clearCanvas();
-        // Draw grid lines
-        ctx.lineWidth = 0.5;
-        ctx.strokeStyle = "rgba(42, 157, 143, 0.2)"; // Light teal
-        for(let i=0; i<tileCount; i++) {
-             ctx.beginPath();
-             ctx.moveTo(i*gridSize, 0);
-             ctx.lineTo(i*gridSize, canvas.height);
-             ctx.stroke();
-             ctx.beginPath();
-             ctx.moveTo(0, i*gridSize);
-             ctx.lineTo(canvas.width, i*gridSize);
-             ctx.stroke();
-        }
-        
-        drawBonus(); 
-        drawBomb(); 
-        drawFood();
-        drawSnake();
-        updateAndDrawParticles(); 
-        updateAndDrawPopups(); 
-    }
-
-    function clearCanvas() {
-        ctx.fillStyle = "#FFFFFF"; 
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function drawFood() {
-        if (food.x < 0 || food.y < 0) return;
-
-        // Bubble background
-        ctx.fillStyle = "#FFE8D6"; // Very light orange/skin tone
-        ctx.beginPath();
-        ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/1.5, 0, Math.PI*2);
-        ctx.fill();
-
-        ctx.fillStyle = "#E76F51"; // Accent Color (Muted Red)
-        ctx.font = "bold 24px 'Noto Sans TC'"; // Increased font size here
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(food.char, food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2 + 2);
-    }
-
-    function drawBonus() {
-        if (bonusItem.active) {
-            if (bonusItem.timer < 30 && bonusItem.timer % 6 < 3) return; 
-            
-            ctx.font = "26px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText(bonusItem.icon, bonusItem.x * gridSize + gridSize/2, bonusItem.y * gridSize + gridSize/2 + 2);
-        }
-    }
-
-    function drawBomb() {
-        if (bombItem.active) {
-            if (bombItem.timer < 30 && bombItem.timer % 6 < 3) return;
-            ctx.font = "26px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText("💣", bombItem.x * gridSize + gridSize/2, bombItem.y * gridSize + gridSize/2 + 2);
         }
     }
 
     function moveSnake() {
-        let newX = snake[0].x + dx;
-        let newY = snake[0].y + dy;
+        let nx = snake[0].x + dx, ny = snake[0].y + dy;
+        if (nx < 0) nx = tileCount - 1; else if (nx >= tileCount) nx = 0;
+        if (ny < 0) ny = tileCount - 1; else if (ny >= tileCount) ny = 0;
+        const head = { x: nx, y: ny }; snake.unshift(head);
 
-        if (newX < 0) newX = tileCount - 1;
-        else if (newX >= tileCount) newX = 0;
-
-        if (newY < 0) newY = tileCount - 1;
-        else if (newY >= tileCount) newY = 0;
-
-        const head = { x: newX, y: newY };
-        snake.unshift(head);
+        // Score logic - Only update score var if not revived
+        const addScore = (pts) => { if (!isRevived) { score += pts; scoreElement.innerText = score; } };
 
         if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) {
-            score += 100;
-            scoreElement.innerText = score;
-            bonusItem.active = false;
-            playBonusSound();
-            spawnParticles(head.x, head.y, "#FFD166");
-            spawnPopup(head.x, head.y, "+100", "#E76F51"); 
+            addScore(100); bonusItem.active = false; playBonusSound(); 
+            spawnPopup(head.x, head.y, "+100", "#E76F51");
+            spawnHappyEffect(head.x, head.y, 'fruit'); 
         }
-
         if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) {
-            score = Math.max(0, score - 50); 
-            scoreElement.innerText = score;
-            bombItem.active = false;
-            comboCount = 0; // Reset combo on hit
-            playBombSound();
-            spawnParticles(head.x, head.y, "#555");
-            spawnPopup(head.x, head.y, "-50", "#555");
-            
-            canvas.style.transform = "translateX(5px)";
-            setTimeout(() => canvas.style.transform = "translateX(-5px)", 50);
-            setTimeout(() => canvas.style.transform = "none", 100);
+            if (!isRevived) { score = Math.max(0, score - 50); scoreElement.innerText = score; }
+            bombItem.active = false; playBombSound(); spawnPopup(head.x, head.y, "-50", "#555");
+            ouchTimer = 6; 
+            spawnHappyEffect(head.x, head.y, 'bomb'); // Added bomb effect
+        }
+        if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) {
+            lives++; heartRefillCount++; heartItem.active = false; updateLivesDisplay(); playHealSound();
         }
 
-        if (head.x === food.x && head.y === food.y && !isTransitioning) {
-            // Combo Logic
-            let points = 10;
-            if (comboTimer > 0) {
-                comboCount++;
-                points += comboCount * 5; // Extra points for combo
-                spawnPopup(head.x, head.y, `Combo x${comboCount}`, "#2A9D8F");
-            } else {
-                comboCount = 1;
-            }
-            comboTimer = 30; // Reset timer (approx 3-5s depending on speed)
-
-            score += points;
-            scoreElement.innerText = score;
-            
-            eatenSentenceChars.push(food.char);
-            const audioText = getCorrectAudioText(food.char, charIndex, currentSentence);
-            speakText(audioText);
-            playEatSound();
-            spawnParticles(head.x, head.y, "#E76F51");
-            
-            charIndex++;
-            advanceToNextChar();
-            updateSentenceDisplay();
-
-            if (charIndex >= currentSentence.length) {
-                score += 50; 
-                isTransitioning = true;
-                food.x = -1; 
-                food.y = -1;
-                sentencesCompleted++;
-                updateProgressDisplay();
-                playLevelUpSound();
+        let fIdx = foodItems.findIndex(f => f.x === head.x && f.y === head.y);
+        if (fIdx !== -1 && !isTransitioning) {
+            if (foodItems[fIdx].isCorrect) {
+                let pts = 10;
+                let displayText = "+10";
                 
-                if (speed < 20) {
-                    speed++;
-                    levelElement.innerText = Math.floor((speed - initialSpeed) + 1);
-                    levelElement.style.color = "#E76F51"; 
-                    levelElement.style.transform = "scale(1.5)";
-                    setTimeout(() => {
-                        levelElement.style.color = "";
-                        levelElement.style.transform = "scale(1)";
-                    }, 500);
-                    clearInterval(gameLoop);
-                    gameLoop = setInterval(drawGame, 1000 / speed);
+                if (comboTimer > 0) { 
+                    comboCount++; 
+                    pts += comboCount * 5; 
+                    displayText = `Combo x${comboCount}`;
+                } else { 
+                    comboCount = 1; 
                 }
-                setTimeout(() => { if (isGameRunning) startNewSentence(); }, 1200); 
+                
+                comboTimer = 30; 
+                addScore(pts); 
+                eatenSentenceChars.push(foodItems[fIdx].char);
+                speakText(getCorrectAudioText(foodItems[fIdx].char, charIndex, currentSentence));
+                playEatSound(); 
+                spawnPopup(head.x, head.y, displayText, "#2A9D8F"); 
+                spawnHappyEffect(head.x, head.y, 'char'); 
+                
+                charIndex++; 
+                while (charIndex < currentSentence.length && isPunctuation(currentSentence[charIndex])) charIndex++;
+                updateSentenceDisplay();
+                if (charIndex >= currentSentence.length) {
+                    addScore(50); isTransitioning = true; foodItems = []; sentencesCompleted++;
+                    updateProgressDisplay(); playLevelUpSound();
+                    setTimeout(() => { if (isGameRunning) startNewSentence(); }, 1200);
+                } else spawnFoods();
             } else {
-                createFood();
+                if (!isRevived) { score = Math.max(0, score - 20); scoreElement.innerText = score; }
+                comboCount = 0; playErrorSound(); spawnPopup(head.x, head.y, "選錯了!", "#D32F2F"); spawnFoods();
+                ouchTimer = 6; 
+                spawnHappyEffect(head.x, head.y, 'wrong'); // Added wrong effect
             }
-        } else {
-            snake.pop(); 
-        }
+        } else snake.pop();
     }
 
-    function drawSnake() {
-        snake.forEach((part, index) => {
-            if (index === 0) {
-                ctx.fillStyle = "#2A9D8F"; 
-            } else {
-                ctx.fillStyle = "#F4A261"; 
-            }
-            
-            let size = gridSize - 2;
-            let radius = 6;
-            let x = part.x * gridSize + 1;
-            let y = part.y * gridSize + 1;
-            
-            ctx.beginPath();
-            ctx.roundRect(x, y, size, size, radius);
-            ctx.fill();
+    function askToRevive() {
+        isGameRunning = false; clearInterval(gameLoop);
+        document.getElementById('revive-remaining').innerText = totalSentencesCount - sentencesCompleted;
+        reviveModal.classList.remove('hidden');
+    }
 
-            if (index === 0) {
+    function manageItems() {
+        if (!bonusItem.active && Math.random() < 0.02) { let p = getFreePosition(); bonusItem = { ...p, active: true, timer: 100, icon: fruitIcons[Math.floor(Math.random()*fruitIcons.length)] }; }
+        else if (bonusItem.active && --bonusItem.timer <= 0) bonusItem.active = false;
+        
+        // REVERTED to standard rates
+        if (!bombItem.active && Math.random() < 0.015) { let p = getFreePosition(); bombItem = { ...p, active: true, timer: 150 }; }
+        else if (bombItem.active && --bombItem.timer <= 0) bombItem.active = false;
+        
+        if (!heartItem.active && lives === 1 && heartRefillCount < 2 && Math.random() < 0.02) { let p = getFreePosition(); heartItem = { ...p, active: true, timer: 300 }; }
+        else if (heartItem.active && --heartItem.timer <= 0) heartItem.active = false;
+    }
+
+    window.reviveGame = function() {
+        lives = 3; isRevived = true;
+        scoreElement.parentElement.classList.add('locked-score');
+        document.getElementById('revive-note').classList.remove('hidden');
+        updateLivesDisplay(); reviveModal.classList.add('hidden'); resetSnakePos(); spawnFoods();
+        isGameRunning = true; gameLoop = setInterval(drawGame, 1000 / speed);
+    }
+
+    window.gameOver = function() {
+        reviveModal.classList.add('hidden'); isGameRunning = false; clearInterval(gameLoop); clearInterval(heartbeatInterval);
+        document.getElementById('game-over-title').innerText = `😲 ${playerName}，練習結算！`;
+        document.getElementById('game-over-name').innerText = playerName;
+        document.getElementById('final-score').innerText = score;
+        const lessonName = document.getElementById('lesson-select').options[document.getElementById('lesson-select').selectedIndex].text;
+        document.getElementById('game-over-lesson').innerText = `練習課程：${lessonName}`;
+        window.saveScoreToCloud(playerName, score, lessonName);
+        gameOverScreen.classList.remove('hidden');
+    }
+
+    function showLessonComplete() {
+        isGameRunning = false; clearInterval(gameLoop); clearInterval(heartbeatInterval);
+        playLevelUpSound();
+        const lessonName = document.getElementById('lesson-select').options[document.getElementById('lesson-select').selectedIndex].text;
+        document.getElementById('complete-lesson-name').innerText = lessonName;
+        document.getElementById('complete-score').innerText = score;
+        
+        // Show revive note in complete screen if used
+        if (isRevived) {
+             document.getElementById('revive-note').classList.remove('hidden');
+        } else {
+             document.getElementById('revive-note').classList.add('hidden');
+        }
+        
+        window.saveScoreToCloud(playerName, score, lessonName);
+        lessonCompleteScreen.classList.remove('hidden');
+    }
+
+    function drawGame() {
+        if (!isGameRunning || isPaused) return;
+        moveSnake(); manageItems();
+        if (comboTimer > 0) comboTimer--; else comboCount = 0;
+        if (ouchTimer > 0) ouchTimer--; 
+        if (snake.slice(1).some(p => p.x === snake[0].x && p.y === snake[0].y)) { handleCollision(); return; }
+        ctx.fillStyle = "#FFF"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 0.5; ctx.strokeStyle = "rgba(42, 157, 143, 0.2)";
+        for(let i=0; i<tileCount; i++) {
+            ctx.beginPath(); ctx.moveTo(i*gridSize,0); ctx.lineTo(i*gridSize,600); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0,i*gridSize); ctx.lineTo(600,i*gridSize); ctx.stroke();
+        }
+        foodItems.forEach(f => {
+            // ADJUSTED: Offset +25 for 50px grid center
+            ctx.fillStyle = "#FFE8D6"; ctx.beginPath(); ctx.arc(f.x*gridSize+25, f.y*gridSize+25, 28, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "#E76F51"; ctx.font = "bold 28px Noto Sans TC"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText(f.char, f.x*gridSize+25, f.y*gridSize+27);
+        });
+        // ADJUSTED: Offsets for 50px grid
+        if (bonusItem.active) { ctx.font = "32px Arial"; ctx.fillText(bonusItem.icon, bonusItem.x*gridSize+25, bonusItem.y*gridSize+27); }
+        if (bombItem.active) { ctx.font = "32px Arial"; ctx.fillText("💣", bombItem.x*gridSize+25, bombItem.y*gridSize+27); }
+        if (heartItem.active) { ctx.font = "32px Arial"; ctx.fillText("❤️", heartItem.x*gridSize+25, heartItem.y*gridSize+27); }
+        
+        snake.forEach((p, i) => {
+            ctx.fillStyle = i === 0 ? "#2A9D8F" : "#F4A261";
+            // ADJUSTED: Snake body size 48px
+            ctx.beginPath(); ctx.roundRect(p.x*gridSize+1, p.y*gridSize+1, 48, 48, 8); ctx.fill();
+            if (i === 0) {
                 ctx.fillStyle = "white";
-                ctx.beginPath();
-                let ex1, ey1, ex2, ey2;
-                if (dx === 1) { 
-                    ex1 = x + 20; ey1 = y + 8; ex2 = x + 20; ey2 = y + 20;
-                } else if (dx === -1) { 
-                    ex1 = x + 8; ey1 = y + 8; ex2 = x + 8; ey2 = y + 20;
-                } else if (dy === 1) { 
-                    ex1 = x + 8; ey1 = y + 20; ex2 = x + 20; ey2 = y + 20;
-                } else { 
-                    ex1 = x + 8; ey1 = y + 8; ex2 = x + 20; ey2 = y + 8;
-                }
-                ctx.arc(ex1, ey1, 4, 0, Math.PI * 2);
-                ctx.arc(ex2, ey2, 4, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            else {
-                let charIndexToDraw = -1;
-                if (eatenSentenceChars.length <= snake.length - 1) {
-                    charIndexToDraw = index - 1;
+                // ADJUSTED: Eye offsets for 50px grid
+                // Right: [38, 12, 38, 38]
+                // Left: [12, 12, 12, 38]
+                // Down: [12, 38, 38, 38]
+                // Up: [12, 12, 38, 12]
+                let offset = dx === 1 ? [38,12,38,38] : (dx === -1 ? [12,12,12,38] : (dy === 1 ? [12,38,38,38] : [12,12,38,12]));
+                
+                if (ouchTimer > 0) {
+                    ctx.strokeStyle = "white";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    // Left eye X
+                    ctx.moveTo(p.x*gridSize+offset[0]-4, p.y*gridSize+offset[1]-4);
+                    ctx.lineTo(p.x*gridSize+offset[0]+4, p.y*gridSize+offset[1]+4);
+                    ctx.moveTo(p.x*gridSize+offset[0]+4, p.y*gridSize+offset[1]-4);
+                    ctx.lineTo(p.x*gridSize+offset[0]-4, p.y*gridSize+offset[1]+4);
+                    // Right eye X
+                    ctx.moveTo(p.x*gridSize+offset[2]-4, p.y*gridSize+offset[3]-4);
+                    ctx.lineTo(p.x*gridSize+offset[2]+4, p.y*gridSize+offset[3]+4);
+                    ctx.moveTo(p.x*gridSize+offset[2]+4, p.y*gridSize+offset[3]-4);
+                    ctx.lineTo(p.x*gridSize+offset[2]-4, p.y*gridSize+offset[3]+4);
+                    ctx.stroke();
                 } else {
-                    let hiddenChars = eatenSentenceChars.length - (snake.length - 1);
-                    charIndexToDraw = (index - 1) + hiddenChars;
+                    ctx.beginPath(); 
+                    ctx.arc(p.x*gridSize+offset[0], p.y*gridSize+offset[1], 5, 0, Math.PI*2); 
+                    ctx.arc(p.x*gridSize+offset[2], p.y*gridSize+offset[3], 5, 0, Math.PI*2); 
+                    ctx.fill();
                 }
-
-                if (charIndexToDraw >= 0 && charIndexToDraw < eatenSentenceChars.length) {
-                    ctx.fillStyle = "#FFF";
-                    ctx.font = "bold 18px 'Noto Sans TC'";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
-                    ctx.fillText(eatenSentenceChars[charIndexToDraw], x + size/2, y + size/2 + 2);
-                }
+            } else {
+                let char = eatenSentenceChars[eatenSentenceChars.length - (snake.length - 1) + (i - 1)];
+                if (char) { ctx.fillStyle = "#FFF"; ctx.font = "bold 22px Noto Sans TC"; ctx.fillText(char, p.x*gridSize+25, p.y*gridSize+27); }
             }
         });
-    }
-
-    function checkCollision() {
-        const head = snake[0];
-        for (let i = 1; i < snake.length; i++) {
-            if (head.x === snake[i].x && head.y === snake[i].y) {
-                return true;
-            }
-        }
-        return false;
+        updateAndDrawParticles(); updateAndDrawPopups();
     }
 
     function handleCollision() {
-        playCrashSound();
-        lives--;
-        updateLivesDisplay();
-        comboCount = 0; // Reset combo
-        
-        canvas.style.transform = "translateX(5px)";
-        setTimeout(() => canvas.style.transform = "translateX(-5px)", 50);
-        setTimeout(() => canvas.style.transform = "none", 100);
-
-        if (lives <= 0) {
-            gameOver();
-        } else {
-            resetSnakePos();
-            createFood(); 
-            isPaused = true;
-            setTimeout(() => {
-                isPaused = false;
-            }, 500);
-        }
+        playCrashSound(); lives--; updateLivesDisplay(); comboCount = 0;
+        ouchTimer = 6; 
+        if (lives <= 0) askToRevive(); else { resetSnakePos(); spawnFoods(); isPaused = true; setTimeout(() => isPaused = false, 500); }
     }
 
-    function gameOver() {
-        isGameRunning = false;
-        clearInterval(gameLoop);
-        clearInterval(heartbeatInterval);
-        gameOverTitle.innerText = `😲 ${playerName}，遊戲結束！`;
-        gameOverName.innerText = playerName;
-        finalScoreElement.innerText = score;
-        const lessonName = lessonSelect.options[lessonSelect.selectedIndex].text;
-        gameOverLesson.innerText = `練習課程：${lessonName}`;
-        
-        if(window.saveScoreToCloud) {
-            window.saveScoreToCloud(playerName, score, lessonName);
+    function spawnPopup(x, y, text, color) { popups.push({ x: x*gridSize+25, y: y*gridSize, text, life: 1, color }); }
+    
+    function updateAndDrawPopups() {
+        for (let i = popups.length-1; i>=0; i--) {
+            let p = popups[i]; p.y -= 1; p.life -= 0.02;
+            if (p.life <= 0) popups.splice(i, 1);
+            else { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.font = "bold 20px Noto Sans TC"; ctx.fillText(p.text, p.x, p.y); ctx.globalAlpha = 1; }
         }
-
-        gameOverScreen.classList.remove('hidden');
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    }
-
-    document.addEventListener('keydown', changeDirection);
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'KeyP') togglePause();
-    });
-
-    function changeDirection(event) {
-        if (isPaused) return; 
-        handleMove(event.keyCode);
     }
     
-    function handleMove(key) {
-        const goingUp = dy === -1;
-        const goingDown = dy === 1;
-        const goingRight = dx === 1;
-        const goingLeft = dx === -1;
-
-        if (key === 37 && !goingRight) { dx = -1; dy = 0; } 
-        if (key === 38 && !goingDown) { dx = 0; dy = -1; } 
-        if (key === 39 && !goingLeft) { dx = 1; dy = 0; }  
-        if (key === 40 && !goingUp) { dx = 0; dy = 1; }    
+    function updateAndDrawParticles() {
+        for (let i = particles.length-1; i>=0; i--) {
+            let p = particles[i]; p.x += p.vx; p.y += p.vy; p.life -= 0.03; // Slower fade
+            if (p.life <= 0) particles.splice(i, 1);
+            else { 
+                ctx.globalAlpha = p.life; 
+                if (p.content) {
+                    ctx.font = "20px Arial";
+                    ctx.fillText(p.content, p.x, p.y);
+                } else {
+                    ctx.fillStyle = p.color; 
+                    ctx.beginPath(); 
+                    ctx.arc(p.x, p.y, 4, 0, Math.PI*2); 
+                    ctx.fill(); 
+                }
+                ctx.globalAlpha = 1; 
+            }
+        }
     }
 
-    let touchStartX = 0;
-    let touchStartY = 0;
-    document.addEventListener('touchstart', function(event) {
-        if (event.target.tagName !== 'BUTTON' && event.target.tagName !== 'INPUT' && event.target.tagName !== 'SELECT') {
-            event.preventDefault(); 
-        }
-        touchStartX = event.changedTouches[0].screenX;
-        touchStartY = event.changedTouches[0].screenY;
-    }, {passive: false});
+    window.startGame = function() {
+        playerName = document.getElementById('player-name').value.trim() || "小勇士";
+        localStorage.setItem('snake_player_name', playerName);
+        let lesson = document.getElementById('lesson-select').value === 'all' ? '全冊' : `第${document.getElementById('lesson-select').value}課`;
+        window.sendHeartbeat(playerName, lesson);
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        heartbeatInterval = setInterval(() => window.sendHeartbeat(playerName, lesson), 30000);
+        startScreen.classList.add('hidden'); gameOverScreen.classList.add('hidden'); lessonCompleteScreen.classList.add('hidden');
 
-    document.addEventListener('touchend', function(event) {
+        // Ensure UI is reset
+        document.getElementById('pause-btn').innerText = "⏸️";
+        document.getElementById('pause-overlay').classList.add('hidden');
+        
+        initGame(); 
+        isGameRunning = true; 
+        gameLoop = setInterval(drawGame, 1000 / speed);
+    };
+
+    window.resetGame = () => window.startGame();
+    window.showStartScreen = () => { gameOverScreen.classList.add('hidden'); lessonCompleteScreen.classList.add('hidden'); reviveModal.classList.add('hidden'); startScreen.classList.remove('hidden'); isGameRunning = false; clearInterval(heartbeatInterval); };
+    window.toggleSound = () => { isSoundOn = !isSoundOn; document.getElementById('sound-btn').innerText = isSoundOn ? "🔊" : "🔇"; };
+    window.togglePause = () => { if (!isGameRunning) return; isPaused = !isPaused; document.getElementById('pause-btn').innerText = isPaused ? "▶️" : "⏸️"; document.getElementById('pause-overlay').classList.toggle('hidden'); };
+    window.triggerQuit = () => { if (isGameRunning && !isPaused) window.togglePause(); quitModal.classList.remove('hidden'); };
+    window.cancelQuit = () => quitModal.classList.add('hidden');
+    window.confirmQuit = () => { reviveModal.classList.add('hidden'); quitModal.classList.add('hidden'); isGameRunning = false; clearInterval(gameLoop); clearInterval(heartbeatInterval); window.showStartScreen(); };
+    window.hideLeaderboardModal = () => { modalBackdrop.classList.add('hidden'); leaderboardModal.classList.add('hidden'); };
+    window.showLeaderboardModal = () => { modalBackdrop.classList.remove('hidden'); leaderboardModal.classList.remove('hidden'); };
+
+    function speakText(t) { if (!isSoundOn) return; window.speechSynthesis.cancel(); 
+        let cleanText = t.replace(/都/g, '兜').replace(/什/g, '神'); // Fix: Force '都' -> '兜', '什' -> '神'
+        const u = new SpeechSynthesisUtterance(cleanText); u.lang = 'zh-TW'; u.rate = 0.85; window.speechSynthesis.speak(u); }
+    function isPunctuation(c) { return /[，。、？！：；「」『』\s,.?!:;"'()（）]/.test(c); }
+    function updateSentenceDisplay() {
+        let h = ''; for (let i = 0; i < currentSentence.length; i++) {
+            if (i < charIndex) h += `<span class="char-eaten">${currentSentence[i]}</span>`;
+            else if (i === charIndex) h += `<span class="char-current">${currentSentence[i]}</span>`;
+            else h += `<span class="char-pending">${currentSentence[i]}</span>`;
+        }
+        h += `<button id="replay-btn" onclick="replayCurrentAudio()">🔊</button>`; sentenceDisplay.innerHTML = h;
+    }
+    window.replayCurrentAudio = () => speakText(currentSentence);
+
+    // --- Controls ---
+    document.addEventListener('keydown', e => {
+        if (isPaused) return;
+        // Left: ArrowLeft (37) or KeyA
+        if ((e.keyCode === 37 || e.code === 'KeyA') && dx !== 1) { dx = -1; dy = 0; }
+        // Up: ArrowUp (38) or KeyW
+        if ((e.keyCode === 38 || e.code === 'KeyW') && dy !== 1) { dx = 0; dy = -1; }
+        // Right: ArrowRight (39) or KeyD
+        if ((e.keyCode === 39 || e.code === 'KeyD') && dx !== -1) { dx = 1; dy = 0; }
+        // Down: ArrowDown (40) or KeyS
+        if ((e.keyCode === 40 || e.code === 'KeyS') && dy !== -1) { dx = 0; dy = 1; }
+        
+        if (e.code === 'KeyP') window.togglePause();
+    });
+    let tsX, tsY;
+    document.addEventListener('touchstart', e => { if (!['BUTTON','INPUT','SELECT'].includes(e.target.tagName)) e.preventDefault(); tsX = e.touches[0].screenX; tsY = e.touches[0].screenY; }, {passive: false});
+    document.addEventListener('touchend', e => {
         if (isPaused || !isGameRunning) return;
-        let touchEndX = event.changedTouches[0].screenX;
-        let touchEndY = event.changedTouches[0].screenY;
-        handleSwipeGesture(touchStartX, touchStartY, touchEndX, touchEndY);
-    }, false);
-
-    function handleSwipeGesture(startX, startY, endX, endY) {
-        let xDiff = endX - startX;
-        let yDiff = endY - startY;
-        if (Math.abs(xDiff) > Math.abs(yDiff)) {
-            if (Math.abs(xDiff) > 20) { 
-                if (xDiff > 0) handleMove(39); 
-                else handleMove(37); 
-            }
-        } else {
-            if (Math.abs(yDiff) > 20) {
-                if (yDiff > 0) handleMove(40); 
-                else handleMove(38); 
-            }
-        }
+        let dx_s = e.changedTouches[0].screenX - tsX, dy_s = e.changedTouches[0].screenY - tsY;
+        if (Math.abs(dx_s) > Math.abs(dy_s)) { if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } }
+        else { if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } }
+    });
+    window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); });
+    function getCorrectAudioText(c, i, s) { 
+        if (c==='覺' && s[i-1]==='睡') return '叫'; 
+        if (c==='樂' && (s[i-1]==='音'||s[i+1]==='隊')) return '月';
+        if (c==='都') return '兜'; // Fix: Force '都' to be pronounced as 'dōu' (兜)
+        if (c==='什') return '神'; // Fix: Force '什' to be pronounced as 'shén' (神)
+        if (c==='興' && s[i-1]==='高') return '幸'; // Fix: Force '興' in '高興' to be pronounced as 'xìng' (幸)
+        return c; 
     }
-
-    window.addEventListener("keydown", function(e) {
-        if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
-            e.preventDefault();
-        }
-    }, false);
-
 </script>
 </body>
 </html>
