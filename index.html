@@ -8,19 +8,17 @@
     <title>華語貪食蛇：課文大冒險</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap'); /* Handwriting font */
 
         :root {
             /* 柔和色調 Palette */
-            --primary-color: #F4A261;   /* Soft Orange/Coral */
-            --secondary-color: #2A9D8F; /* Sage Green */
-            --accent-color: #E76F51;    /* Terra Cotta */
-            --bg-color: #FDF6E3;        /* Warm Cream */
-            --text-color: #264653;      /* Dark Slate Blue */
-            --card-bg: #FFFFFF;         
-            --bonus-color: #FFD166;     
-            --bomb-color: #264653;      
-            --grid-line: #E0F7FA;       /* Light Blue for grid */
+            --primary-color: #F4A261;   /* Soft Orange/Coral (Buttons, Body) */
+            --secondary-color: #2A9D8F; /* Sage Green/Muted Teal (Head, Borders) */
+            --accent-color: #E76F51;    /* Terra Cotta/Muted Red (Food, Hearts) */
+            --bg-color: #FDF6E3;        /* Warm Cream/Beige Background */
+            --text-color: #264653;      /* Dark Slate Blue Text */
+            --card-bg: #FFFFFF;         /* White for cards */
+            --bonus-color: #FFD166;     /* Yellow for Stars */
+            --bomb-color: #264653;      /* Dark for Bomb */
         }
 
         body {
@@ -32,21 +30,31 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh; /* Changed to min-height for better scrolling if needed */
             overflow: hidden;
-            touch-action: none;
+            touch-action: none; /* Prevent scroll on mobile */
             user-select: none;
-            background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
-            background-size: 20px 20px;
+        }
+
+        /* Fullscreen specific styles */
+        body.fullscreen-mode {
+            justify-content: center;
+            background-color: #F0EAD6; /* Slightly darker cream for focus */
+        }
+        
+        body.fullscreen-mode .subtitle,
+        body.fullscreen-mode h1,
+        body.fullscreen-mode .footer {
+            display: none; /* Hide non-game elements in fullscreen */
         }
 
         .subtitle {
-            color: #7D8597;
+            color: #7D8597; /* Softer Grey */
             font-size: 1rem;
             margin-bottom: -5px;
             font-weight: bold;
             letter-spacing: 1px;
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
         }
 
         h1 {
@@ -54,7 +62,6 @@
             margin: 5px 0 10px 0;
             font-size: 1.8rem;
             text-align: center;
-            font-family: 'Gaegu', cursive, 'Noto Sans TC', sans-serif;
         }
 
         #game-container {
@@ -62,17 +69,16 @@
             background: var(--card-bg);
             padding: 10px;
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(38, 70, 83, 0.15);
-            border: 5px solid #FFF;
+            box-shadow: 0 10px 20px rgba(38, 70, 83, 0.1); /* Softer shadow color */
+            border: 4px solid #FFF;
         }
 
         canvas {
             background-color: #FFFFFF;
             border: 2px solid var(--secondary-color);
-            border-radius: 8px;
+            border-radius: 10px;
             display: block;
             touch-action: none;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
         }
 
         #ui-layer {
@@ -91,30 +97,31 @@
 
         .screen {
             background: rgba(255, 255, 255, 0.98);
-            padding: 15px; 
+            padding: 15px; /* Reduced padding for more space */
             border-radius: 15px;
             text-align: center;
             pointer-events: auto;
-            width: 95%; 
+            width: 95%; /* Increased width */
             max-width: 380px;
-            max-height: 96%; 
-            overflow-y: auto; 
+            max-height: 96%; /* Increased height limit */
+            overflow-y: auto; /* Allow scrolling if content is tall */
             box-shadow: 0 10px 25px rgba(38, 70, 83, 0.15);
             border: 3px solid var(--primary-color);
             display: flex;
             flex-direction: column;
-            gap: 6px; 
+            gap: 6px; /* Reduced gap */
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             align-items: center; 
         }
         
+        /* Specialized Style for Large Leaderboard Modal */
         #leaderboard-modal {
-            position: fixed; 
+            position: fixed; /* Fix to viewport to ignore game container constraints */
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
-            max-width: 550px; 
+            max-width: 550px; /* Much wider max width */
             max-height: 85vh;
             z-index: 1000;
             background: #FFF;
@@ -124,6 +131,7 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
         
+        /* Backdrop for modal */
         .modal-backdrop {
             position: fixed;
             top: 0;
@@ -140,6 +148,7 @@
             to { transform: scale(1); opacity: 1; }
         }
 
+        /* Override transform for fixed modal animation */
         @keyframes popInFixed {
             from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
             to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
@@ -157,13 +166,13 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 8px 16px; /* Compact padding */
             font-size: 1rem;
             border-radius: 25px;
             cursor: pointer;
             font-family: 'Noto Sans TC', sans-serif;
             font-weight: bold;
-            margin: 3px; 
+            margin: 3px; /* Compact margin */
             transition: all 0.1s;
             box-shadow: 0 4px 0 rgba(0,0,0,0.1);
             white-space: nowrap;
@@ -213,7 +222,7 @@
         }
         
         #lives {
-            color: var(--accent-color); 
+            color: var(--accent-color); /* Updated to new accent color */
             font-size: 1.2rem;
             letter-spacing: 2px;
         }
@@ -238,14 +247,14 @@
         }
 
         #current-sentence-display {
-            margin-top: 15px;
-            min-height: 60px;
-            padding: 10px 15px;
+            margin-bottom: 10px; /* Space below sentence */
+            min-height: 50px;
+            padding: 8px 15px;
             background: #fff;
             border-radius: 12px;
             border: 2px dashed var(--secondary-color);
-            width: 90%;
-            max-width: 380px;
+            width: 95%; /* Slightly wider */
+            max-width: 400px; /* Match canvas width */
             text-align: center;
             display: flex;
             align-items: center;
@@ -257,18 +266,19 @@
             flex-wrap: wrap;
             position: relative;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-sizing: border-box;
         }
         
         #replay-btn {
             position: absolute;
-            right: -12px;
-            top: -12px;
+            right: -10px;
+            top: -10px;
             background: var(--secondary-color);
             border-radius: 50%;
-            width: 35px;
-            height: 35px;
+            width: 30px;
+            height: 30px;
             padding: 0;
-            font-size: 1rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -281,15 +291,15 @@
         .char-pending { color: #BBB; }
 
         select, input[type="text"] {
-            padding: 10px; 
+            padding: 10px; /* Compact padding */
             font-size: 1rem;
             border-radius: 12px;
             border: 2px solid var(--secondary-color);
-            margin-bottom: 3px; 
+            margin-bottom: 3px; /* Compact margin */
             font-family: 'Noto Sans TC', sans-serif;
             width: 100%;
             box-sizing: border-box;
-            background: #F4F1DE; 
+            background: #F4F1DE; /* Very light beige */
             outline: none;
             color: var(--text-color);
         }
@@ -314,22 +324,22 @@
             border-radius: 20px;
             box-sizing: border-box;
             white-space: nowrap;
-            overflow-x: auto; 
+            overflow-x: auto; /* CHANGED: Allow scrolling */
             overflow-y: hidden;
-            text-overflow: unset; 
+            text-overflow: unset; /* CHANGED: No ellipsis */
             text-align: left;
             border: 2px solid #FFF;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            -webkit-overflow-scrolling: touch; 
-            scrollbar-width: none; 
+            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+            scrollbar-width: none; /* Hide scrollbar Firefox */
         }
         #online-status-bar::-webkit-scrollbar {
-            display: none; 
+            display: none; /* Hide scrollbar Chrome/Safari */
         }
         
         .leaderboard-container {
             width: 100%;
-            max-height: 300px; 
+            max-height: 300px; /* Taller for main leaderboard */
             overflow-y: auto;
             margin: 15px 0;
             border: 1px solid #eee;
@@ -340,7 +350,7 @@
         table.leaderboard-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.95rem; 
+            font-size: 0.95rem; /* Larger font */
         }
         
         table.leaderboard-table th {
@@ -359,6 +369,7 @@
             color: var(--text-color);
         }
 
+        /* Column Width Optimization */
         table.leaderboard-table th:nth-child(1), table.leaderboard-table td:nth-child(1) { width: 15%; } /* Rank */
         table.leaderboard-table th:nth-child(2), table.leaderboard-table td:nth-child(2) { width: 35%; text-align: left; padding-left: 15px; } /* Name */
         table.leaderboard-table th:nth-child(3), table.leaderboard-table td:nth-child(3) { width: 25%; } /* Score */
@@ -368,6 +379,7 @@
             background-color: #f9f9f9;
         }
         
+        /* Top 3 Highlighting */
         table.leaderboard-table tr:nth-child(1) td { background-color: #FFF8E1; color: #D4AF37; font-weight: bold; }
         table.leaderboard-table tr:nth-child(2) td { background-color: #F5F5F5; color: #A9A9A9; font-weight: bold; }
         table.leaderboard-table tr:nth-child(3) td { background-color: #FFF0E6; color: #CD7F32; font-weight: bold; }
@@ -397,7 +409,7 @@
         }
 
         #mobile-hint {
-            margin-top: 15px;
+            margin-top: 10px;
             color: #7D8597;
             font-size: 0.9rem;
             text-align: center;
@@ -407,7 +419,7 @@
         }
         
         .footer {
-            margin-top: 20px;
+            margin-top: 15px;
             color: #888;
             font-size: 0.8rem;
             font-weight: bold;
@@ -466,8 +478,14 @@
         <div style="display: flex; gap: 5px;">
             <button class="control-btn" id="sound-btn" onclick="toggleSound()" title="聲音開關">🔊</button>
             <button class="control-btn" id="pause-btn" onclick="togglePause()" title="暫停遊戲">⏸️</button>
+            <button class="control-btn" id="fullscreen-btn" onclick="toggleFullscreen()" title="全螢幕">⛶</button>
             <button class="control-btn" id="exit-btn" onclick="triggerQuit()" title="回到首頁">🏠</button>
         </div>
+    </div>
+
+    <div id="current-sentence-display">
+        準備開始...
+        <button id="replay-btn" onclick="replayCurrentAudio()" title="重聽一次">🔊</button>
     </div>
 
     <div id="online-status-bar">🟢 連線中...</div>
@@ -607,10 +625,6 @@
         <button class="secondary" onclick="hideLeaderboardModal()">關閉</button>
     </div>
 
-    <div id="current-sentence-display">
-        準備開始...
-        <button id="replay-btn" onclick="replayCurrentAudio()" title="重聽一次">🔊</button>
-    </div>
     
     <div id="mobile-hint">💡 提示：順序吃字組成句子，撞牆會從另一邊出來</div>
     
@@ -624,7 +638,7 @@
     import { getFirestore, collection, doc, setDoc, addDoc, getDocs, onSnapshot, query, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     // Provided globals
-    const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyBQI17CXEhD5mJhDCid-mt0cAL6qvdcAiA",
   authDomain: "chinses-snake-game.firebaseapp.com",
   projectId: "chinses-snake-game",
@@ -1298,6 +1312,29 @@
             }
         }
     }
+
+    window.toggleFullscreen = function() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+            document.body.classList.add('fullscreen-mode');
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                document.body.classList.remove('fullscreen-mode');
+            }
+        }
+    }
+
+    // Listener for fullscreen change (ESC key etc)
+    document.addEventListener('fullscreenchange', (event) => {
+        if (!document.fullscreenElement) {
+            document.body.classList.remove('fullscreen-mode');
+        } else {
+            document.body.classList.add('fullscreen-mode');
+        }
+    });
 
     window.togglePause = function() {
         if (!isGameRunning) return;
