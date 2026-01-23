@@ -624,7 +624,14 @@
     import { getFirestore, collection, doc, setDoc, addDoc, getDocs, onSnapshot, query, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     // Provided globals
-    const firebaseConfig = JSON.parse(__firebase_config);
+    const firebaseConfig = {
+  apiKey: "AIzaSyBQI17CXEhD5mJhDCid-mt0cAL6qvdcAiA",
+  authDomain: "chinses-snake-game.firebaseapp.com",
+  projectId: "chinses-snake-game",
+  storageBucket: "chinses-snake-game.firebasestorage.app",
+  messagingSenderId: "239140560404",
+  appId: "1:239140560404:web:dd5ead9018a0f0e5ad5101"
+};
     
     // Fix: Sanitize appId to ensure it's a valid path segment (no slashes or dots)
     const rawAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
