@@ -8,17 +8,19 @@
     <title>華語貪食蛇：課文大冒險</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap'); /* Handwriting font */
 
         :root {
             /* 柔和色調 Palette */
-            --primary-color: #F4A261;   /* Soft Orange/Coral (Buttons, Body) */
-            --secondary-color: #2A9D8F; /* Sage Green/Muted Teal (Head, Borders) */
-            --accent-color: #E76F51;    /* Terra Cotta/Muted Red (Food, Hearts) */
-            --bg-color: #FDF6E3;        /* Warm Cream/Beige Background */
-            --text-color: #264653;      /* Dark Slate Blue Text */
-            --card-bg: #FFFFFF;         /* White for cards */
-            --bonus-color: #FFD166;     /* Yellow for Stars */
-            --bomb-color: #264653;      /* Dark for Bomb */
+            --primary-color: #F4A261;   /* Soft Orange/Coral */
+            --secondary-color: #2A9D8F; /* Sage Green */
+            --accent-color: #E76F51;    /* Terra Cotta */
+            --bg-color: #FDF6E3;        /* Warm Cream */
+            --text-color: #264653;      /* Dark Slate Blue */
+            --card-bg: #FFFFFF;         
+            --bonus-color: #FFD166;     
+            --bomb-color: #264653;      
+            --grid-line: #E0F7FA;       
         }
 
         body {
@@ -30,55 +32,65 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh; /* Changed to min-height for better scrolling if needed */
+            min-height: 100vh; 
             overflow: hidden;
-            touch-action: none; /* Prevent scroll on mobile */
+            touch-action: none;
             user-select: none;
+            background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
+            background-size: 20px 20px;
         }
 
         /* Fullscreen specific styles */
         body.fullscreen-mode {
             justify-content: center;
-            background-color: #F0EAD6; /* Slightly darker cream for focus */
+            background-color: #F0EAD6; 
         }
         
         body.fullscreen-mode .subtitle,
         body.fullscreen-mode h1,
         body.fullscreen-mode .footer {
-            display: none; /* Hide non-game elements in fullscreen */
+            display: none; 
         }
 
         .subtitle {
-            color: #7D8597; /* Softer Grey */
-            font-size: 1rem;
+            color: #7D8597; 
+            font-size: 1.2rem; /* Larger font */
             margin-bottom: -5px;
             font-weight: bold;
             letter-spacing: 1px;
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
         }
 
         h1 {
             color: var(--secondary-color);
             margin: 5px 0 10px 0;
-            font-size: 1.8rem;
+            font-size: 2.2rem; /* Larger font */
             text-align: center;
+            font-family: 'Gaegu', cursive, 'Noto Sans TC', sans-serif;
         }
 
         #game-container {
             position: relative;
             background: var(--card-bg);
-            padding: 10px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(38, 70, 83, 0.1); /* Softer shadow color */
-            border: 4px solid #FFF;
+            padding: 12px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(38, 70, 83, 0.15);
+            border: 6px solid #FFF;
+            width: 95%;
+            max-width: 600px; /* Increased max width for tablet */
+            box-sizing: border-box;
         }
 
         canvas {
             background-color: #FFFFFF;
-            border: 2px solid var(--secondary-color);
-            border-radius: 10px;
+            border: 3px solid var(--secondary-color);
+            border-radius: 12px;
             display: block;
             touch-action: none;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+            width: 100%; /* Responsive width */
+            height: auto; /* Maintain aspect ratio */
+            aspect-ratio: 1 / 1; /* Square */
         }
 
         #ui-layer {
@@ -97,41 +109,39 @@
 
         .screen {
             background: rgba(255, 255, 255, 0.98);
-            padding: 15px; /* Reduced padding for more space */
-            border-radius: 15px;
+            padding: 20px; 
+            border-radius: 20px;
             text-align: center;
             pointer-events: auto;
-            width: 95%; /* Increased width */
-            max-width: 380px;
-            max-height: 96%; /* Increased height limit */
-            overflow-y: auto; /* Allow scrolling if content is tall */
-            box-shadow: 0 10px 25px rgba(38, 70, 83, 0.15);
-            border: 3px solid var(--primary-color);
+            width: 90%; 
+            max-width: 450px; /* Wider modal */
+            max-height: 96%; 
+            overflow-y: auto; 
+            box-shadow: 0 15px 30px rgba(38, 70, 83, 0.2);
+            border: 4px solid var(--primary-color);
             display: flex;
             flex-direction: column;
-            gap: 6px; /* Reduced gap */
+            gap: 10px; 
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             align-items: center; 
         }
         
-        /* Specialized Style for Large Leaderboard Modal */
         #leaderboard-modal {
-            position: fixed; /* Fix to viewport to ignore game container constraints */
+            position: fixed; 
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
-            max-width: 550px; /* Much wider max width */
-            max-height: 85vh;
+            max-width: 600px; 
+            max-height: 90vh;
             z-index: 1000;
             background: #FFF;
-            border: 4px solid var(--secondary-color);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border: 5px solid var(--secondary-color);
+            padding: 25px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
         }
         
-        /* Backdrop for modal */
         .modal-backdrop {
             position: fixed;
             top: 0;
@@ -148,7 +158,6 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        /* Override transform for fixed modal animation */
         @keyframes popInFixed {
             from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
             to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
@@ -166,13 +175,13 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 16px; /* Compact padding */
-            font-size: 1rem;
-            border-radius: 25px;
+            padding: 12px 24px; /* Larger touch targets */
+            font-size: 1.1rem; /* Larger font */
+            border-radius: 30px;
             cursor: pointer;
             font-family: 'Noto Sans TC', sans-serif;
             font-weight: bold;
-            margin: 3px; /* Compact margin */
+            margin: 5px; 
             transition: all 0.1s;
             box-shadow: 0 4px 0 rgba(0,0,0,0.1);
             white-space: nowrap;
@@ -195,9 +204,9 @@
             background: #fff;
             color: var(--text-color);
             border: 2px solid var(--text-color);
-            padding: 5px 10px;
-            font-size: 1.2rem;
-            min-width: 40px;
+            padding: 8px 14px;
+            font-size: 1.4rem; /* Larger icons */
+            min-width: 50px;
             box-shadow: none;
         }
         
@@ -206,8 +215,8 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 400px;
-            margin-bottom: 5px;
+            max-width: 600px; /* Match game container */
+            margin-bottom: 8px;
             padding: 0 5px;
             box-sizing: border-box;
         }
@@ -217,14 +226,14 @@
             color: var(--text-color);
             display: flex;
             flex-direction: column;
-            font-size: 0.95rem;
+            font-size: 1.1rem; /* Larger font */
             line-height: 1.4;
         }
         
         #lives {
-            color: var(--accent-color); /* Updated to new accent color */
-            font-size: 1.2rem;
-            letter-spacing: 2px;
+            color: var(--accent-color); 
+            font-size: 1.4rem; /* Larger hearts */
+            letter-spacing: 3px;
         }
 
         #level {
@@ -235,7 +244,7 @@
         }
 
         #progress-container {
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             color: #7D8597;
             margin-top: 2px;
         }
@@ -243,63 +252,64 @@
         #progress-current {
             color: var(--secondary-color);
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
         #current-sentence-display {
-            margin-bottom: 10px; /* Space below sentence */
-            min-height: 50px;
-            padding: 8px 15px;
+            margin-top: 15px; /* Back to bottom, add margin top */
+            margin-bottom: 5px;
+            min-height: 70px; /* Taller */
+            padding: 12px 20px;
             background: #fff;
-            border-radius: 12px;
-            border: 2px dashed var(--secondary-color);
-            width: 95%; /* Slightly wider */
-            max-width: 400px; /* Match canvas width */
+            border-radius: 15px;
+            border: 3px dashed var(--secondary-color);
+            width: 95%; 
+            max-width: 600px; /* Match canvas */
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem; 
+            font-size: 1.6rem; /* Larger text */
             color: #ccc; 
             font-weight: bold;
             line-height: 1.5;
             flex-wrap: wrap;
             position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.08);
             box-sizing: border-box;
         }
         
         #replay-btn {
             position: absolute;
-            right: -10px;
-            top: -10px;
+            right: -12px;
+            top: -12px;
             background: var(--secondary-color);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 40px; /* Larger button */
+            height: 40px;
             padding: 0;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
             border: 2px solid #fff;
         }
 
         .char-eaten { color: var(--secondary-color); transition: color 0.3s; }
-        .char-current { color: var(--accent-color); text-decoration: underline; font-size: 1.8rem; font-weight: 900; }
+        .char-current { color: var(--accent-color); text-decoration: underline; font-size: 2.0rem; font-weight: 900; } /* Larger current char */
         .char-pending { color: #BBB; }
 
         select, input[type="text"] {
-            padding: 10px; /* Compact padding */
-            font-size: 1rem;
+            padding: 12px 16px; 
+            font-size: 1.1rem; /* Larger font */
             border-radius: 12px;
             border: 2px solid var(--secondary-color);
-            margin-bottom: 3px; /* Compact margin */
+            margin-bottom: 5px; 
             font-family: 'Noto Sans TC', sans-serif;
             width: 100%;
             box-sizing: border-box;
-            background: #F4F1DE; /* Very light beige */
+            background: #F4F1DE; 
             outline: none;
             color: var(--text-color);
         }
@@ -315,31 +325,31 @@
 
         #online-status-bar {
             width: 100%;
-            max-width: 400px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
+            max-width: 600px; /* Match game container */
+            margin-bottom: 10px;
+            font-size: 1rem;
             color: #555;
             background: rgba(255,255,255,0.8);
-            padding: 6px 12px;
+            padding: 8px 15px;
             border-radius: 20px;
             box-sizing: border-box;
             white-space: nowrap;
-            overflow-x: auto; /* CHANGED: Allow scrolling */
+            overflow-x: auto; 
             overflow-y: hidden;
-            text-overflow: unset; /* CHANGED: No ellipsis */
+            text-overflow: unset; 
             text-align: left;
             border: 2px solid #FFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
-            scrollbar-width: none; /* Hide scrollbar Firefox */
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            -webkit-overflow-scrolling: touch; 
+            scrollbar-width: none; 
         }
         #online-status-bar::-webkit-scrollbar {
-            display: none; /* Hide scrollbar Chrome/Safari */
+            display: none; 
         }
         
         .leaderboard-container {
             width: 100%;
-            max-height: 300px; /* Taller for main leaderboard */
+            max-height: 400px; /* Taller */
             overflow-y: auto;
             margin: 15px 0;
             border: 1px solid #eee;
@@ -350,26 +360,25 @@
         table.leaderboard-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.95rem; /* Larger font */
+            font-size: 1.05rem; /* Larger font */
         }
         
         table.leaderboard-table th {
             background-color: var(--secondary-color);
             color: white;
-            padding: 10px;
+            padding: 12px;
             position: sticky;
             top: 0;
             font-weight: bold;
         }
         
         table.leaderboard-table td {
-            padding: 10px 8px;
+            padding: 12px 10px;
             border-bottom: 1px solid #eee;
             text-align: center;
             color: var(--text-color);
         }
 
-        /* Column Width Optimization */
         table.leaderboard-table th:nth-child(1), table.leaderboard-table td:nth-child(1) { width: 15%; } /* Rank */
         table.leaderboard-table th:nth-child(2), table.leaderboard-table td:nth-child(2) { width: 35%; text-align: left; padding-left: 15px; } /* Name */
         table.leaderboard-table th:nth-child(3), table.leaderboard-table td:nth-child(3) { width: 25%; } /* Score */
@@ -379,7 +388,6 @@
             background-color: #f9f9f9;
         }
         
-        /* Top 3 Highlighting */
         table.leaderboard-table tr:nth-child(1) td { background-color: #FFF8E1; color: #D4AF37; font-weight: bold; }
         table.leaderboard-table tr:nth-child(2) td { background-color: #F5F5F5; color: #A9A9A9; font-weight: bold; }
         table.leaderboard-table tr:nth-child(3) td { background-color: #FFF0E6; color: #CD7F32; font-weight: bold; }
@@ -398,30 +406,30 @@
         }
         
         .pause-text {
-            font-size: 3rem;
+            font-size: 3.5rem; /* Larger */
             font-weight: bold;
             color: var(--text-color);
             text-shadow: 2px 2px white;
             background: rgba(255,255,255,0.9);
-            padding: 10px 30px;
-            border-radius: 20px;
-            border: 3px solid var(--primary-color);
+            padding: 15px 40px;
+            border-radius: 25px;
+            border: 4px solid var(--primary-color);
         }
 
         #mobile-hint {
-            margin-top: 10px;
+            margin-top: 15px;
             color: #7D8597;
-            font-size: 0.9rem;
+            font-size: 1rem;
             text-align: center;
             background: rgba(255,255,255,0.6);
-            padding: 5px 15px;
-            border-radius: 15px;
+            padding: 8px 20px;
+            border-radius: 20px;
         }
         
         .footer {
-            margin-top: 15px;
+            margin-top: 25px;
             color: #888;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: bold;
             letter-spacing: 1px;
             opacity: 0.7;
@@ -434,13 +442,13 @@
             color: #fff;
             text-align: center;
             border-radius: 25px;
-            padding: 12px 20px;
+            padding: 15px 25px;
             position: fixed;
             z-index: 100;
             left: 50%;
             transform: translateX(-50%);
             bottom: 30px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             opacity: 0;
             transition: opacity 0.3s, bottom 0.3s;
@@ -483,15 +491,11 @@
         </div>
     </div>
 
-    <div id="current-sentence-display">
-        準備開始...
-        <button id="replay-btn" onclick="replayCurrentAudio()" title="重聽一次">🔊</button>
-    </div>
-
     <div id="online-status-bar">🟢 連線中...</div>
 
     <div id="game-container">
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <!-- Canvas width/height increased to 600 for better resolution -->
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
         
         <div id="pause-overlay" class="hidden">
             <div class="pause-text">暫停</div>
@@ -500,13 +504,13 @@
         <div id="ui-layer">
             <!-- Start Screen -->
             <div id="start-screen" class="screen">
-                <h2 style="margin: 0 0 5px 0; color: var(--primary-color); font-size: 1.5rem;">準備好了嗎？</h2>
+                <h2 id="start-title" style="margin: 0 0 10px 0; color: var(--primary-color); font-size: 1.8rem;">準備好了嗎？</h2>
                 
-                <label for="player-name" style="font-size: 0.9rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px;">你的名字：</label>
+                <label for="player-name" style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px;">你的名字：</label>
                 <input type="text" id="player-name" placeholder="請輸入名字 (例如: 小美)" maxlength="8">
                 
-                <label for="lesson-select" style="font-size: 0.9rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">選擇課程：</label>
-                <div style="display: flex; gap: 5px; width: 100%; margin-bottom: 5px;">
+                <label for="lesson-select" style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">選擇課程：</label>
+                <div style="display: flex; gap: 5px; width: 100%; margin-bottom: 10px;">
                     <select id="lesson-select" style="margin-bottom: 0;">
                         <option value="1">第 1 課：新同學</option>
                         <option value="2">第 2 課：我爸爸做生意</option>
@@ -522,7 +526,7 @@
                         <option value="12">第 12 課：打網路電話</option>
                         <option value="all">📚 全部複習 (1-12課)</option>
                     </select>
-                    <button class="secondary" onclick="shareLesson()" style="margin: 0; padding: 0 15px;" title="複製課程連結">🔗</button>
+                    <button class="secondary" onclick="shareLesson()" style="margin: 0; padding: 0 20px;" title="複製課程連結">🔗</button>
                 </div>
                 
                 <div style="display: flex; gap: 10px; width: 100%;">
@@ -530,7 +534,7 @@
                     <button class="secondary" onclick="showLeaderboardModal()" style="flex:1;">🏆 排行榜</button>
                 </div>
 
-                <p style="font-size: 0.8rem; color: #7D8597; margin: 10px 0 0 0;">
+                <p style="font-size: 0.9rem; color: #7D8597; margin: 15px 0 0 0;">
                     電腦：⬆️⬇️⬅️➡️ &nbsp;|&nbsp; 平板：👆 滑動螢幕<br>
                     <span style="color: var(--accent-color);">提示：撞牆不會死掉，還有水果獎勵 🍎</span>
                 </p>
@@ -539,7 +543,7 @@
             <!-- Quit Confirmation Modal (Inside UI Layer) -->
             <div id="quit-modal" class="screen hidden" style="z-index: 50;">
                 <h2 style="color: var(--accent-color); margin: 0 0 10px 0;">確定要離開嗎？</h2>
-                <p style="margin: 10px 0;">目前的遊戲進度會消失喔！</p>
+                <p style="margin: 10px 0; font-size: 1.1rem;">目前的遊戲進度會消失喔！</p>
                 <div style="display: flex; gap: 10px; justify-content: center; width: 100%;">
                     <button class="danger" onclick="confirmQuit()" style="flex: 1;">確定離開</button>
                     <button class="secondary" onclick="cancelQuit()" style="flex: 1;">取消</button>
@@ -549,29 +553,29 @@
             <!-- Lesson Complete Screen -->
             <div id="lesson-complete-screen" class="screen hidden">
                 <h2 style="margin: 0; color: var(--primary-color);">🎉 恭喜完成！</h2>
-                <div style="background: #f0f0f0; padding: 10px; border-radius: 10px; width: 100%; box-sizing: border-box;">
-                    <p style="margin: 5px 0; font-size: 1.1rem; color: #555;">你已經複習完</p>
-                    <p id="complete-lesson-name" style="font-size: 1.1rem; color: var(--secondary-color); font-weight: bold; margin: 5px 0;">第 X 課</p>
+                <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
+                    <p style="margin: 5px 0; font-size: 1.2rem; color: #555;">你已經複習完</p>
+                    <p id="complete-lesson-name" style="font-size: 1.3rem; color: var(--secondary-color); font-weight: bold; margin: 5px 0;">第 X 課</p>
                     <p style="margin: 5px 0 0 0;">所有的句子了！</p>
-                    <p style="margin: 10px 0; font-size: 1.2rem;">總得分：<span id="complete-score" style="color: var(--accent-color); font-weight: 900;">0</span></p>
+                    <p style="margin: 10px 0; font-size: 1.4rem;">總得分：<span id="complete-score" style="color: var(--accent-color); font-weight: 900;">0</span></p>
                 </div>
 
                 <!-- Mini Leaderboard for Complete Screen -->
-                <div style="width:100%; margin-top:5px;">
-                    <div style="font-size: 0.8rem; color: #555; font-weight: bold; margin-bottom: 2px;">🏆 歷史排行榜</div>
-                    <div class="leaderboard-container" style="max-height: 100px;">
+                <div style="width:100%; margin-top:10px;">
+                    <div style="font-size: 1rem; color: #555; font-weight: bold; margin-bottom: 5px;">🏆 歷史排行榜</div>
+                    <div class="leaderboard-container" style="max-height: 120px;">
                         <table class="leaderboard-table">
                             <tbody id="leaderboard-body-complete"></tbody>
                         </table>
                     </div>
                 </div>
                 
-                <div id="lesson-nav-buttons" style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 5px;">
-                     <button id="btn-prev-lesson" class="secondary" style="flex: 1; font-size: 0.9rem;">⬅️ 上一課</button>
-                     <button id="btn-next-lesson" class="secondary" style="flex: 1; font-size: 0.9rem;">下一課 ➡️</button>
+                <div id="lesson-nav-buttons" style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
+                     <button id="btn-prev-lesson" class="secondary" style="flex: 1; font-size: 1rem;">⬅️ 上一課</button>
+                     <button id="btn-next-lesson" class="secondary" style="flex: 1; font-size: 1rem;">下一課 ➡️</button>
                 </div>
 
-                <div style="display: flex; gap: 10px; justify-content: center; width: 100%;">
+                <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 5px;">
                     <button onclick="resetGame()" style="flex: 1;">再複習一次 🔄</button>
                     <button class="secondary" onclick="showStartScreen()" style="flex: 1;">回首頁 🏠</button>
                 </div>
@@ -580,23 +584,23 @@
             <!-- Game Over Screen -->
             <div id="game-over-screen" class="screen hidden">
                 <h2 id="game-over-title" style="margin: 0; color: var(--text-color);">😲 遊戲結束！</h2>
-                <div style="background: #f0f0f0; padding: 10px; border-radius: 10px; width: 100%; box-sizing: border-box;">
-                    <p id="game-over-lesson" style="font-size: 0.9rem; color: #555; margin: 5px 0;"></p>
-                    <p style="margin: 5px 0; font-size: 1.2rem;"><span id="game-over-name">你</span>的最終得分</p>
-                    <p style="margin: 0; font-size: 2.5rem; color: var(--accent-color); font-weight: 900; line-height: 1;"><span id="final-score">0</span></p>
+                <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
+                    <p id="game-over-lesson" style="font-size: 1.1rem; color: #555; margin: 5px 0;"></p>
+                    <p style="margin: 5px 0; font-size: 1.3rem;"><span id="game-over-name">你</span>的最終得分</p>
+                    <p style="margin: 0; font-size: 3rem; color: var(--accent-color); font-weight: 900; line-height: 1;"><span id="final-score">0</span></p>
                 </div>
                 
                 <!-- Mini Leaderboard -->
-                <div style="width:100%; margin-top:5px;">
-                    <div style="font-size: 0.8rem; color: #555; font-weight: bold; margin-bottom: 2px;">🏆 歷史排行榜</div>
-                    <div class="leaderboard-container" style="max-height: 100px;">
+                <div style="width:100%; margin-top:10px;">
+                    <div style="font-size: 1rem; color: #555; font-weight: bold; margin-bottom: 5px;">🏆 歷史排行榜</div>
+                    <div class="leaderboard-container" style="max-height: 120px;">
                         <table class="leaderboard-table">
                             <tbody id="leaderboard-body-gameover"></tbody>
                         </table>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 5px;">
+                <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
                     <button onclick="resetGame()" style="flex: 1;">再玩一次 🔄</button>
                     <button class="secondary" onclick="showStartScreen()" style="flex: 1;">換課文 📖</button>
                 </div>
@@ -606,8 +610,8 @@
 
     <!-- Leaderboard Modal (Separate from UI Layer for Full Screen) -->
     <div id="leaderboard-modal" class="screen hidden">
-        <h2 style="color: var(--secondary-color); margin: 0 0 10px 0;">🏆 歷史榮譽榜</h2>
-        <div class="leaderboard-container">
+        <h2 style="color: var(--secondary-color); margin: 0 0 10px 0; font-size: 1.8rem;">🏆 歷史榮譽榜</h2>
+        <div class="leaderboard-container" style="max-height: 50vh;">
             <table class="leaderboard-table">
                 <thead>
                     <tr>
@@ -622,9 +626,13 @@
                 </tbody>
             </table>
         </div>
-        <button class="secondary" onclick="hideLeaderboardModal()">關閉</button>
+        <button class="secondary" onclick="hideLeaderboardModal()" style="margin-top: 15px; min-width: 150px;">關閉</button>
     </div>
 
+    <div id="current-sentence-display">
+        準備開始...
+        <button id="replay-btn" onclick="replayCurrentAudio()" title="重聽一次">🔊</button>
+    </div>
     
     <div id="mobile-hint">💡 提示：順序吃字組成句子，撞牆會從另一邊出來</div>
     
@@ -638,7 +646,7 @@
     import { getFirestore, collection, doc, setDoc, addDoc, getDocs, onSnapshot, query, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     // Provided globals
-const firebaseConfig = {
+   const firebaseConfig = {
   apiKey: "AIzaSyBQI17CXEhD5mJhDCid-mt0cAL6qvdcAiA",
   authDomain: "chinses-snake-game.firebaseapp.com",
   projectId: "chinses-snake-game",
@@ -1089,7 +1097,7 @@ const firebaseConfig = {
     const pauseOverlay = document.getElementById('pause-overlay');
 
     // Config
-    const gridSize = 25; 
+    const gridSize = 30; // Increased size to make grid smaller (20x20)
     const tileCount = canvas.width / gridSize;
     let initialSpeed = 5;
     let speed = initialSpeed;
@@ -1777,7 +1785,7 @@ const firebaseConfig = {
         ctx.fill();
 
         ctx.fillStyle = "#E76F51"; // Accent Color (Muted Red)
-        ctx.font = "bold 22px 'Noto Sans TC'"; // Increased font size here
+        ctx.font = "bold 24px 'Noto Sans TC'"; // Increased font size here
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(food.char, food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2 + 2);
@@ -1787,7 +1795,7 @@ const firebaseConfig = {
         if (bonusItem.active) {
             if (bonusItem.timer < 30 && bonusItem.timer % 6 < 3) return; 
             
-            ctx.font = "24px Arial";
+            ctx.font = "26px Arial";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText(bonusItem.icon, bonusItem.x * gridSize + gridSize/2, bonusItem.y * gridSize + gridSize/2 + 2);
@@ -1797,7 +1805,7 @@ const firebaseConfig = {
     function drawBomb() {
         if (bombItem.active) {
             if (bombItem.timer < 30 && bombItem.timer % 6 < 3) return;
-            ctx.font = "24px Arial";
+            ctx.font = "26px Arial";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText("💣", bombItem.x * gridSize + gridSize/2, bombItem.y * gridSize + gridSize/2 + 2);
@@ -1904,7 +1912,7 @@ const firebaseConfig = {
             }
             
             let size = gridSize - 2;
-            let radius = 4;
+            let radius = 6;
             let x = part.x * gridSize + 1;
             let y = part.y * gridSize + 1;
             
@@ -1917,16 +1925,16 @@ const firebaseConfig = {
                 ctx.beginPath();
                 let ex1, ey1, ex2, ey2;
                 if (dx === 1) { 
-                    ex1 = x + 18; ey1 = y + 7; ex2 = x + 18; ey2 = y + 17;
+                    ex1 = x + 20; ey1 = y + 8; ex2 = x + 20; ey2 = y + 20;
                 } else if (dx === -1) { 
-                    ex1 = x + 7; ey1 = y + 7; ex2 = x + 7; ey2 = y + 17;
+                    ex1 = x + 8; ey1 = y + 8; ex2 = x + 8; ey2 = y + 20;
                 } else if (dy === 1) { 
-                    ex1 = x + 7; ey1 = y + 17; ex2 = x + 17; ey2 = y + 17;
+                    ex1 = x + 8; ey1 = y + 20; ex2 = x + 20; ey2 = y + 20;
                 } else { 
-                    ex1 = x + 7; ey1 = y + 7; ex2 = x + 17; ey2 = y + 7;
+                    ex1 = x + 8; ey1 = y + 8; ex2 = x + 20; ey2 = y + 8;
                 }
-                ctx.arc(ex1, ey1, 3, 0, Math.PI * 2);
-                ctx.arc(ex2, ey2, 3, 0, Math.PI * 2);
+                ctx.arc(ex1, ey1, 4, 0, Math.PI * 2);
+                ctx.arc(ex2, ey2, 4, 0, Math.PI * 2);
                 ctx.fill();
             }
             else {
@@ -1940,10 +1948,10 @@ const firebaseConfig = {
 
                 if (charIndexToDraw >= 0 && charIndexToDraw < eatenSentenceChars.length) {
                     ctx.fillStyle = "#FFF";
-                    ctx.font = "bold 15px 'Noto Sans TC'";
+                    ctx.font = "bold 18px 'Noto Sans TC'";
                     ctx.textAlign = "center";
                     ctx.textBaseline = "middle";
-                    ctx.fillText(eatenSentenceChars[charIndexToDraw], x + size/2, y + size/2 + 1);
+                    ctx.fillText(eatenSentenceChars[charIndexToDraw], x + size/2, y + size/2 + 2);
                 }
             }
         });
