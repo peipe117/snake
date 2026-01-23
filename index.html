@@ -8,17 +8,19 @@
     <title>華語貪食蛇：課文大冒險</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap'); /* Handwriting font */
 
         :root {
             /* 柔和色調 Palette */
-            --primary-color: #F4A261;   /* Soft Orange/Coral (Buttons, Body) */
-            --secondary-color: #2A9D8F; /* Sage Green/Muted Teal (Head, Borders) */
-            --accent-color: #E76F51;    /* Terra Cotta/Muted Red (Food, Hearts) */
-            --bg-color: #FDF6E3;        /* Warm Cream/Beige Background */
-            --text-color: #264653;      /* Dark Slate Blue Text */
-            --card-bg: #FFFFFF;         /* White for cards */
-            --bonus-color: #FFD166;     /* Yellow for Stars */
-            --bomb-color: #264653;      /* Dark for Bomb */
+            --primary-color: #F4A261;   /* Soft Orange/Coral */
+            --secondary-color: #2A9D8F; /* Sage Green */
+            --accent-color: #E76F51;    /* Terra Cotta */
+            --bg-color: #FDF6E3;        /* Warm Cream */
+            --text-color: #264653;      /* Dark Slate Blue */
+            --card-bg: #FFFFFF;         
+            --bonus-color: #FFD166;     
+            --bomb-color: #264653;      
+            --grid-line: #E0F7FA;       /* Light Blue for grid */
         }
 
         body {
@@ -32,17 +34,19 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
-            touch-action: none; /* Prevent scroll on mobile */
+            touch-action: none;
             user-select: none;
+            background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
+            background-size: 20px 20px;
         }
 
         .subtitle {
-            color: #7D8597; /* Softer Grey */
+            color: #7D8597;
             font-size: 1rem;
             margin-bottom: -5px;
             font-weight: bold;
             letter-spacing: 1px;
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
         }
 
         h1 {
@@ -50,6 +54,7 @@
             margin: 5px 0 10px 0;
             font-size: 1.8rem;
             text-align: center;
+            font-family: 'Gaegu', cursive, 'Noto Sans TC', sans-serif;
         }
 
         #game-container {
@@ -57,16 +62,17 @@
             background: var(--card-bg);
             padding: 10px;
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(38, 70, 83, 0.1); /* Softer shadow color */
-            border: 4px solid #FFF;
+            box-shadow: 0 10px 20px rgba(38, 70, 83, 0.15);
+            border: 5px solid #FFF;
         }
 
         canvas {
             background-color: #FFFFFF;
             border: 2px solid var(--secondary-color);
-            border-radius: 10px;
+            border-radius: 8px;
             display: block;
             touch-action: none;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
         }
 
         #ui-layer {
@@ -85,47 +91,47 @@
 
         .screen {
             background: rgba(255, 255, 255, 0.98);
-            padding: 15px; /* Reduced padding for more space */
+            padding: 15px; 
             border-radius: 15px;
             text-align: center;
             pointer-events: auto;
-            width: 95%; /* Increased width */
+            width: 95%; 
             max-width: 380px;
-            max-height: 96%; /* Increased height limit */
-            overflow-y: auto; /* Allow scrolling if content is tall */
+            max-height: 96%; 
+            overflow-y: auto; 
             box-shadow: 0 10px 25px rgba(38, 70, 83, 0.15);
             border: 3px solid var(--primary-color);
             display: flex;
             flex-direction: column;
-            gap: 6px; /* Reduced gap */
+            gap: 6px; 
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             align-items: center; 
         }
         
-        /* Specialized Style for Large Leaderboard Modal */
         #leaderboard-modal {
-            position: fixed; /* Fix to viewport to ignore game container constraints */
+            position: fixed; 
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
-            max-width: 550px; /* Much wider max width */
+            max-width: 550px; 
             max-height: 85vh;
             z-index: 1000;
             background: #FFF;
             border: 4px solid var(--secondary-color);
             padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
         
-        /* Backdrop for modal */
         .modal-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(3px);
+            background: rgba(38, 70, 83, 0.4);
+            backdrop-filter: blur(4px);
             z-index: 999;
         }
 
@@ -134,7 +140,6 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        /* Override transform for fixed modal animation */
         @keyframes popInFixed {
             from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
             to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
@@ -152,13 +157,13 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 16px; /* Compact padding */
+            padding: 8px 16px;
             font-size: 1rem;
             border-radius: 25px;
             cursor: pointer;
             font-family: 'Noto Sans TC', sans-serif;
             font-weight: bold;
-            margin: 3px; /* Compact margin */
+            margin: 3px; 
             transition: all 0.1s;
             box-shadow: 0 4px 0 rgba(0,0,0,0.1);
             white-space: nowrap;
@@ -208,7 +213,7 @@
         }
         
         #lives {
-            color: var(--accent-color); /* Updated to new accent color */
+            color: var(--accent-color); 
             font-size: 1.2rem;
             letter-spacing: 2px;
         }
@@ -276,15 +281,15 @@
         .char-pending { color: #BBB; }
 
         select, input[type="text"] {
-            padding: 10px; /* Compact padding */
+            padding: 10px; 
             font-size: 1rem;
             border-radius: 12px;
             border: 2px solid var(--secondary-color);
-            margin-bottom: 3px; /* Compact margin */
+            margin-bottom: 3px; 
             font-family: 'Noto Sans TC', sans-serif;
             width: 100%;
             box-sizing: border-box;
-            background: #F4F1DE; /* Very light beige */
+            background: #F4F1DE; 
             outline: none;
             color: var(--text-color);
         }
@@ -304,20 +309,27 @@
             margin-bottom: 8px;
             font-size: 0.85rem;
             color: #555;
-            background: rgba(255,255,255,0.6);
-            padding: 5px 12px;
-            border-radius: 15px;
+            background: rgba(255,255,255,0.8);
+            padding: 6px 12px;
+            border-radius: 20px;
             box-sizing: border-box;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            overflow-x: auto; 
+            overflow-y: hidden;
+            text-overflow: unset; 
             text-align: left;
-            border: 1px solid rgba(42, 157, 143, 0.2);
+            border: 2px solid #FFF;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            -webkit-overflow-scrolling: touch; 
+            scrollbar-width: none; 
+        }
+        #online-status-bar::-webkit-scrollbar {
+            display: none; 
         }
         
         .leaderboard-container {
             width: 100%;
-            max-height: 300px; /* Taller for main leaderboard */
+            max-height: 300px; 
             overflow-y: auto;
             margin: 15px 0;
             border: 1px solid #eee;
@@ -328,7 +340,7 @@
         table.leaderboard-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.95rem; /* Larger font */
+            font-size: 0.95rem; 
         }
         
         table.leaderboard-table th {
@@ -347,17 +359,15 @@
             color: var(--text-color);
         }
 
-        /* Column Width Optimization */
         table.leaderboard-table th:nth-child(1), table.leaderboard-table td:nth-child(1) { width: 15%; } /* Rank */
         table.leaderboard-table th:nth-child(2), table.leaderboard-table td:nth-child(2) { width: 35%; text-align: left; padding-left: 15px; } /* Name */
-        table.leaderboard-table th:nth-child(3), table.leaderboard-table td:nth-child(3) { width: 20%; } /* Score */
-        table.leaderboard-table th:nth-child(4), table.leaderboard-table td:nth-child(4) { width: 30%; font-size: 0.85em; } /* Lesson */
+        table.leaderboard-table th:nth-child(3), table.leaderboard-table td:nth-child(3) { width: 25%; } /* Score */
+        table.leaderboard-table th:nth-child(4), table.leaderboard-table td:nth-child(4) { width: 25%; font-size: 0.9em; } /* Lesson */
         
         table.leaderboard-table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
         
-        /* Top 3 Highlighting */
         table.leaderboard-table tr:nth-child(1) td { background-color: #FFF8E1; color: #D4AF37; font-weight: bold; }
         table.leaderboard-table tr:nth-child(2) td { background-color: #F5F5F5; color: #A9A9A9; font-weight: bold; }
         table.leaderboard-table tr:nth-child(3) td { background-color: #FFF0E6; color: #CD7F32; font-weight: bold; }
@@ -614,14 +624,7 @@
     import { getFirestore, collection, doc, setDoc, addDoc, getDocs, onSnapshot, query, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     // Provided globals
-   const firebaseConfig = {
-  apiKey: "AIzaSyBQI17CXEhD5mJhDCid-mt0cAL6qvdcAiA",
-  authDomain: "chinses-snake-game.firebaseapp.com",
-  projectId: "chinses-snake-game",
-  storageBucket: "chinses-snake-game.firebasestorage.app",
-  messagingSenderId: "239140560404",
-  appId: "1:239140560404:web:dd5ead9018a0f0e5ad5101"
-};
+    const firebaseConfig = JSON.parse(__firebase_config);
     
     // Fix: Sanitize appId to ensure it's a valid path segment (no slashes or dots)
     const rawAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
@@ -688,16 +691,26 @@
                 const now = Date.now();
                 const activeThreshold = 60 * 1000 * 5; 
                 
-                const onlineNames = [];
+                const onlineData = [];
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     if (data.name && data.lastSeen && (now - data.lastSeen < activeThreshold)) {
-                        onlineNames.push(data.name);
+                        onlineData.push({ name: data.name, lesson: data.lesson || '準備中' });
                     }
                 });
                 
-                const uniqueNames = [...new Set(onlineNames)];
-                updateOnlineUI(uniqueNames);
+                // Use a map to ensure unique users if duplicate names exist (though auth uid is key)
+                // Filter distinct names for display:
+                const uniquePlayers = [];
+                const seenNames = new Set();
+                onlineData.forEach(p => {
+                     if(!seenNames.has(p.name)) {
+                         seenNames.add(p.name);
+                         uniquePlayers.push(p);
+                     }
+                });
+
+                updateOnlineUI(uniquePlayers);
             }, (error) => {
                 console.warn("Presence offline:", error.message);
                 activateOfflineMode();
@@ -708,13 +721,14 @@
     }
 
     // Heartbeat function
-    window.sendHeartbeat = async function(name) {
+    window.sendHeartbeat = async function(name, lesson) {
         if (isOffline || !currentUser || !name) return;
         
         try {
             const presenceRef = doc(db, 'artifacts', appId, 'public', 'data', 'presence', currentUser.uid);
             await setDoc(presenceRef, {
                 name: name,
+                lesson: lesson,
                 lastSeen: Date.now()
             }, { merge: true });
         } catch (e) {
@@ -727,14 +741,18 @@
         }
     }
 
-    function updateOnlineUI(names) {
+    function updateOnlineUI(players) {
         const listEl = document.getElementById('online-status-bar');
         if (!listEl) return;
         
-        if (names.length === 0) {
+        if (players.length === 0) {
             listEl.innerHTML = "🟢 <b>在線同學：</b>目前只有你";
         } else {
-            listEl.innerHTML = "🟢 <b>在線同學：</b>" + names.join(', ');
+            // New Format: Name (Lesson)
+            const html = players.map(p => {
+                return `<span style="margin-right:15px; display:inline-block;"><span class="online-badge"></span>${p.name} <span style="font-size:0.8em; opacity:0.8; font-weight:normal;">(${p.lesson})</span></span>`;
+            }).join('');
+            listEl.innerHTML = `🟢 <b>在線同學：</b> ` + html;
         }
     }
 
@@ -798,15 +816,25 @@
                 else if (rank === 3) medal = "🥉";
                 else medal = rank + ".";
                 
-                let lessonShort = s.lesson ? s.lesson.replace("第 ", "").replace("課", "") : "-";
-                if(lessonShort.length > 6) lessonShort = lessonShort.substring(0, 5) + "..";
+                // --- MODIFIED: Simplify Lesson Name ---
+                let lessonDisplay = s.lesson || "-";
+                const match = lessonDisplay.match(/第\s*\d+\s*課/);
+                if (match) {
+                    lessonDisplay = match[0]; 
+                } else if (lessonDisplay.includes("全部")) {
+                    lessonDisplay = "全冊";
+                } else {
+                    lessonDisplay = lessonDisplay.split('：')[0];
+                    if (lessonDisplay.length > 6) lessonDisplay = lessonDisplay.substring(0, 5) + "..";
+                }
+                // -------------------------------------
 
                 return `
                     <tr>
                         <td>${medal}</td>
                         <td style="font-weight:bold; color:var(--text-color);">${s.name}</td>
                         <td style="color:var(--accent-color); font-weight:900;">${s.score}</td>
-                        <td style="font-size:0.8em; color:#666;">${lessonShort}</td>
+                        <td style="font-size:0.8em; color:#666;">${lessonDisplay}</td>
                     </tr>
                 `;
             }).join('');
@@ -1015,6 +1043,7 @@
     
     // Screens & Modals
     const startScreen = document.getElementById('start-screen');
+    const startTitle = document.getElementById('start-title');
     const gameOverScreen = document.getElementById('game-over-screen');
     const lessonCompleteScreen = document.getElementById('lesson-complete-screen');
     const quitModal = document.getElementById('quit-modal');
@@ -1081,6 +1110,35 @@
     
     // Sound State
     let isSoundOn = true;
+
+    // --- Check URL Params Immediately ---
+    (function checkParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const lessonParam = urlParams.get('lesson');
+        if (lessonParam) {
+            const select = document.getElementById('lesson-select');
+            // Verify if lesson exists in select options
+            const option = select.querySelector(`option[value="${lessonParam}"]`);
+            if (option) {
+                select.value = lessonParam;
+                
+                // Visual Feedback
+                const lessonText = option.text.split('：')[0]; // Get "第 X 課"
+                if (startTitle) {
+                    startTitle.innerHTML = `挑戰：<span style="color:#E76F51">${lessonText}</span>`;
+                }
+                
+                // Auto Focus Name
+                if (playerInput) playerInput.focus();
+            }
+        }
+        
+        // Auto-load player name from localStorage
+        const savedName = localStorage.getItem('snake_player_name');
+        if (savedName) {
+            playerInput.value = savedName;
+        }
+    })();
 
     // --- Share Function ---
     window.shareLesson = function() {
@@ -1196,6 +1254,10 @@
         
         loadSentences();
         startNewSentence();
+        
+        // Reset combo
+        comboCount = 0;
+        comboTimer = 0;
     }
     
     function resetSnakePos() {
@@ -1361,6 +1423,8 @@
         createFood();
         bonusItem.active = false;
         bombItem.active = false;
+        
+        // Reset Combo on new sentence? Maybe not, keep flow
     }
     
     function showLessonComplete() {
@@ -1428,9 +1492,17 @@
         playerName = playerInput.value.trim();
         if (!playerName) playerName = "小勇士";
         
+        // Save Name
+        localStorage.setItem('snake_player_name', playerName);
+
+        // Get Current Lesson Text
+        let currentLessonVal = document.getElementById('lesson-select').value;
+        let lessonText = currentLessonVal === 'all' ? '全冊' : `第${currentLessonVal}課`;
+        
         if(window.sendHeartbeat) {
-            window.sendHeartbeat(playerName);
-            heartbeatInterval = setInterval(() => window.sendHeartbeat(playerName), 30000);
+            window.sendHeartbeat(playerName, lessonText);
+            if (heartbeatInterval) clearInterval(heartbeatInterval);
+            heartbeatInterval = setInterval(() => window.sendHeartbeat(playerName, lessonText), 30000);
         }
 
         startScreen.classList.add('hidden');
@@ -1604,17 +1676,40 @@
         }
     }
 
+    // Combo Variables
+    let comboCount = 0;
+    let comboTimer = 0;
+
     function drawGame() {
         if (!isGameRunning || isPaused) return;
 
         moveSnake();
         manageBonus();
+        
+        // Update combo timer
+        if (comboTimer > 0) comboTimer--;
+        else comboCount = 0; // Reset combo if time runs out
+
         if (checkCollision()) {
             handleCollision();
             return;
         }
 
         clearCanvas();
+        // Draw grid lines
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = "rgba(42, 157, 143, 0.2)"; // Light teal
+        for(let i=0; i<tileCount; i++) {
+             ctx.beginPath();
+             ctx.moveTo(i*gridSize, 0);
+             ctx.lineTo(i*gridSize, canvas.height);
+             ctx.stroke();
+             ctx.beginPath();
+             ctx.moveTo(0, i*gridSize);
+             ctx.lineTo(canvas.width, i*gridSize);
+             ctx.stroke();
+        }
+        
         drawBonus(); 
         drawBomb(); 
         drawFood();
@@ -1626,19 +1721,6 @@
     function clearCanvas() {
         ctx.fillStyle = "#FFFFFF"; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.strokeStyle = "#E0E0E0";
-        ctx.lineWidth = 0.5;
-        for(let i=0; i<tileCount; i++) {
-            ctx.beginPath();
-            ctx.moveTo(i*gridSize, 0);
-            ctx.lineTo(i*gridSize, canvas.height);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(0, i*gridSize);
-            ctx.lineTo(canvas.width, i*gridSize);
-            ctx.stroke();
-        }
     }
 
     function drawFood() {
@@ -1659,7 +1741,6 @@
 
     function drawBonus() {
         if (bonusItem.active) {
-            // Simple flicker effect
             if (bonusItem.timer < 30 && bonusItem.timer % 6 < 3) return; 
             
             ctx.font = "24px Arial";
@@ -1705,6 +1786,7 @@
             score = Math.max(0, score - 50); 
             scoreElement.innerText = score;
             bombItem.active = false;
+            comboCount = 0; // Reset combo on hit
             playBombSound();
             spawnParticles(head.x, head.y, "#555");
             spawnPopup(head.x, head.y, "-50", "#555");
@@ -1715,7 +1797,18 @@
         }
 
         if (head.x === food.x && head.y === food.y && !isTransitioning) {
-            score += 10;
+            // Combo Logic
+            let points = 10;
+            if (comboTimer > 0) {
+                comboCount++;
+                points += comboCount * 5; // Extra points for combo
+                spawnPopup(head.x, head.y, `Combo x${comboCount}`, "#2A9D8F");
+            } else {
+                comboCount = 1;
+            }
+            comboTimer = 30; // Reset timer (approx 3-5s depending on speed)
+
+            score += points;
             scoreElement.innerText = score;
             
             eatenSentenceChars.push(food.char);
@@ -1826,6 +1919,7 @@
         playCrashSound();
         lives--;
         updateLivesDisplay();
+        comboCount = 0; // Reset combo
         
         canvas.style.transform = "translateX(5px)";
         setTimeout(() => canvas.style.transform = "translateX(-5px)", 50);
