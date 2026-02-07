@@ -136,11 +136,7 @@
             white-space: nowrap;
         }
 
-        button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
-        }
-
+        button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
         button.secondary { background-color: var(--secondary-color); }
         button.danger { background-color: var(--accent-color); }
 
@@ -149,24 +145,15 @@
             align-items: center;
             gap: 10px;
             background: #f0f0f0;
-            padding: 5px 15px;
+            padding: 8px 15px;
             border-radius: 15px;
             margin: 5px 0;
             width: 100%;
             box-sizing: border-box;
         }
         
-        .speed-slider-container label {
-            font-weight: bold;
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-
-        input[type="range"] {
-            flex: 1;
-            cursor: pointer;
-            accent-color: var(--primary-color);
-        }
+        .speed-slider-container label { font-weight: bold; font-size: 0.9rem; white-space: nowrap; }
+        input[type="range"] { flex: 1; cursor: pointer; accent-color: var(--primary-color); }
 
         button.control-btn {
             background: #fff;
@@ -198,11 +185,7 @@
             line-height: 1.4;
         }
         
-        #lives {
-            color: var(--accent-color); 
-            font-size: 1.4rem; 
-            letter-spacing: 3px;
-        }
+        #lives { color: var(--accent-color); font-size: 1.4rem; letter-spacing: 3px; }
 
         #current-sentence-display {
             margin-top: 15px; 
@@ -281,25 +264,9 @@
             border-radius: 10px;
         }
         
-        table.leaderboard-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 1.05rem; 
-        }
-        
-        table.leaderboard-table th {
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 12px;
-            position: sticky;
-            top: 0;
-        }
-        
-        table.leaderboard-table td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #eee;
-            text-align: center;
-        }
+        table.leaderboard-table { width: 100%; border-collapse: collapse; font-size: 1.05rem; }
+        table.leaderboard-table th { background-color: var(--secondary-color); color: white; padding: 12px; position: sticky; top: 0; }
+        table.leaderboard-table td { padding: 12px 10px; border-bottom: 1px solid #eee; text-align: center; }
 
         @media (max-width: 600px) {
             h1 { font-size: 1.5rem; }
@@ -336,7 +303,7 @@
         </div>
     </div>
 
-    <div id="online-status-bar">🟢 連線中...</div>
+    <div id="online-status-bar">🟡 連線中...</div>
 
     <div id="game-container">
         <canvas id="gameCanvas" width="600" height="600"></canvas>
@@ -346,7 +313,6 @@
         </div>
 
         <div id="ui-layer">
-            <!-- Start Screen -->
             <div id="start-screen" class="screen">
                 <h2 id="start-title" style="margin: 0 0 5px 0; color: var(--primary-color); font-size: 1.8rem;">準備好了嗎？</h2>
                 <label style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px;">你的名字：</label>
@@ -378,14 +344,13 @@
                 </div>
             </div>
 
-            <!-- Revive Modal -->
             <div id="revive-modal" class="screen hidden" style="z-index: 55;">
                 <h2 style="color: var(--accent-color); margin: 0 0 10px 0; font-size: 1.6rem;">💔 愛心用光了！</h2>
                 <p style="margin: 5px 0; font-size: 1.1rem;">別氣餒，我們把剩下的練習做完吧！</p>
                 <p style="color: #999; font-size: 0.9rem; margin-bottom: 10px;">注意：復活後分數將停止累積</p>
                 <div style="margin-bottom: 15px; color: #555;">(還有 <span id="revive-remaining">0</span> 個句子)</div>
                 <button onclick="window.reviveGame()" style="font-size: 1.2rem; padding: 12px 30px; width: 100%;">💪 復活繼續</button>
-                <button class="secondary" onclick="gameOver()" style="margin-top: 10px;">結束練習</button>
+                <button class="secondary" onclick="window.gameOver()" style="margin-top: 10px;">結束結算</button>
             </div>
 
             <div id="lesson-complete-screen" class="screen hidden">
@@ -441,7 +406,6 @@
     <div class="footer">Design by Sophia Wong</div>
     <div id="toast"></div>
 
-<!-- Firebase Logic -->
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
@@ -454,7 +418,6 @@
     const db = getFirestore(app);
     let currentUser = null, isOffline = false;
 
-    // RULE 3: Auth First
     const initAuth = async () => {
         try {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
@@ -470,16 +433,16 @@
         if (user) {
             currentUser = user;
             if (!isOffline) {
-                // Ensure auth is solid before starting listeners
+                window.sendHeartbeat(localStorage.getItem('snake_player_name') || "訪客", "瀏覽中");
                 startFirebaseListeners();
+                const bar = document.getElementById('online-status-bar');
+                if(bar) bar.innerText = "🟢 已連線";
             }
         }
     });
 
     function startFirebaseListeners() {
         if (!auth.currentUser) return;
-
-        // Presence
         const presenceCol = collection(db, 'artifacts', appId, 'public', 'data', 'presence');
         onSnapshot(presenceCol, (snap) => {
             const now = Date.now(), online = [];
@@ -490,10 +453,9 @@
             const unique = []; const seen = new Set();
             online.forEach(p => { if(!seen.has(p.name)) { seen.add(p.name); unique.push(p); }});
             const el = document.getElementById('online-status-bar');
-            if(el) el.innerHTML = unique.length === 0 ? "🟢 在線同學：目前只有你" : "🟢 在線同學： " + unique.map(p => `${p.name} <small>(${p.lesson})</small>`).join(', ');
+            if(el) el.innerHTML = unique.length <= 1 ? "🟢 在線同學：目前只有你" : "🟢 在線同學： " + unique.map(p => `${p.name} <small>(${p.lesson})</small>`).join(', ');
         }, (err) => console.warn("Rules limited."));
 
-        // Leaderboard
         const lbCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
         onSnapshot(lbCol, (snap) => {
             const scores = [];
@@ -507,18 +469,24 @@
 
     window.sendHeartbeat = async (name, lesson) => {
         if (isOffline || !auth.currentUser) return;
-        try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'presence', auth.currentUser.uid), { name, lesson, lastSeen: Date.now() }, { merge: true }); } catch (e) {}
+        try { 
+            const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'presence', auth.currentUser.uid);
+            await setDoc(userRef, { name, lesson, lastSeen: Date.now() }, { merge: true }); 
+        } catch (e) {}
     };
+    
     window.saveScoreToCloud = async (name, score, lessonName) => {
         if (isOffline || !auth.currentUser) return;
-        try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), { name, score, lesson: lessonName, timestamp: Date.now() }); } catch (e) {}
+        try { 
+            const lbCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+            await addDoc(lbCol, { name, score, lesson: lessonName, timestamp: Date.now() }); 
+        } catch (e) {}
     };
-
     initAuth();
 </script>
 
 <script>
-    // --- Data (Manual Review & Correction) ---
+    // --- Lesson Data (Final Check) ---
     const rawLessonData = {
         "1": ["老師：今天，我們有兩個新同學。","老師：現在請他們介紹自己。","友朋：大家好，我叫方友朋，今年八歲。","友朋：我最喜歡跟爸爸一起游泳。","張莉：大家好，我叫張莉，今年七歲。","張莉：我比較喜歡看書。","大文：你們好，我叫李大文。","大文：很高興認識你們。","老師：歡迎你們來中文學校學華語。"],
         "2": ["大文：張莉，照片裡面的人是誰？","張莉：左邊是我外公，他以前是醫生。","張莉：右邊是我外婆。","大文：你爸爸媽媽做什麼工作？","張莉：我爸爸做生意，我媽媽幫他。","張莉：你爸爸媽媽呢?","大文：我爸爸在電腦公司上班。","大文：我媽媽在銀行工作。","大文：你以後想做什麼？","張莉：我以後想跟爸爸一樣。"],
@@ -536,51 +504,20 @@
     const lessonData = {};
     for (let key in rawLessonData) { lessonData[key] = rawLessonData[key].map(s => s.replace(/^[^：]+：/, '')); }
 
-    // --- Config & Globals ---
+    // --- Config ---
     const fruitIcons = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍉', '🍒', '🍑', '🍍', '🥝'];
     const gridSize = 40, tileCount = 15;
-    
     let canvas, ctx, gameLoop = null, speed = 5, score = 0, lives = 3, ouchTimer = 0, happyTimer = 0;
     let isGameRunning = false, isPaused = false, isTransitioning = false, isRevived = false;
     let snake, foodItems = [], bonusItem = {active:false}, bombItem = {active:false}, heartItem = {active:false};
     let dx, dy, particles = [], popups = [];
     let currentLessonSentences, availableIndices, currentSentence, charIndex, eatenSentenceChars = [];
-    let sentencesCompleted = 0, totalSentencesCount = 0, heartRefillCount = 0;
-    let isSoundOn = true, playerName = "";
-
+    let sentencesCompleted = 0, totalSentencesCount = 0, playerName = "";
+    let isSoundOn = true;
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx; try { audioCtx = new AudioContext(); } catch(e) {}
 
-    window.onload = () => {
-        canvas = document.getElementById('gameCanvas');
-        ctx = canvas.getContext('2d');
-        const savedName = localStorage.getItem('snake_player_name');
-        if (savedName) document.getElementById('player-name').value = savedName;
-    };
-
-    // --- Logic Utilities ---
-    function stopGameLoop() { if(gameLoop) { clearInterval(gameLoop); gameLoop = null; } }
-    function resetSnakePos() { snake = [{ x: 7, y: 7 }, { x: 6, y: 7 }, { x: 5, y: 7 }]; dx = 1; dy = 0; }
-
-    function spawnParticles(x, y, color, customEmojis = null) {
-        const emojis = customEmojis || ['✨', '⭐', '🎉', '🎊', '🌈'];
-        for(let i=0; i<8; i++) {
-            particles.push({
-                x: x * gridSize + 20, 
-                y: y * gridSize + 20, 
-                vx: (Math.random()-0.5)*10, 
-                vy: (Math.random()-0.5)*10, 
-                life: 1, 
-                emoji: emojis[Math.floor(Math.random() * emojis.length)]
-            });
-        }
-    }
-
-    function spawnPopup(x, y, text, color) {
-        popups.push({ x: x * gridSize + 20, y: y * gridSize, text, life: 1, color });
-    }
-
-    // --- Audio ---
+    // --- Audio Functions ---
     function playTone(freq, duration) {
         if (!isSoundOn || !audioCtx) return;
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -598,42 +535,50 @@
     function playErrorSound() { playTone(150, 0.2); }
     function playHealSound() { playTone(400, 0.1); setTimeout(() => playTone(600, 0.2), 100); }
 
-    // --- UI Actions ---
+    // --- VFX ---
+    function spawnParticles(x, y, color, customEmojis = null) {
+        const emojis = customEmojis || ['✨', '⭐', '🎉', '🎊', '🌈'];
+        for(let i=0; i<8; i++) {
+            particles.push({ x: x * gridSize + 20, y: y * gridSize + 20, vx: (Math.random()-0.5)*10, vy: (Math.random()-0.5)*10, life: 1, emoji: emojis[Math.floor(Math.random() * emojis.length)] });
+        }
+    }
+    function spawnPopup(x, y, text, color) { popups.push({ x: x * gridSize + 20, y: y * gridSize, text, life: 1, color }); }
+
+    window.onload = () => {
+        canvas = document.getElementById('gameCanvas');
+        ctx = canvas.getContext('2d');
+        const savedName = localStorage.getItem('snake_player_name');
+        if (savedName) document.getElementById('player-name').value = savedName;
+    };
+
+    // --- Logic ---
+    function stopGameLoop() { if(gameLoop) { clearInterval(gameLoop); gameLoop = null; } }
+    function resetSnakePos() { snake = [{ x: 7, y: 7 }, { x: 6, y: 7 }, { x: 5, y: 7 }]; dx = 1; dy = 0; }
+
     window.updateSpeedFromSlider = (val) => {
         speed = parseInt(val);
-        const el = document.getElementById('speed-val');
-        if(el) el.innerText = speed;
-        if (isGameRunning && !isPaused) {
-            stopGameLoop();
-            gameLoop = setInterval(drawGame, 1000 / speed);
-        }
+        document.getElementById('speed-val').innerText = speed;
+        if (isGameRunning && !isPaused) { stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); }
     };
 
     window.toggleFullscreen = () => {
-        const btn = document.getElementById('full-btn');
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(() => {});
-            if(btn) btn.innerText = "❌";
-        } else {
-            document.exitFullscreen();
-            if(btn) btn.innerText = "⛶";
-        }
+        if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(() => {}); document.getElementById('full-btn').innerText = "❌"; }
+        else { document.exitFullscreen(); document.getElementById('full-btn').innerText = "⛶"; }
     };
 
-    window.toggleSound = () => { isSoundOn = !isSoundOn; const b = document.getElementById('sound-btn'); if(b) b.innerText = isSoundOn ? "🔊" : "🔇"; };
+    window.toggleSound = () => { isSoundOn = !isSoundOn; document.getElementById('sound-btn').innerText = isSoundOn ? "🔊" : "🔇"; };
 
     window.togglePause = () => {
         if (!isGameRunning) return;
         isPaused = !isPaused;
-        const btn = document.getElementById('pause-btn');
-        const overlay = document.getElementById('pause-overlay');
+        const btn = document.getElementById('pause-btn'), overlay = document.getElementById('pause-overlay');
         if(btn) btn.innerText = isPaused ? "▶️" : "⏸️";
         if(overlay) overlay.classList.toggle('hidden');
         if(!isPaused) { stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); }
         else { stopGameLoop(); }
     };
 
-    window.triggerQuit = () => { if (isGameRunning && !isPaused) window.togglePause(); const m = document.getElementById('quit-modal'); if(m) m.classList.remove('hidden'); };
+    window.triggerQuit = () => { if (isGameRunning && !isPaused) window.togglePause(); document.getElementById('quit-modal').classList.remove('hidden'); };
     window.confirmQuit = () => { stopGameLoop(); isGameRunning = false; isPaused = false; document.getElementById('quit-modal').classList.add('hidden'); document.getElementById('pause-overlay').classList.add('hidden'); window.showStartScreen(); };
     window.cancelQuit = () => { document.getElementById('quit-modal').classList.add('hidden'); if(isGameRunning && isPaused) window.togglePause(); };
 
@@ -660,9 +605,7 @@
         const sld = document.getElementById('speed-slider'); if(sld) speed = parseInt(sld.value);
         document.getElementById('score').innerText = score;
         document.getElementById('score-display-wrapper').classList.remove('locked-score');
-        updateLivesDisplay();
-        loadSentences();
-        startNewSentence();
+        updateLivesDisplay(); loadSentences(); startNewSentence();
     }
 
     function updateLivesDisplay() { let h = ""; for(let i=0; i<lives; i++) h += "❤️"; for(let i=lives; i<3; i++) h += "🖤"; const el = document.getElementById('lives'); if(el) el.innerText = h; }
@@ -672,8 +615,7 @@
         currentLessonSentences = val === "all" ? [].concat(...Object.values(lessonData)) : lessonData[val];
         availableIndices = currentLessonSentences.map((_, i) => i);
         sentencesCompleted = 0; totalSentencesCount = currentLessonSentences.length;
-        const cur = document.getElementById('progress-current'); if(cur) cur.innerText = 0;
-        const tot = document.getElementById('progress-total'); if(tot) tot.innerText = totalSentencesCount;
+        document.getElementById('progress-current').innerText = 0; document.getElementById('progress-total').innerText = totalSentencesCount;
     }
 
     function startNewSentence() {
@@ -715,11 +657,10 @@
         if (nx < 0) nx = tileCount - 1; else if (nx >= tileCount) nx = 0;
         if (ny < 0) ny = tileCount - 1; else if (ny >= tileCount) ny = 0;
         const head = { x: nx, y: ny }; snake.unshift(head);
-
-        const addScore = (pts) => { if (!isRevived) { score += pts; const el = document.getElementById('score'); if(el) el.innerText = score; } };
+        const addScore = (pts) => { if (!isRevived) { score += pts; document.getElementById('score').innerText = score; } };
 
         if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) { addScore(100); bonusItem.active = false; playBonusSound(); spawnParticles(head.x, head.y, "#FFD166", ['💰', '🎉', '🎈']); spawnPopup(head.x, head.y, "+100", "#E76F51"); }
-        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) { if(!isRevived) { score=Math.max(0, score-50); const el = document.getElementById('score'); if(el) el.innerText = score; } bombItem.active = false; playErrorSound(); ouchTimer = 30; spawnParticles(head.x, head.y, "#555", ['💣', '💥', '💢']); spawnPopup(head.x, head.y, "-50", "#555"); }
+        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) { if(!isRevived) { score=Math.max(0, score-50); document.getElementById('score').innerText = score; } bombItem.active = false; playErrorSound(); ouchTimer = 30; spawnParticles(head.x, head.y, "#555", ['💣', '💥', '💢']); spawnPopup(head.x, head.y, "-50", "#555"); }
         if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) { lives++; heartRefillCount++; heartItem.active = false; updateLivesDisplay(); playHealSound(); spawnParticles(head.x, head.y, "#FF6B6B", ['❤️', '💖', '✨']); spawnPopup(head.x, head.y, "+1❤️", "#E76F51"); }
 
         let fIdx = foodItems.findIndex(f => f.x === head.x && f.y === head.y);
@@ -731,12 +672,11 @@
                 updateSentenceDisplay();
                 if (charIndex >= currentSentence.length) {
                     addScore(50); isTransitioning = true; foodItems = []; sentencesCompleted++;
-                    const cur = document.getElementById('progress-current'); if(cur) cur.innerText = sentencesCompleted; 
-                    playLevelUpSound(); spawnParticles(head.x, head.y, "#F4A261", ['🎊', '🎈', '🎆']);
+                    document.getElementById('progress-current').innerText = sentencesCompleted; playLevelUpSound();
                     setTimeout(() => { if (isGameRunning) startNewSentence(); }, 1200);
                 } else spawnFoods();
             } else {
-                if (!isRevived) { score = Math.max(0, score - 20); const el = document.getElementById('score'); if(el) el.innerText = score; }
+                if (!isRevived) { score = Math.max(0, score - 20); document.getElementById('score').innerText = score; }
                 playErrorSound(); ouchTimer = 30; spawnParticles(head.x, head.y, "#D32F2F", ['❌', '💥', '❕']);
                 spawnPopup(head.x, head.y, "選錯了!", "#D32F2F"); spawnFoods();
             }
@@ -786,7 +726,6 @@
             }
         });
 
-        // Effect Drawing
         for(let i=particles.length-1; i>=0; i--) {
             let p = particles[i]; p.x += p.vx; p.y += p.vy; p.life -= 0.04;
             if(p.life <= 0) particles.splice(i, 1);
@@ -801,23 +740,11 @@
         ctx.globalAlpha = 1;
     }
 
-    function manageItems() {
-        if (!bonusItem.active && Math.random() < 0.01) { let p = getFreePosition(); bonusItem = { ...p, active: true, timer: 150, icon: fruitIcons[Math.floor(Math.random()*fruitIcons.length)] }; }
-        else if (bonusItem.active && --bonusItem.timer <= 0) bonusItem.active = false;
-        if (!bombItem.active && Math.random() < 0.01) { let p = getFreePosition(); bombItem = { ...p, active: true, timer: 150 }; }
-        else if (bombItem.active && --bombItem.timer <= 0) bombItem.active = false;
-        if (!heartItem.active && lives === 1 && heartRefillCount < 2 && Math.random() < 0.02) { let p = getFreePosition(); heartItem = { ...p, active: true, timer: 300 }; }
-        else if (heartItem.active && --heartItem.timer <= 0) heartItem.active = false;
-    }
-
     function handleCollision() {
         playCrashSound(); lives--; updateLivesDisplay(); ouchTimer = 30;
         spawnParticles(snake[0].x, snake[0].y, "#D32F2F", ['😵', '💢', '💥']);
-        if (lives <= 0) { 
-            isGameRunning = false; stopGameLoop();
-            const rem = document.getElementById('revive-remaining'); if(rem) rem.innerText = totalSentencesCount - sentencesCompleted; 
-            const mod = document.getElementById('revive-modal'); if(mod) mod.classList.remove('hidden'); 
-        } else { resetSnakePos(); spawnFoods(); isPaused = true; setTimeout(() => isPaused = false, 500); }
+        if (lives <= 0) { isGameRunning = false; stopGameLoop(); const rem = document.getElementById('revive-remaining'); if(rem) rem.innerText = totalSentencesCount - sentencesCompleted; const mod = document.getElementById('revive-modal'); if(mod) mod.classList.remove('hidden'); }
+        else { resetSnakePos(); spawnFoods(); isPaused = true; setTimeout(() => isPaused = false, 500); }
     }
 
     window.reviveGame = () => { lives = 3; isRevived = true; document.getElementById('score-display-wrapper').classList.add('locked-score'); document.getElementById('revive-note').classList.remove('hidden'); document.getElementById('revive-modal').classList.add('hidden'); resetSnakePos(); spawnFoods(); isGameRunning = true; isPaused = false; stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); };
@@ -836,48 +763,17 @@
     }
     window.replayCurrentAudio = () => speakText(currentSentence);
 
-    function showLessonComplete() {
-        isGameRunning = false; stopGameLoop(); playLevelUpSound();
-        const sel = document.getElementById('lesson-select');
-        const lessonText = sel.options[sel.selectedIndex].text;
-        document.getElementById('complete-lesson-name').innerText = lessonText;
-        document.getElementById('complete-score').innerText = score;
-        if(window.saveScoreToCloud) window.saveScoreToCloud(playerName, score, lessonText);
-        document.getElementById('lesson-complete-screen').classList.remove('hidden');
-    }
-
-    function showToast(msg) {
-        const t = document.getElementById("toast"); t.innerText = msg; t.className = "show";
-        setTimeout(() => t.className = t.className.replace("show", ""), 3000);
-    }
-
-    window.shareLesson = function() {
-        const lessonVal = document.getElementById('lesson-select').value;
-        const url = new URL(window.location.href); url.searchParams.set('lesson', lessonVal);
-        const temp = document.createElement("textarea"); temp.value = url.toString();
-        document.body.appendChild(temp); temp.select(); document.execCommand("copy");
-        document.body.removeChild(temp); showToast("已複製課程連結！");
-    };
-
+    function showLessonComplete() { isGameRunning = false; stopGameLoop(); playLevelUpSound(); const sel = document.getElementById('lesson-select'); const text = sel.options[sel.selectedIndex].text; document.getElementById('complete-lesson-name').innerText = text; document.getElementById('complete-score').innerText = score; if(window.saveScoreToCloud) window.saveScoreToCloud(playerName, score, text); document.getElementById('lesson-complete-screen').classList.remove('hidden'); }
+    function showToast(msg) { const t = document.getElementById("toast"); t.innerText = msg; t.className = "show"; setTimeout(() => t.className = t.className.replace("show", ""), 3000); }
+    window.shareLesson = function() { const v = document.getElementById('lesson-select').value; const url = new URL(window.location.href); url.searchParams.set('lesson', v); const temp = document.createElement("textarea"); temp.value = url.toString(); document.body.appendChild(temp); temp.select(); document.execCommand("copy"); document.body.removeChild(temp); showToast("已複製課程連結！"); };
+    window.showLeaderboardModal = () => { document.getElementById('backdrop').classList.remove('hidden'); document.getElementById('leaderboard-modal').classList.remove('hidden'); };
+    window.hideLeaderboardModal = () => { document.getElementById('backdrop').classList.add('hidden'); document.getElementById('leaderboard-modal').classList.add('hidden'); };
     window.showStartScreen = () => { stopGameLoop(); isGameRunning = false; isPaused = false; document.getElementById('game-over-screen').classList.add('hidden'); document.getElementById('lesson-complete-screen').classList.add('hidden'); document.getElementById('start-screen').classList.remove('hidden'); document.getElementById('pause-overlay').classList.add('hidden'); };
 
-    document.addEventListener('keydown', e => {
-        if (!isGameRunning || isPaused) return;
-        if (e.keyCode === 37 && dx !== 1) { dx = -1; dy = 0; }
-        else if (e.keyCode === 38 && dy !== 1) { dx = 0; dy = -1; }
-        else if (e.keyCode === 39 && dx !== -1) { dx = 1; dy = 0; }
-        else if (e.keyCode === 40 && dy !== -1) { dx = 0; dy = 1; }
-    });
-    let tsX, tsY;
-    document.addEventListener('touchstart', e => { tsX = e.touches[0].screenX; tsY = e.touches[0].screenY; }, {passive: false});
-    document.addEventListener('touchend', e => {
-        if (isPaused || !isGameRunning) return;
-        let dx_s = e.changedTouches[0].screenX - tsX, dy_s = e.changedTouches[0].screenY - tsY;
-        if (Math.abs(dx_s) > Math.abs(dy_s)) { if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } }
-        else { if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } }
-    });
+    document.addEventListener('keydown', e => { if (!isGameRunning || isPaused) return; if (e.keyCode === 37 && dx !== 1) { dx = -1; dy = 0; } else if (e.keyCode === 38 && dy !== 1) { dx = 0; dy = -1; } else if (e.keyCode === 39 && dx !== -1) { dx = 1; dy = 0; } else if (e.keyCode === 40 && dy !== -1) { dx = 0; dy = 1; } });
+    let tsX, tsY; document.addEventListener('touchstart', e => { tsX = e.touches[0].screenX; tsY = e.touches[0].screenY; }, {passive: false}); document.addEventListener('touchend', e => { if (isPaused || !isGameRunning) return; let dx_s = e.changedTouches[0].screenX - tsX, dy_s = e.changedTouches[0].screenY - tsY; if (Math.abs(dx_s) > Math.abs(dy_s)) { if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } } else { if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } } });
     window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); });
-    function getCorrectAudioText(c, i, s) { if (c==='覺' && s[i-1]==='睡') return '叫'; if (c==='樂' && (s[i-1]==='音'||s[i+1]==='隊')) return '月'; return c; }
+    function getCorrectAudioText(c, i, s) { if (c==='長' && s[i+1]==='大') return '掌'; return c; }
 </script>
 </body>
 </html>
