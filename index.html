@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>華語貪食蛇</title>
+    <title>華語貪食蛇：課文大冒險</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap'); /* Handwriting font */
+        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap');
 
         :root {
-            /* 柔和色調 Palette */
-            --primary-color: #F4A261;   /* Soft Orange/Coral */
-            --secondary-color: #2A9D8F; /* Sage Green */
-            --accent-color: #E76F51;    /* Terra Cotta */
-            --bg-color: #FDF6E3;        /* Warm Cream */
-            --text-color: #264653;      /* Dark Slate Blue */
+            --primary-color: #F4A261;   
+            --secondary-color: #2A9D8F; 
+            --accent-color: #E76F51;    
+            --bg-color: #FDF6E3;        
+            --text-color: #264653;      
             --card-bg: #FFFFFF;         
-            --locked-color: #999;       /* Locked score color */
+            --locked-color: #999;       
         }
 
         body {
@@ -32,7 +31,7 @@
             justify-content: center;
             min-height: 100vh; 
             overflow: hidden;
-            touch-action: none;
+            touch-action: none; 
             user-select: none;
             background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
             background-size: 20px 20px;
@@ -103,22 +102,6 @@
             align-items: center; 
         }
         
-        #leaderboard-modal {
-            position: fixed; 
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 600px; 
-            max-height: 90vh;
-            z-index: 1000;
-            background: #FFF;
-            border: 5px solid var(--secondary-color);
-            padding: 25px;
-            border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-        }
-        
         .modal-backdrop {
             position: fixed;
             top: 0;
@@ -135,14 +118,7 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        @keyframes popInFixed {
-            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         button {
             background-color: var(--primary-color);
@@ -165,12 +141,31 @@
             box-shadow: 0 2px 0 rgba(0,0,0,0.1);
         }
 
-        button.secondary {
-            background-color: var(--secondary-color);
+        button.secondary { background-color: var(--secondary-color); }
+        button.danger { background-color: var(--accent-color); }
+
+        .speed-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f0f0f0;
+            padding: 5px 15px;
+            border-radius: 15px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
         }
         
-        button.danger {
-            background-color: var(--accent-color);
+        .speed-slider-container label {
+            font-weight: bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            cursor: pointer;
+            accent-color: var(--primary-color);
         }
 
         button.control-btn {
@@ -209,25 +204,6 @@
             letter-spacing: 3px;
         }
 
-        #level-info {
-            color: var(--accent-color);
-            font-weight: bold;
-            transition: transform 0.2s;
-            display: inline-block;
-        }
-
-        #progress-container {
-            font-size: 0.95rem;
-            color: #7D8597;
-            margin-top: 2px;
-        }
-        
-        #progress-current {
-            color: var(--secondary-color);
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
         #current-sentence-display {
             margin-top: 15px; 
             margin-bottom: 5px;
@@ -252,77 +228,57 @@
             box-sizing: border-box;
         }
         
-        #replay-btn {
-            position: absolute;
-            right: -12px;
-            top: -12px;
-            background: var(--secondary-color);
-            border-radius: 50%;
-            width: 40px; 
-            height: 40px;
-            padding: 0;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-            border: 2px solid #fff;
-        }
-
-        .char-eaten { color: var(--secondary-color); transition: color 0.3s; }
-        .char-current { color: var(--accent-color); text-decoration: underline; font-size: 2.0rem; font-weight: 900; } 
-        .char-pending { color: #BBB; }
-
-        select, input[type="text"] {
+        input[type="text"], select {
             padding: 12px 16px; 
             font-size: 1.1rem; 
             border-radius: 12px;
             border: 2px solid var(--secondary-color);
             margin-bottom: 5px; 
-            font-family: 'Noto Sans TC', sans-serif;
             width: 100%;
             box-sizing: border-box;
             background: #F4F1DE; 
             outline: none;
-            color: var(--text-color);
         }
-        
-        select:focus, input:focus {
-            border-color: var(--primary-color);
-        }
-        
+
         #online-status-bar {
             width: 100%;
             max-width: 600px; 
             margin-bottom: 10px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #555;
             background: rgba(255,255,255,0.8);
             padding: 8px 15px;
             border-radius: 20px;
-            box-sizing: border-box;
             white-space: nowrap;
             overflow-x: auto; 
-            overflow-y: hidden;
-            text-overflow: unset; 
             text-align: left;
             border: 2px solid #FFF;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-            -webkit-overflow-scrolling: touch; 
-            scrollbar-width: none; 
-        }
-        #online-status-bar::-webkit-scrollbar {
-            display: none; 
         }
         
+        #toast {
+            visibility: hidden;
+            background-color: var(--text-color);
+            color: #fff;
+            text-align: center;
+            border-radius: 25px;
+            padding: 15px 25px;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 30px;
+            z-index: 100;
+        }
+
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; transition: all 0.3s;}
+        .locked-score { color: #999 !important; text-decoration: line-through; opacity: 0.7; }
+
         .leaderboard-container {
             width: 100%;
-            max-height: 400px; 
+            max-height: 350px; 
             overflow-y: auto;
             margin: 15px 0;
             border: 1px solid #eee;
             border-radius: 10px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
         
         table.leaderboard-table {
@@ -337,85 +293,17 @@
             padding: 12px;
             position: sticky;
             top: 0;
-            font-weight: bold;
         }
         
         table.leaderboard-table td {
             padding: 12px 10px;
             border-bottom: 1px solid #eee;
             text-align: center;
-            color: var(--text-color);
-        }
-
-        table.leaderboard-table tr:nth-child(even) { background-color: #f9f9f9; }
-        
-        /* New CSS for centering pause overlay */
-        #pause-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 15;
-            background-color: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(2px);
-        }
-
-        .pause-text {
-            font-size: 3.5rem; 
-            font-weight: bold;
-            color: var(--text-color);
-            text-shadow: 2px 2px white;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px 40px;
-            border-radius: 25px;
-            border: 4px solid var(--primary-color);
-        }
-
-        .footer {
-            margin-top: 25px;
-            color: #888;
-            font-size: 0.9rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            opacity: 0.7;
-        }
-
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: var(--text-color);
-            color: #fff;
-            text-align: center;
-            border-radius: 25px;
-            padding: 15px 25px;
-            position: fixed;
-            z-index: 100;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 30px;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
-        }
-
-        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
-        
-        /* Revived score animation */
-        .locked-score {
-            color: var(--locked-color) !important;
-            text-decoration: line-through;
-            opacity: 0.7;
         }
 
         @media (max-width: 600px) {
             h1 { font-size: 1.5rem; }
             #current-sentence-display { font-size: 1.3rem; }
-            table.leaderboard-table { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -427,14 +315,24 @@
 
     <div id="top-controls">
         <div id="score-info">
-            <div>得分: <span id="score-display"><span id="score">0</span></span> &nbsp;|&nbsp; <span id="level-info">關卡: 1</span></div>
-            <div id="progress-container">總進度: <span id="progress-current">0</span> / <span id="progress-total">0</span></div>
+            <div>得分: <span id="score-display-wrapper"><span id="score">0</span></span> &nbsp;|&nbsp; <span id="level-info">關卡: 1</span></div>
+            <div id="progress-info">進度: <span id="progress-current">0</span> / <span id="progress-total">0</span></div>
             <div id="lives">❤️❤️❤️</div>
         </div>
         <div style="display: flex; gap: 5px;">
-            <button class="control-btn" id="sound-btn" onclick="toggleSound()" title="聲音開關">🔊</button>
-            <button class="control-btn" id="pause-btn" onclick="togglePause()" title="暫停遊戲">⏸️</button>
-            <button class="control-btn" id="exit-btn" onclick="triggerQuit()" title="回到首頁">🏠</button>
+            <button class="control-btn" id="full-btn" onclick="window.toggleFullscreen()" title="全螢幕">⛶</button>
+            <button class="control-btn" id="sound-btn" onclick="window.toggleSound()">🔊</button>
+            <button class="control-btn" id="pause-btn" onclick="window.togglePause()">⏸️</button>
+            <button class="control-btn" id="exit-btn" onclick="window.triggerQuit()">🏠</button>
+        </div>
+    </div>
+
+    <div id="game-controls" style="width: 95%; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
+        <div class="speed-slider-container">
+            <label>🐢 慢</label>
+            <input type="range" id="speed-slider" min="2" max="15" value="5" oninput="window.updateSpeedFromSlider(this.value)">
+            <label>🚀 快</label>
+            <span id="speed-val" style="margin-left: 5px; font-weight: bold; min-width: 25px;">5</span>
         </div>
     </div>
 
@@ -443,26 +341,20 @@
     <div id="game-container">
         <canvas id="gameCanvas" width="600" height="600"></canvas>
         
-        <div id="pause-overlay" class="hidden">
-            <div class="pause-text">暫停</div>
+        <div id="pause-overlay" class="hidden" style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:rgba(255,255,255,0.7); border-radius:12px; z-index: 10; backdrop-filter: blur(2px);">
+            <div style="background:white; padding:20px 40px; border-radius:20px; font-size:3rem; font-weight:bold; border:4px solid var(--primary-color); color: var(--text-color); box-shadow: 0 10px 25px rgba(0,0,0,0.1);">暫停</div>
         </div>
 
         <div id="ui-layer">
+            <!-- Start Screen -->
             <div id="start-screen" class="screen">
-                <h2 id="start-title" style="margin: 0 0 10px 0; color: var(--primary-color); font-size: 1.8rem;">準備好了嗎？</h2>
-                <label for="player-name" style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px;">你的名字：</label>
-                <input type="text" id="player-name" placeholder="請輸入名字 (例如: 小美)" maxlength="8">
+                <h2 id="start-title" style="margin: 0 0 5px 0; color: var(--primary-color); font-size: 1.8rem;">準備好了嗎？</h2>
+                <label style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px;">你的名字：</label>
+                <input type="text" id="player-name" placeholder="請輸入名字" maxlength="8">
                 
-                <label for="speed-select" style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">遊戲速度：</label>
-                <select id="speed-select">
-                    <option value="2.5" selected>🐢 慢慢的 (適合初學)</option>
-                    <option value="4">🐇 普通速度 (有點刺激)</option>
-                    <option value="6">🐆 快快的 (超級挑戰)</option>
-                </select>
-
-                <label for="lesson-select" style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">選擇課程：學華語向前走 第二冊</label>
+                <label style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">選擇課程：</label>
                 <div style="display: flex; gap: 5px; width: 100%; margin-bottom: 10px;">
-                    <select id="lesson-select" style="margin-bottom: 0;">
+                    <select id="lesson-select">
                         <option value="1">第 1 課：新同學</option>
                         <option value="2">第 2 課：我爸爸做生意</option>
                         <option value="3">第 3 課：去超級市場</option>
@@ -477,22 +369,12 @@
                         <option value="12">第 12 課：打網路電話</option>
                         <option value="all">📚 全部複習 (1-12課)</option>
                     </select>
-                    <button class="secondary" onclick="shareLesson()" style="margin: 0; padding: 0 20px;" title="複製課程連結">🔗</button>
+                    <button class="secondary" onclick="window.shareLesson()" style="margin: 0; padding: 0 20px;">🔗</button>
                 </div>
                 
                 <div style="display: flex; gap: 10px; width: 100%;">
-                    <button onclick="startGame()" style="flex:2;">開始遊戲 ▶️</button>
-                    <button class="secondary" onclick="showLeaderboardModal()" style="flex:1;">🏆 排行榜</button>
-                </div>
-                <p style="font-size: 0.9rem; color: #7D8597; margin: 15px 0 0 0;">電腦：WASD 或 ⬆️⬇️⬅️➡️ &nbsp;|&nbsp; 平板：👆 滑動螢幕</p>
-            </div>
-
-            <div id="quit-modal" class="screen hidden" style="z-index: 50;">
-                <h2 style="color: var(--accent-color); margin: 0 0 10px 0;">確定要離開嗎？</h2>
-                <p style="margin: 10px 0; font-size: 1.1rem;">目前的遊戲進度會消失喔！</p>
-                <div style="display: flex; gap: 10px; justify-content: center; width: 100%;">
-                    <button class="danger" onclick="confirmQuit()" style="flex: 1;">確定離開</button>
-                    <button class="secondary" onclick="cancelQuit()" style="flex: 1;">取消</button>
+                    <button onclick="window.startGame()" style="flex:2;">開始遊戲 ▶️</button>
+                    <button class="secondary" onclick="window.showLeaderboardModal()" style="flex:1;">🏆 排行榜</button>
                 </div>
             </div>
 
@@ -500,55 +382,43 @@
             <div id="revive-modal" class="screen hidden" style="z-index: 55;">
                 <h2 style="color: var(--accent-color); margin: 0 0 10px 0; font-size: 1.6rem;">💔 愛心用光了！</h2>
                 <p style="margin: 5px 0; font-size: 1.1rem;">別氣餒，我們把剩下的練習做完吧！</p>
-                <p style="color: var(--locked-color); font-size: 0.9rem; margin-bottom: 10px;">⚠️ 注意：復活後分數將停止累積</p>
+                <p style="color: #999; font-size: 0.9rem; margin-bottom: 10px;">注意：復活後分數將停止累積</p>
                 <div style="margin-bottom: 15px; color: #555;">(還有 <span id="revive-remaining">0</span> 個句子)</div>
-                <button onclick="reviveGame()" style="font-size: 1.2rem; padding: 12px 30px; width: 100%;">💪 復活練習</button>
-                <button class="secondary" onclick="gameOver()" style="margin-top: 10px; font-size: 0.9rem;">結束練習並存檔</button>
+                <button onclick="window.reviveGame()" style="font-size: 1.2rem; padding: 12px 30px; width: 100%;">💪 復活繼續</button>
+                <button class="secondary" onclick="gameOver()" style="margin-top: 10px;">結束練習</button>
             </div>
 
             <div id="lesson-complete-screen" class="screen hidden">
                 <h2 style="margin: 0; color: var(--primary-color);">🎉 恭喜完成！</h2>
                 <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
-                    <p id="complete-lesson-name" style="font-size: 1.3rem; color: var(--secondary-color); font-weight: bold; margin: 5px 0;">第 X 課</p>
+                    <p id="complete-lesson-name" style="font-size: 1.2rem; font-weight: bold; margin: 5px 0;"></p>
                     <p style="margin: 10px 0; font-size: 1.4rem;">總得分：<span id="complete-score" style="color: var(--accent-color); font-weight: 900;">0</span></p>
                     <p id="revive-note" class="hidden" style="color: #888; font-size: 0.85rem;">(曾使用復活機制，得分已鎖定)</p>
                 </div>
-                <div style="width:100%; margin-top:10px;">
-                    <div style="font-size: 1rem; color: #555; font-weight: bold; margin-bottom: 5px;">🏆 歷史排行榜</div>
-                    <div class="leaderboard-container" style="max-height: 120px;">
-                        <table class="leaderboard-table">
-                            <tbody id="leaderboard-body-complete"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div id="lesson-nav-buttons" style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
-                     <button id="btn-prev-lesson" class="secondary" style="flex: 1; font-size: 1rem;">⬅️ 上一課</button>
-                     <button id="btn-next-lesson" class="secondary" style="flex: 1; font-size: 1rem;">下一課 ➡️</button>
-                </div>
-                <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 5px;">
-                    <button onclick="resetGame()" style="flex: 1;">再複習一次 🔄</button>
-                    <button class="secondary" onclick="showStartScreen()" style="flex: 1;">回首頁 🏠</button>
+                <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
+                    <button onclick="window.resetGame()" style="flex: 1;">再複習一次 🔄</button>
+                    <button class="secondary" onclick="window.showStartScreen()" style="flex: 1;">回首頁 🏠</button>
                 </div>
             </div>
 
             <div id="game-over-screen" class="screen hidden">
-                <h2 id="game-over-title" style="margin: 0; color: var(--text-color);">😲 遊戲結束！</h2>
-                <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
+                <h2 id="game-over-title" style="margin: 0;">😲 練習結算</h2>
+                <div style="background: #f0f0f0; padding: 20px; border-radius: 15px; width: 100%; box-sizing: border-box;">
                     <p id="game-over-lesson" style="font-size: 1.1rem; color: #555; margin: 5px 0;"></p>
-                    <p style="margin: 5px 0; font-size: 1.3rem;"><span id="game-over-name">你</span>的最終得分</p>
-                    <p style="margin: 0; font-size: 3rem; color: var(--accent-color); font-weight: 900; line-height: 1;"><span id="final-score">0</span></p>
+                    <p style="margin: 0; font-size: 3rem; color: var(--accent-color); font-weight: 900;"><span id="final-score">0</span></p>
                 </div>
-                <div style="width:100%; margin-top:10px;">
-                    <div style="font-size: 1rem; color: #555; font-weight: bold; margin-bottom: 5px;">🏆 歷史排行榜</div>
-                    <div class="leaderboard-container" style="max-height: 120px;">
-                        <table class="leaderboard-table">
-                            <tbody id="leaderboard-body-gameover"></tbody>
-                        </table>
-                    </div>
+                <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 15px;">
+                    <button onclick="window.resetGame()" style="flex: 1;">再玩一次 🔄</button>
+                    <button class="secondary" onclick="window.showStartScreen()" style="flex: 1;">換課文 📖</button>
                 </div>
-                <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
-                    <button onclick="resetGame()" style="flex: 1;">再玩一次 🔄</button>
-                    <button class="secondary" onclick="showStartScreen()" style="flex: 1;">換課文 📖</button>
+            </div>
+
+            <div id="quit-modal" class="screen hidden" style="z-index: 50;">
+                <h2 style="color: var(--accent-color); margin: 0 0 10px 0;">確定要離開嗎？</h2>
+                <p style="margin: 10px 0;">目前的遊戲進度會消失喔！</p>
+                <div style="display: flex; gap: 10px; justify-content: center; width: 100%;">
+                    <button class="danger" onclick="window.confirmQuit()" style="flex: 1;">確定離開</button>
+                    <button class="secondary" onclick="window.cancelQuit()" style="flex: 1;">取消</button>
                 </div>
             </div>
         </div>
@@ -556,181 +426,99 @@
 
     <div id="leaderboard-modal" class="screen hidden">
         <h2 style="color: var(--secondary-color); margin: 0 0 10px 0; font-size: 1.8rem;">🏆 歷史榮譽榜</h2>
-        <div class="leaderboard-container" style="max-height: 50vh;">
+        <div class="leaderboard-container">
             <table class="leaderboard-table">
                 <thead>
-                    <tr>
-                        <th>名次</th><th>名字</th><th>分數</th><th>課程</th>
-                    </tr>
+                    <tr><th>名次</th><th>名字</th><th>分數</th><th>課程</th></tr>
                 </thead>
                 <tbody id="leaderboard-body-modal"></tbody>
             </table>
         </div>
-        <button class="secondary" onclick="hideLeaderboardModal()" style="margin-top: 15px; min-width: 150px;">關閉</button>
+        <button class="secondary" onclick="window.hideLeaderboardModal()" style="margin-top: 15px;">關閉</button>
     </div>
 
-    <div id="current-sentence-display">準備開始...<button id="replay-btn" onclick="replayCurrentAudio()" title="重聽一次">🔊</button></div>
-    <div id="mobile-hint">💡 提示：順序吃字組成句子，撞牆會從另一邊出來</div>
+    <div id="current-sentence-display">準備開始...<button id="replay-btn" onclick="window.replayCurrentAudio()">🔊</button></div>
     <div class="footer">Design by Sophia Wong</div>
     <div id="toast"></div>
 
-<!-- Firebase Integration -->
+<!-- Firebase Logic -->
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-    import { getFirestore, collection, doc, setDoc, addDoc, getDocs, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+    import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-   const firebaseConfig = {
-  apiKey: "AIzaSyBQI17CXEhD5mJhDCid-mt0cAL6qvdcAiA",
-  authDomain: "chinses-snake-game.firebaseapp.com",
-  projectId: "chinses-snake-game",
-  storageBucket: "chinses-snake-game.firebasestorage.app",
-  messagingSenderId: "239140560404",
-  appId: "1:239140560404:web:dd5ead9018a0f0e5ad5101"
-};
-    const rawAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
-    const appId = rawAppId.split('/')[0].replace(/[^a-zA-Z0-9_-]/g, '_');
-    
+    const firebaseConfig = JSON.parse(__firebase_config);
+    const appId = (typeof __app_id !== 'undefined' ? __app_id : 'default-app').split('/')[0].replace(/[^a-zA-Z0-9_-]/g, '_');
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    let currentUser = null;
-    let isOffline = false;
+    let currentUser = null, isOffline = false;
 
+    // RULE 3: Auth First
     const initAuth = async () => {
         try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-        } catch (error) { activateOfflineMode(); }
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+            else await signInAnonymously(auth);
+        } catch (e) { 
+            isOffline = true; 
+            const bar = document.getElementById('online-status-bar');
+            if(bar) bar.innerText = "🔴 單機模式 (連線失敗)";
+        }
     };
-    initAuth();
-
-    function activateOfflineMode() {
-        isOffline = true;
-        const listEl = document.getElementById('online-status-bar');
-        if(listEl) listEl.innerText = "🔴 單機模式 (雲端功能暫停)";
-    }
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
             if (!isOffline) {
-                startPresenceSystem(); 
-                loadLeaderboard();     
+                // Ensure auth is solid before starting listeners
+                startFirebaseListeners();
             }
         }
     });
 
-    function startPresenceSystem() {
-        if (!currentUser || isOffline) return;
+    function startFirebaseListeners() {
+        if (!auth.currentUser) return;
+
+        // Presence
         const presenceCol = collection(db, 'artifacts', appId, 'public', 'data', 'presence');
-        onSnapshot(presenceCol, (snapshot) => {
-            const now = Date.now();
-            const activeThreshold = 60 * 1000 * 5; 
-            const onlineData = [];
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                if (data.name && data.lastSeen && (now - data.lastSeen < activeThreshold)) {
-                    onlineData.push({ name: data.name, lesson: data.lesson || '準備中' });
-                }
+        onSnapshot(presenceCol, (snap) => {
+            const now = Date.now(), online = [];
+            snap.forEach(doc => {
+                const d = doc.data();
+                if (d.name && d.lastSeen && (now - d.lastSeen < 300000)) online.push(d);
             });
-            const uniquePlayers = [];
-            const seenNames = new Set();
-            onlineData.forEach(p => {
-                if(!seenNames.has(p.name)) { seenNames.add(p.name); uniquePlayers.push(p); }
-            });
-            updateOnlineUI(uniquePlayers);
-        }, () => activateOfflineMode());
-    }
+            const unique = []; const seen = new Set();
+            online.forEach(p => { if(!seen.has(p.name)) { seen.add(p.name); unique.push(p); }});
+            const el = document.getElementById('online-status-bar');
+            if(el) el.innerHTML = unique.length === 0 ? "🟢 在線同學：目前只有你" : "🟢 在線同學： " + unique.map(p => `${p.name} <small>(${p.lesson})</small>`).join(', ');
+        }, (err) => console.warn("Rules limited."));
 
-    window.sendHeartbeat = async function(name, lesson) {
-        if (isOffline || !currentUser || !name) return;
-        try {
-            const presenceRef = doc(db, 'artifacts', appId, 'public', 'data', 'presence', currentUser.uid);
-            await setDoc(presenceRef, { name, lesson, lastSeen: Date.now() }, { merge: true });
-        } catch (e) { activateOfflineMode(); }
-    }
-
-    function updateOnlineUI(players) {
-        const listEl = document.getElementById('online-status-bar');
-        if (!listEl) return;
-        if (players.length === 0) {
-            listEl.innerHTML = "🟢 <b>在線同學：</b>目前只有你";
-        } else {
-            const html = players.map(p => `<span style="margin-right:15px; display:inline-block;">${p.name} <span style="font-size:0.8em; opacity:0.8;">(${p.lesson})</span></span>`).join('');
-            listEl.innerHTML = `🟢 <b>在線同學：</b> ` + html;
-        }
-    }
-
-    window.saveScoreToCloud = async function(name, score, lessonName) {
-        if (isOffline || !currentUser) return;
-        try {
-            const lbCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
-            await addDoc(lbCol, { name, score, lesson: lessonName, timestamp: Date.now() });
-        } catch (e) { activateOfflineMode(); }
-    }
-
-    function loadLeaderboard() {
-        if (isOffline) return;
+        // Leaderboard
         const lbCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
-        onSnapshot(lbCol, (snapshot) => {
+        onSnapshot(lbCol, (snap) => {
             const scores = [];
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                if (data.name && data.score != null) { scores.push(data); }
-            });
-            scores.sort((a, b) => b.score - a.score);
-            updateLeaderboardUI(scores.slice(0, 10));
-        }, () => activateOfflineMode());
+            snap.forEach(doc => { const d = doc.data(); if(d.name && d.score != null) scores.push(d); });
+            scores.sort((a,b) => b.score - a.score);
+            const rows = scores.slice(0, 10).map((s, i) => `<tr><td>${i+1}</td><td>${s.name}</td><td>${s.score}</td><td>${s.lesson}</td></tr>`).join('');
+            const body = document.getElementById('leaderboard-body-modal');
+            if(body) body.innerHTML = rows || "<tr><td colspan='4'>尚無紀錄</td></tr>";
+        }, (err) => {});
     }
 
-    function updateLeaderboardUI(scores) {
-        const createRows = (limit) => {
-            if (scores.length === 0) return `<tr><td colspan="4">尚無紀錄</td></tr>`;
-            return scores.slice(0, limit).map((s, i) => {
-                let rank = i + 1;
-                let medal = rank === 1 ? "🥇" : (rank === 2 ? "🥈" : (rank === 3 ? "🥉" : rank + "."));
-                let lessonDisplay = (s.lesson || "-").match(/第\s*\d+\s*課/)?.[0] || (s.lesson?.includes("全部") ? "全冊" : s.lesson?.split('：')[0]);
-                return `<tr><td>${medal}</td><td style="font-weight:bold;">${s.name}</td><td style="color:var(--accent-color); font-weight:900;">${s.score}</td><td>${lessonDisplay}</td></tr>`;
-            }).join('');
-        };
-        document.getElementById('leaderboard-body-modal').innerHTML = createRows(20);
-        document.getElementById('leaderboard-body-gameover').innerHTML = createRows(5);
-        document.getElementById('leaderboard-body-complete').innerHTML = createRows(5);
-    }
+    window.sendHeartbeat = async (name, lesson) => {
+        if (isOffline || !auth.currentUser) return;
+        try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'presence', auth.currentUser.uid), { name, lesson, lastSeen: Date.now() }, { merge: true }); } catch (e) {}
+    };
+    window.saveScoreToCloud = async (name, score, lessonName) => {
+        if (isOffline || !auth.currentUser) return;
+        try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard'), { name, score, lesson: lessonName, timestamp: Date.now() }); } catch (e) {}
+    };
+
+    initAuth();
 </script>
 
 <script>
-    // --- Audio Logic ---
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx;
-    try { audioCtx = new AudioContext(); } catch(e) {}
-
-    function playTone(freq, type, duration) {
-        if (!isSoundOn || !audioCtx) return;
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-        osc.connect(gainNode); gainNode.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + duration);
-    }
-    const playEatSound = () => playTone(440, 'sine', 0.1);
-    const playBonusSound = () => { playTone(523, 'triangle', 0.1); setTimeout(() => playTone(659, 'triangle', 0.2), 100); };
-    const playLevelUpSound = () => { playTone(523, 'square', 0.1); setTimeout(() => playTone(783, 'square', 0.2), 200); };
-    const playCrashSound = () => playTone(150, 'sawtooth', 0.3);
-    const playErrorSound = () => playTone(150, 'sawtooth', 0.2);
-    const playHealSound = () => { playTone(400, 'sine', 0.1); setTimeout(() => playTone(600, 'sine', 0.2), 100); };
-    const playBombSound = () => { playTone(100, 'sawtooth', 0.1); setTimeout(() => playTone(80, 'sawtooth', 0.3), 100); };
-
-    // --- Data ---
-    const fruitIcons = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑'];
+    // --- Data (Manual Review & Correction) ---
     const rawLessonData = {
         "1": ["老師：今天，我們有兩個新同學。","老師：現在請他們介紹自己。","友朋：大家好，我叫方友朋，今年八歲。","友朋：我最喜歡跟爸爸一起游泳。","張莉：大家好，我叫張莉，今年七歲。","張莉：我比較喜歡看書。","大文：你們好，我叫李大文。","大文：很高興認識你們。","老師：歡迎你們來中文學校學華語。"],
         "2": ["大文：張莉，照片裡面的人是誰？","張莉：左邊是我外公，他以前是醫生。","張莉：右邊是我外婆。","大文：你爸爸媽媽做什麼工作？","張莉：我爸爸做生意，我媽媽幫他。","張莉：你爸爸媽媽呢?","大文：我爸爸在電腦公司上班。","大文：我媽媽在銀行工作。","大文：你以後想做什麼？","張莉：我以後想跟爸爸一樣。"],
@@ -741,93 +529,152 @@
         "7": ["爸爸：大文，該起床了！來不及了！","大文：我很累，還想睡覺。","爸爸：今天晚上早一點睡,現在趕快去刷牙、洗澡。","大文：我昨天晚上洗過澡了。","爸爸：還有，別忘了用肥皂洗臉。","大文：我知道了，要洗乾淨。"],
         "8": ["心美：昨天我爸爸的朋友送給我一隻狗。","心美：你們家有寵物嗎？","大文：有，我家有兩隻狗，我每天都帶牠們去散步。","心美：張莉，你養過狗嗎？","張莉：我沒養過狗，我去年養了一隻貓，可是上個月不見了。","友朋：我也養過貓，非常可愛，我每天都餵牠。","張莉：以後我想養一隻兔子。"],
         "9": ["友朋：東明，這是什麼？","東明：指南針，也叫指北針，它告訴我們南方和北方在哪裡。","友朋：音樂教室是什麼方向？","東明：音樂教室在北方，校門口在南方。","友朋：足球場在東方，還是西方？","東明：因為音樂教室在北方，所以足球場在東方。"],
-        "10": ["心美：暑假的時候，我會去臺灣看外公、外婆。","張莉：你外公、外婆家在哪裡？","心美：他們本來住在臺北，退休以後，跟我的舅舅住在臺南。","張莉：你們每年都去看外公外婆嗎？","心美：我們每年都去看他們一次，你外公外婆住在哪裡？","張莉：我外公、外婆現在住在紐約，他們下個月會來看我們。","心美：我外公、外婆喜歡旅行，常常來看我們，也常去法國看阿姨。"],
-        "11": ["心美：下個星期五，學校要帶我們去動物園玩。","心美哥哥：太好了！你可以看到你喜歡的大象和老虎。","心美：這一次我希望可以看到熊貓和猴子。","心美哥哥：對，以前我去的時候，動物園沒有熊貓。","爸爸：現在不但有熊貓，還有企鵝。","心美：我覺得熊貓胖胖的，真可愛！","心美哥哥：我喜歡長頸鹿，脖子長長的。"],
-        "12": ["爸爸：大文，我現在要用網路給姑姑打電話。","大文：可以看到姑姑嗎？我很久沒跟姑姑說話了。","爸爸：可以看到她的影像，快一點過來。","姑姑：大文，你看起來瘦了。","大文：我沒瘦，我長高了。","姑姑：文文現在也跟你一起去學華語嗎?","大文：是啊！上中文課很有意思。","姑姑：你好好學華語，以後可以用網路給我寫信。","大文：沒問題，我一定會好好學華語。"]
+        "10": ["心美：暑假的時候，我會去臺灣看外公、外婆。","張莉：你外公、外婆家在哪裡？","心美：他們本來住在臺北，退休以後，跟我的舅舅住在臺南。","張莉：你們每年都去看外公外婆嗎？","心美：我們每年都去看他們一次，你外公外婆住在哪裡？","張莉：我外公、外婆現在住在紐約，他們下個月會來看我們。", "心美：我外公、外婆喜歡旅行，常常來看我們，也常去法國看阿姨。"],
+        "11": ["心美：下個星期五，學校要帶我們去動物園玩。","心美哥哥：太好了！你可以看到你喜歡的大象和老虎。", "心美：這一次我希望可以看到熊貓和猴子。", "心美哥哥：對，以前我去的時候，動物園沒有熊貓。", "爸爸：現在不但有熊貓，還有企鵝。", "心美：我覺得熊貓胖胖的，真可愛！", "心美哥哥：我喜歡長頸鹿，脖子長長的。"],
+        "12": ["爸爸：大文，我現在要用網路給姑姑打電話。", "大文：可以看到姑姑嗎？我很久沒跟姑姑說話了。", "爸爸：可以看到她的影像，快一點過來。", "姑姑：大文，你看起來瘦了。", "大文：我沒瘦，我長高了。", "姑姑：文文現在也跟你一起去學華語嗎?", "大文：是啊！上中文課很有意思。", "姑姑：你好好學華語，以後可以用網路給我寫信。", "大文：沒問題，我一定會好好學華語。"]
     };
     const lessonData = {};
     for (let key in rawLessonData) { lessonData[key] = rawLessonData[key].map(s => s.replace(/^[^：]+：/, '')); }
 
-    // --- Game Variables ---
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreElement = document.getElementById('score');
-    const livesElement = document.getElementById('lives');
-    const progressCurrentElement = document.getElementById('progress-current');
-    const progressTotalElement = document.getElementById('progress-total');
-    const sentenceDisplay = document.getElementById('current-sentence-display');
-    const startScreen = document.getElementById('start-screen');
-    const gameOverScreen = document.getElementById('game-over-screen');
-    const lessonCompleteScreen = document.getElementById('lesson-complete-screen');
-    const quitModal = document.getElementById('quit-modal');
-    const reviveModal = document.getElementById('revive-modal');
-    const leaderboardModal = document.getElementById('leaderboard-modal');
-    const modalBackdrop = document.getElementById('backdrop');
+    // --- Config & Globals ---
+    const fruitIcons = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍉', '🍒', '🍑', '🍍', '🥝'];
+    const gridSize = 40, tileCount = 15;
+    
+    let canvas, ctx, gameLoop = null, speed = 5, score = 0, lives = 3, ouchTimer = 0, happyTimer = 0;
+    let isGameRunning = false, isPaused = false, isTransitioning = false, isRevived = false;
+    let snake, foodItems = [], bonusItem = {active:false}, bombItem = {active:false}, heartItem = {active:false};
+    let dx, dy, particles = [], popups = [];
+    let currentLessonSentences, availableIndices, currentSentence, charIndex, eatenSentenceChars = [];
+    let sentencesCompleted = 0, totalSentencesCount = 0, heartRefillCount = 0;
+    let isSoundOn = true, playerName = "";
 
-    // GRID SIZE CHANGE: Increased from 40 to 50, tileCount from 15 to 12 (600px width constant)
-    const gridSize = 50, tileCount = 12;
-    let speed, score, lives, heartRefillCount, isRevived = false;
-    let snake, foodItems, bonusItem, bombItem, heartItem;
-    let dx, dy, gameLoop, isGameRunning, isPaused, isTransitioning, playerName, heartbeatInterval;
-    let particles, popups, currentLessonSentences, availableIndices, sentencesCompleted, totalSentencesCount, currentSentence, charIndex, eatenSentenceChars, isSoundOn = true;
-    let comboCount = 0, comboTimer = 0;
-    let ouchTimer = 0; 
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx; try { audioCtx = new AudioContext(); } catch(e) {}
 
-    (function init() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('lesson')) {
-            document.getElementById('lesson-select').value = urlParams.get('lesson');
-            document.getElementById('start-title').innerHTML = `挑戰：第${urlParams.get('lesson')}課`;
-        }
+    window.onload = () => {
+        canvas = document.getElementById('gameCanvas');
+        ctx = canvas.getContext('2d');
         const savedName = localStorage.getItem('snake_player_name');
         if (savedName) document.getElementById('player-name').value = savedName;
-    })();
+    };
 
-    window.shareLesson = function() {
-        const lessonVal = document.getElementById('lesson-select').value;
-        const url = new URL(window.location.href); url.searchParams.set('lesson', lessonVal);
-        const temp = document.createElement("textarea"); temp.value = url.toString();
-        document.body.appendChild(temp); temp.select(); document.execCommand("copy");
-        document.body.removeChild(temp); showToast("已複製課程連結！");
+    // --- Logic Utilities ---
+    function stopGameLoop() { if(gameLoop) { clearInterval(gameLoop); gameLoop = null; } }
+    function resetSnakePos() { snake = [{ x: 7, y: 7 }, { x: 6, y: 7 }, { x: 5, y: 7 }]; dx = 1; dy = 0; }
+
+    function spawnParticles(x, y, color, customEmojis = null) {
+        const emojis = customEmojis || ['✨', '⭐', '🎉', '🎊', '🌈'];
+        for(let i=0; i<8; i++) {
+            particles.push({
+                x: x * gridSize + 20, 
+                y: y * gridSize + 20, 
+                vx: (Math.random()-0.5)*10, 
+                vy: (Math.random()-0.5)*10, 
+                life: 1, 
+                emoji: emojis[Math.floor(Math.random() * emojis.length)]
+            });
+        }
     }
 
-    function showToast(msg) {
-        const t = document.getElementById("toast"); t.innerText = msg; t.className = "show";
-        setTimeout(() => t.className = t.className.replace("show", ""), 3000);
+    function spawnPopup(x, y, text, color) {
+        popups.push({ x: x * gridSize + 20, y: y * gridSize, text, life: 1, color });
     }
+
+    // --- Audio ---
+    function playTone(freq, duration) {
+        if (!isSoundOn || !audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + duration);
+    }
+    function playEatSound() { playTone(440, 0.1); }
+    function playBonusSound() { playTone(523, 0.1); setTimeout(() => playTone(659, 0.2), 100); }
+    function playLevelUpSound() { playTone(523, 0.1); setTimeout(() => playTone(783, 0.2), 200); }
+    function playCrashSound() { playTone(150, 0.3); }
+    function playErrorSound() { playTone(150, 0.2); }
+    function playHealSound() { playTone(400, 0.1); setTimeout(() => playTone(600, 0.2), 100); }
+
+    // --- UI Actions ---
+    window.updateSpeedFromSlider = (val) => {
+        speed = parseInt(val);
+        const el = document.getElementById('speed-val');
+        if(el) el.innerText = speed;
+        if (isGameRunning && !isPaused) {
+            stopGameLoop();
+            gameLoop = setInterval(drawGame, 1000 / speed);
+        }
+    };
+
+    window.toggleFullscreen = () => {
+        const btn = document.getElementById('full-btn');
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+            if(btn) btn.innerText = "❌";
+        } else {
+            document.exitFullscreen();
+            if(btn) btn.innerText = "⛶";
+        }
+    };
+
+    window.toggleSound = () => { isSoundOn = !isSoundOn; const b = document.getElementById('sound-btn'); if(b) b.innerText = isSoundOn ? "🔊" : "🔇"; };
+
+    window.togglePause = () => {
+        if (!isGameRunning) return;
+        isPaused = !isPaused;
+        const btn = document.getElementById('pause-btn');
+        const overlay = document.getElementById('pause-overlay');
+        if(btn) btn.innerText = isPaused ? "▶️" : "⏸️";
+        if(overlay) overlay.classList.toggle('hidden');
+        if(!isPaused) { stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); }
+        else { stopGameLoop(); }
+    };
+
+    window.triggerQuit = () => { if (isGameRunning && !isPaused) window.togglePause(); const m = document.getElementById('quit-modal'); if(m) m.classList.remove('hidden'); };
+    window.confirmQuit = () => { stopGameLoop(); isGameRunning = false; isPaused = false; document.getElementById('quit-modal').classList.add('hidden'); document.getElementById('pause-overlay').classList.add('hidden'); window.showStartScreen(); };
+    window.cancelQuit = () => { document.getElementById('quit-modal').classList.add('hidden'); if(isGameRunning && isPaused) window.togglePause(); };
+
+    window.startGame = () => {
+        playerName = document.getElementById('player-name').value.trim() || "小勇士";
+        localStorage.setItem('snake_player_name', playerName);
+        const sel = document.getElementById('lesson-select');
+        if (window.sendHeartbeat) window.sendHeartbeat(playerName, sel.options[sel.selectedIndex].text);
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-over-screen').classList.add('hidden');
+        document.getElementById('lesson-complete-screen').classList.add('hidden');
+        initGame();
+        isGameRunning = true;
+        isPaused = false;
+        stopGameLoop();
+        gameLoop = setInterval(drawGame, 1000 / speed);
+    };
 
     function initGame() {
         resetSnakePos();
-        // SPEED CHANGE: set default based on select or default 2.5
-        const speedSelect = document.getElementById('speed-select');
-        speed = speedSelect ? parseFloat(speedSelect.value) : 2.5;
-        
-        score = 0; lives = 3; heartRefillCount = 0; isRevived = false; isPaused = false; 
-        eatenSentenceChars = []; particles = []; popups = []; foodItems = [];
-        bonusItem = { x: -1, y: -1, active: false }; bombItem = { x: -1, y: -1, active: false }; heartItem = { x: -1, y: -1, active: false };
-        scoreElement.innerText = score;
-        scoreElement.parentElement.classList.remove('locked-score');
-        document.getElementById('revive-note').classList.add('hidden');
-        updateLivesDisplay(); isTransitioning = false; loadSentences(); startNewSentence();
-        ouchTimer = 0; 
+        score = 0; lives = 3; heartRefillCount = 0; isRevived = false; ouchTimer = 0; happyTimer = 0;
+        eatenSentenceChars = []; foodItems = []; particles = []; popups = [];
+        bonusItem = {active:false}; bombItem = {active:false}; heartItem = {active:false};
+        const sld = document.getElementById('speed-slider'); if(sld) speed = parseInt(sld.value);
+        document.getElementById('score').innerText = score;
+        document.getElementById('score-display-wrapper').classList.remove('locked-score');
+        updateLivesDisplay();
+        loadSentences();
+        startNewSentence();
     }
 
-    function resetSnakePos() { snake = [{ x: 6, y: 6 }, { x: 5, y: 6 }, { x: 4, y: 6 }]; dx = 1; dy = 0; }
-
-    function updateLivesDisplay() {
-        let h = ""; for(let i=0; i<lives; i++) h += "❤️"; for(let i=lives; i<3; i++) h += "🖤";
-        livesElement.innerText = h;
-    }
-
+    function updateLivesDisplay() { let h = ""; for(let i=0; i<lives; i++) h += "❤️"; for(let i=lives; i<3; i++) h += "🖤"; const el = document.getElementById('lives'); if(el) el.innerText = h; }
+    
     function loadSentences() {
         const val = document.getElementById('lesson-select').value;
         currentLessonSentences = val === "all" ? [].concat(...Object.values(lessonData)) : lessonData[val];
         availableIndices = currentLessonSentences.map((_, i) => i);
         sentencesCompleted = 0; totalSentencesCount = currentLessonSentences.length;
-        updateProgressDisplay();
+        const cur = document.getElementById('progress-current'); if(cur) cur.innerText = 0;
+        const tot = document.getElementById('progress-total'); if(tot) tot.innerText = totalSentencesCount;
     }
-
-    function updateProgressDisplay() { progressCurrentElement.innerText = sentencesCompleted; progressTotalElement.innerText = totalSentencesCount; }
 
     function startNewSentence() {
         if (availableIndices.length === 0) { showLessonComplete(); return; }
@@ -843,65 +690,24 @@
         const target = currentSentence[charIndex];
         const p1 = getFreePosition(); foodItems.push({ x: p1.x, y: p1.y, char: target, isCorrect: true });
         for (let i = 0; i < 2; i++) {
-            let dist = target, safety = 0;
-            while ((dist === target || foodItems.some(f => f.char === dist)) && safety < 50) {
+            let dist = target, s = 0;
+            while ((dist === target || foodItems.some(f => f.char === dist)) && s < 50) {
                 const rs = currentLessonSentences[Math.floor(Math.random() * currentLessonSentences.length)];
                 const rc = rs[Math.floor(Math.random() * rs.length)];
-                if (!isPunctuation(rc)) dist = rc; safety++;
+                if (rc && !isPunctuation(rc)) dist = rc; s++;
             }
             const p = getFreePosition(); foodItems.push({ x: p.x, y: p.y, char: dist, isCorrect: false });
         }
     }
 
     function getFreePosition() {
-        let p = { x: 0, y: 0 }, valid = false, attempts = 0;
-        while (!valid && attempts < 100) {
-            valid = true; p.x = Math.floor(Math.random() * tileCount); p.y = Math.floor(Math.random() * tileCount);
-            if (snake.some(s => s.x === p.x && s.y === p.y)) valid = false;
-            if (foodItems.some(f => f.x === p.x && f.y === p.y)) valid = false;
-            attempts++;
+        let p = { x: 0, y: 0 }, v = false, a = 0;
+        while (!v && a < 100) {
+            v = true; p.x = Math.floor(Math.random() * tileCount); p.y = Math.floor(Math.random() * tileCount);
+            if (snake.some(s => s.x === p.x && s.y === p.y) || foodItems.some(f => f.x === p.x && f.y === p.y)) v = false;
+            a++;
         }
         return p;
-    }
-
-    function spawnHappyEffect(gx, gy, type) { // Grid coordinates, type: 'char', 'fruit', 'wrong', 'bomb'
-        let icons = [];
-        let count = 4;
-        let isExplosion = false;
-
-        if (type === 'fruit') {
-            icons = ['⭐', '✨', '🌟', '💫']; 
-        } else if (type === 'char') {
-            icons = ['❤️', '💖', '🥰', '😍']; 
-        } else if (type === 'wrong') {
-            icons = ['❌', '❓', '🌀', '😵'];
-        } else if (type === 'bomb') {
-            icons = ['💥', '🔥', '💨', '💀'];
-            count = 8; // More particles for explosion
-            isExplosion = true;
-        }
-        
-        for (let i = 0; i < count; i++) {
-            let vx, vy;
-            if (isExplosion) {
-                // Explosion spreads in all directions
-                vx = (Math.random() - 0.5) * 10; 
-                vy = (Math.random() - 0.5) * 10;
-            } else {
-                // Others float upwards
-                vx = (Math.random() - 0.5) * 4; 
-                vy = -Math.random() * 2 - 2;    
-            }
-
-            particles.push({
-                x: gx * gridSize + 25, // Center x
-                y: gy * gridSize + 25, // Center y
-                vx: vx,
-                vy: vy,
-                life: 1.0,
-                content: icons[Math.floor(Math.random() * icons.length)]
-            });
-        }
     }
 
     function moveSnake() {
@@ -910,277 +716,160 @@
         if (ny < 0) ny = tileCount - 1; else if (ny >= tileCount) ny = 0;
         const head = { x: nx, y: ny }; snake.unshift(head);
 
-        // Score logic - Only update score var if not revived
-        const addScore = (pts) => { if (!isRevived) { score += pts; scoreElement.innerText = score; } };
+        const addScore = (pts) => { if (!isRevived) { score += pts; const el = document.getElementById('score'); if(el) el.innerText = score; } };
 
-        if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) {
-            addScore(100); bonusItem.active = false; playBonusSound(); 
-            spawnPopup(head.x, head.y, "+100", "#E76F51");
-            spawnHappyEffect(head.x, head.y, 'fruit'); 
-        }
-        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) {
-            if (!isRevived) { score = Math.max(0, score - 50); scoreElement.innerText = score; }
-            bombItem.active = false; playBombSound(); spawnPopup(head.x, head.y, "-50", "#555");
-            ouchTimer = 6; 
-            spawnHappyEffect(head.x, head.y, 'bomb'); // Added bomb effect
-        }
-        if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) {
-            lives++; heartRefillCount++; heartItem.active = false; updateLivesDisplay(); playHealSound();
-        }
+        if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) { addScore(100); bonusItem.active = false; playBonusSound(); spawnParticles(head.x, head.y, "#FFD166", ['💰', '🎉', '🎈']); spawnPopup(head.x, head.y, "+100", "#E76F51"); }
+        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) { if(!isRevived) { score=Math.max(0, score-50); const el = document.getElementById('score'); if(el) el.innerText = score; } bombItem.active = false; playErrorSound(); ouchTimer = 30; spawnParticles(head.x, head.y, "#555", ['💣', '💥', '💢']); spawnPopup(head.x, head.y, "-50", "#555"); }
+        if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) { lives++; heartRefillCount++; heartItem.active = false; updateLivesDisplay(); playHealSound(); spawnParticles(head.x, head.y, "#FF6B6B", ['❤️', '💖', '✨']); spawnPopup(head.x, head.y, "+1❤️", "#E76F51"); }
 
         let fIdx = foodItems.findIndex(f => f.x === head.x && f.y === head.y);
         if (fIdx !== -1 && !isTransitioning) {
             if (foodItems[fIdx].isCorrect) {
-                let pts = 10;
-                let displayText = "+10";
-                
-                if (comboTimer > 0) { 
-                    comboCount++; 
-                    pts += comboCount * 5; 
-                    displayText = `Combo x${comboCount}`;
-                } else { 
-                    comboCount = 1; 
-                }
-                
-                comboTimer = 30; 
-                addScore(pts); 
-                eatenSentenceChars.push(foodItems[fIdx].char);
-                speakText(getCorrectAudioText(foodItems[fIdx].char, charIndex, currentSentence));
-                playEatSound(); 
-                spawnPopup(head.x, head.y, displayText, "#2A9D8F"); 
-                spawnHappyEffect(head.x, head.y, 'char'); 
-                
-                charIndex++; 
-                while (charIndex < currentSentence.length && isPunctuation(currentSentence[charIndex])) charIndex++;
+                addScore(10); eatenSentenceChars.push(foodItems[fIdx].char); playEatSound(); 
+                happyTimer = 25; spawnParticles(head.x, head.y, "#2A9D8F", ['✨', '⭐', '🌈']);
+                charIndex++; while (charIndex < currentSentence.length && isPunctuation(currentSentence[charIndex])) charIndex++;
                 updateSentenceDisplay();
                 if (charIndex >= currentSentence.length) {
                     addScore(50); isTransitioning = true; foodItems = []; sentencesCompleted++;
-                    updateProgressDisplay(); playLevelUpSound();
+                    const cur = document.getElementById('progress-current'); if(cur) cur.innerText = sentencesCompleted; 
+                    playLevelUpSound(); spawnParticles(head.x, head.y, "#F4A261", ['🎊', '🎈', '🎆']);
                     setTimeout(() => { if (isGameRunning) startNewSentence(); }, 1200);
                 } else spawnFoods();
             } else {
-                if (!isRevived) { score = Math.max(0, score - 20); scoreElement.innerText = score; }
-                comboCount = 0; playErrorSound(); spawnPopup(head.x, head.y, "選錯了!", "#D32F2F"); spawnFoods();
-                ouchTimer = 6; 
-                spawnHappyEffect(head.x, head.y, 'wrong'); // Added wrong effect
+                if (!isRevived) { score = Math.max(0, score - 20); const el = document.getElementById('score'); if(el) el.innerText = score; }
+                playErrorSound(); ouchTimer = 30; spawnParticles(head.x, head.y, "#D32F2F", ['❌', '💥', '❕']);
+                spawnPopup(head.x, head.y, "選錯了!", "#D32F2F"); spawnFoods();
             }
         } else snake.pop();
     }
 
-    function askToRevive() {
-        isGameRunning = false; clearInterval(gameLoop);
-        document.getElementById('revive-remaining').innerText = totalSentencesCount - sentencesCompleted;
-        reviveModal.classList.remove('hidden');
+    function drawGame() {
+        if (!isGameRunning || isPaused || !ctx) return;
+        moveSnake(); manageItems();
+        if (ouchTimer > 0) ouchTimer--;
+        if (happyTimer > 0) happyTimer--;
+        if (snake.slice(1).some(p => p.x === snake[0].x && p.y === snake[0].y)) { handleCollision(); return; }
+        
+        ctx.fillStyle = "#FFF"; ctx.fillRect(0, 0, 600, 600);
+        ctx.lineWidth = 0.5; ctx.strokeStyle = "rgba(42, 157, 143, 0.1)";
+        for(let i=0; i<=tileCount; i++) { ctx.beginPath(); ctx.moveTo(i*gridSize,0); ctx.lineTo(i*gridSize,600); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,i*gridSize); ctx.lineTo(600,i*gridSize); ctx.stroke(); }
+
+        foodItems.forEach(f => {
+            ctx.fillStyle = "#FFE8D6"; ctx.beginPath(); ctx.arc(f.x*gridSize+20, f.y*gridSize+20, 25, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "#E76F51"; ctx.font = "bold 24px Noto Sans TC"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText(f.char, f.x*gridSize+20, f.y*gridSize+22);
+        });
+
+        if (bonusItem.active) { ctx.font = "26px Arial"; ctx.textAlign="center"; ctx.fillText(bonusItem.icon, bonusItem.x*gridSize+20, bonusItem.y*gridSize+22); }
+        if (bombItem.active) { ctx.font = "26px Arial"; ctx.textAlign="center"; ctx.fillText("💣", bombItem.x*gridSize+20, bombItem.y*gridSize+22); }
+        if (heartItem.active) { ctx.font = "26px Arial"; ctx.textAlign="center"; ctx.fillText("❤️", heartItem.x*gridSize+20, heartItem.y*gridSize+22); }
+
+        snake.forEach((p, i) => {
+            ctx.fillStyle = i === 0 ? "#2A9D8F" : "#F4A261";
+            ctx.beginPath(); ctx.roundRect(p.x*gridSize+1, p.y*gridSize+1, 38, 38, 6); ctx.fill();
+            if (i === 0) {
+                let e = dx === 1 ? [28,12,28,28] : (dx === -1 ? [12,12,12,28] : (dy === 1 ? [12,28,28,28] : [12,12,28,12]));
+                ctx.strokeStyle = "white"; ctx.lineWidth = 3;
+                if (ouchTimer > 0) {
+                    const dX = (cx, cy) => { ctx.beginPath(); ctx.moveTo(cx-4,cy-4); ctx.lineTo(cx+4,cy+4); ctx.stroke(); ctx.beginPath(); ctx.moveTo(cx+4,cy-4); ctx.lineTo(cx-4,cy+4); ctx.stroke(); };
+                    dX(p.x*gridSize+e[0], p.y*gridSize+e[1]); dX(p.x*gridSize+e[2], p.y*gridSize+e[3]);
+                } else if (happyTimer > 0) {
+                    const dH = (cx, cy) => { ctx.beginPath(); ctx.moveTo(cx-4,cy+2); ctx.lineTo(cx,cy-2); ctx.lineTo(cx+4,cy+2); ctx.stroke(); };
+                    dH(p.x*gridSize+e[0], p.y*gridSize+e[1]); dH(p.x*gridSize+e[2], p.y*gridSize+e[3]);
+                } else {
+                    ctx.fillStyle = "white";
+                    ctx.beginPath(); ctx.arc(p.x*gridSize+e[0], p.y*gridSize+e[1], 4, 0, Math.PI * 2); ctx.arc(p.x*gridSize+e[2], p.y*gridSize+e[3], 4, 0, Math.PI * 2); ctx.fill();
+                }
+            } else {
+                let char = eatenSentenceChars[eatenSentenceChars.length - (snake.length - 1) + (i - 1)];
+                if (char) { ctx.fillStyle = "#FFF"; ctx.font = "bold 18px Noto Sans TC"; ctx.textAlign="center"; ctx.fillText(char, p.x*gridSize+20, p.y*gridSize+22); }
+            }
+        });
+
+        // Effect Drawing
+        for(let i=particles.length-1; i>=0; i--) {
+            let p = particles[i]; p.x += p.vx; p.y += p.vy; p.life -= 0.04;
+            if(p.life <= 0) particles.splice(i, 1);
+            else { ctx.globalAlpha = p.life; ctx.font = "18px Arial"; ctx.fillText(p.emoji, p.x, p.y); }
+        }
+        ctx.globalAlpha = 1;
+        for(let i=popups.length-1; i>=0; i--) {
+            let p = popups[i]; p.y -= 1; p.life -= 0.02;
+            if(p.life <= 0) popups.splice(i, 1);
+            else { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.font = "bold 18px Noto Sans TC"; ctx.textAlign="center"; ctx.fillText(p.text, p.x, p.y); }
+        }
+        ctx.globalAlpha = 1;
     }
 
     function manageItems() {
-        if (!bonusItem.active && Math.random() < 0.02) { let p = getFreePosition(); bonusItem = { ...p, active: true, timer: 100, icon: fruitIcons[Math.floor(Math.random()*fruitIcons.length)] }; }
+        if (!bonusItem.active && Math.random() < 0.01) { let p = getFreePosition(); bonusItem = { ...p, active: true, timer: 150, icon: fruitIcons[Math.floor(Math.random()*fruitIcons.length)] }; }
         else if (bonusItem.active && --bonusItem.timer <= 0) bonusItem.active = false;
-        
-        // REVERTED to standard rates
-        if (!bombItem.active && Math.random() < 0.015) { let p = getFreePosition(); bombItem = { ...p, active: true, timer: 150 }; }
+        if (!bombItem.active && Math.random() < 0.01) { let p = getFreePosition(); bombItem = { ...p, active: true, timer: 150 }; }
         else if (bombItem.active && --bombItem.timer <= 0) bombItem.active = false;
-        
         if (!heartItem.active && lives === 1 && heartRefillCount < 2 && Math.random() < 0.02) { let p = getFreePosition(); heartItem = { ...p, active: true, timer: 300 }; }
         else if (heartItem.active && --heartItem.timer <= 0) heartItem.active = false;
     }
 
-    window.reviveGame = function() {
-        lives = 3; isRevived = true;
-        scoreElement.parentElement.classList.add('locked-score');
-        document.getElementById('revive-note').classList.remove('hidden');
-        updateLivesDisplay(); reviveModal.classList.add('hidden'); resetSnakePos(); spawnFoods();
-        isGameRunning = true; gameLoop = setInterval(drawGame, 1000 / speed);
-    }
-
-    window.gameOver = function() {
-        reviveModal.classList.add('hidden'); isGameRunning = false; clearInterval(gameLoop); clearInterval(heartbeatInterval);
-        document.getElementById('game-over-title').innerText = `😲 ${playerName}，練習結算！`;
-        document.getElementById('game-over-name').innerText = playerName;
-        document.getElementById('final-score').innerText = score;
-        const lessonName = document.getElementById('lesson-select').options[document.getElementById('lesson-select').selectedIndex].text;
-        document.getElementById('game-over-lesson').innerText = `練習課程：${lessonName}`;
-        window.saveScoreToCloud(playerName, score, lessonName);
-        gameOverScreen.classList.remove('hidden');
-    }
-
-    function showLessonComplete() {
-        isGameRunning = false; clearInterval(gameLoop); clearInterval(heartbeatInterval);
-        playLevelUpSound();
-        const lessonName = document.getElementById('lesson-select').options[document.getElementById('lesson-select').selectedIndex].text;
-        document.getElementById('complete-lesson-name').innerText = lessonName;
-        document.getElementById('complete-score').innerText = score;
-        
-        // Show revive note in complete screen if used
-        if (isRevived) {
-             document.getElementById('revive-note').classList.remove('hidden');
-        } else {
-             document.getElementById('revive-note').classList.add('hidden');
-        }
-        
-        window.saveScoreToCloud(playerName, score, lessonName);
-        lessonCompleteScreen.classList.remove('hidden');
-    }
-
-    function drawGame() {
-        if (!isGameRunning || isPaused) return;
-        moveSnake(); manageItems();
-        if (comboTimer > 0) comboTimer--; else comboCount = 0;
-        if (ouchTimer > 0) ouchTimer--; 
-        if (snake.slice(1).some(p => p.x === snake[0].x && p.y === snake[0].y)) { handleCollision(); return; }
-        ctx.fillStyle = "#FFF"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.lineWidth = 0.5; ctx.strokeStyle = "rgba(42, 157, 143, 0.2)";
-        for(let i=0; i<tileCount; i++) {
-            ctx.beginPath(); ctx.moveTo(i*gridSize,0); ctx.lineTo(i*gridSize,600); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(0,i*gridSize); ctx.lineTo(600,i*gridSize); ctx.stroke();
-        }
-        foodItems.forEach(f => {
-            // ADJUSTED: Offset +25 for 50px grid center
-            ctx.fillStyle = "#FFE8D6"; ctx.beginPath(); ctx.arc(f.x*gridSize+25, f.y*gridSize+25, 28, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = "#E76F51"; ctx.font = "bold 28px Noto Sans TC"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            ctx.fillText(f.char, f.x*gridSize+25, f.y*gridSize+27);
-        });
-        // ADJUSTED: Offsets for 50px grid
-        if (bonusItem.active) { ctx.font = "32px Arial"; ctx.fillText(bonusItem.icon, bonusItem.x*gridSize+25, bonusItem.y*gridSize+27); }
-        if (bombItem.active) { ctx.font = "32px Arial"; ctx.fillText("💣", bombItem.x*gridSize+25, bombItem.y*gridSize+27); }
-        if (heartItem.active) { ctx.font = "32px Arial"; ctx.fillText("❤️", heartItem.x*gridSize+25, heartItem.y*gridSize+27); }
-        
-        snake.forEach((p, i) => {
-            ctx.fillStyle = i === 0 ? "#2A9D8F" : "#F4A261";
-            // ADJUSTED: Snake body size 48px
-            ctx.beginPath(); ctx.roundRect(p.x*gridSize+1, p.y*gridSize+1, 48, 48, 8); ctx.fill();
-            if (i === 0) {
-                ctx.fillStyle = "white";
-                // ADJUSTED: Eye offsets for 50px grid
-                // Right: [38, 12, 38, 38]
-                // Left: [12, 12, 12, 38]
-                // Down: [12, 38, 38, 38]
-                // Up: [12, 12, 38, 12]
-                let offset = dx === 1 ? [38,12,38,38] : (dx === -1 ? [12,12,12,38] : (dy === 1 ? [12,38,38,38] : [12,12,38,12]));
-                
-                if (ouchTimer > 0) {
-                    ctx.strokeStyle = "white";
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    // Left eye X
-                    ctx.moveTo(p.x*gridSize+offset[0]-4, p.y*gridSize+offset[1]-4);
-                    ctx.lineTo(p.x*gridSize+offset[0]+4, p.y*gridSize+offset[1]+4);
-                    ctx.moveTo(p.x*gridSize+offset[0]+4, p.y*gridSize+offset[1]-4);
-                    ctx.lineTo(p.x*gridSize+offset[0]-4, p.y*gridSize+offset[1]+4);
-                    // Right eye X
-                    ctx.moveTo(p.x*gridSize+offset[2]-4, p.y*gridSize+offset[3]-4);
-                    ctx.lineTo(p.x*gridSize+offset[2]+4, p.y*gridSize+offset[3]+4);
-                    ctx.moveTo(p.x*gridSize+offset[2]+4, p.y*gridSize+offset[3]-4);
-                    ctx.lineTo(p.x*gridSize+offset[2]-4, p.y*gridSize+offset[3]+4);
-                    ctx.stroke();
-                } else {
-                    ctx.beginPath(); 
-                    ctx.arc(p.x*gridSize+offset[0], p.y*gridSize+offset[1], 5, 0, Math.PI*2); 
-                    ctx.arc(p.x*gridSize+offset[2], p.y*gridSize+offset[3], 5, 0, Math.PI*2); 
-                    ctx.fill();
-                }
-            } else {
-                let char = eatenSentenceChars[eatenSentenceChars.length - (snake.length - 1) + (i - 1)];
-                if (char) { ctx.fillStyle = "#FFF"; ctx.font = "bold 22px Noto Sans TC"; ctx.fillText(char, p.x*gridSize+25, p.y*gridSize+27); }
-            }
-        });
-        updateAndDrawParticles(); updateAndDrawPopups();
-    }
-
     function handleCollision() {
-        playCrashSound(); lives--; updateLivesDisplay(); comboCount = 0;
-        ouchTimer = 6; 
-        if (lives <= 0) askToRevive(); else { resetSnakePos(); spawnFoods(); isPaused = true; setTimeout(() => isPaused = false, 500); }
+        playCrashSound(); lives--; updateLivesDisplay(); ouchTimer = 30;
+        spawnParticles(snake[0].x, snake[0].y, "#D32F2F", ['😵', '💢', '💥']);
+        if (lives <= 0) { 
+            isGameRunning = false; stopGameLoop();
+            const rem = document.getElementById('revive-remaining'); if(rem) rem.innerText = totalSentencesCount - sentencesCompleted; 
+            const mod = document.getElementById('revive-modal'); if(mod) mod.classList.remove('hidden'); 
+        } else { resetSnakePos(); spawnFoods(); isPaused = true; setTimeout(() => isPaused = false, 500); }
     }
 
-    function spawnPopup(x, y, text, color) { popups.push({ x: x*gridSize+25, y: y*gridSize, text, life: 1, color }); }
+    window.reviveGame = () => { lives = 3; isRevived = true; document.getElementById('score-display-wrapper').classList.add('locked-score'); document.getElementById('revive-note').classList.remove('hidden'); document.getElementById('revive-modal').classList.add('hidden'); resetSnakePos(); spawnFoods(); isGameRunning = true; isPaused = false; stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); };
+    window.gameOver = () => { document.getElementById('revive-modal').classList.add('hidden'); isGameRunning = false; stopGameLoop(); document.getElementById('final-score').innerText = score; document.getElementById('game-over-screen').classList.remove('hidden'); if(window.saveScoreToCloud) window.saveScoreToCloud(playerName, score, document.getElementById('lesson-select').options[document.getElementById('lesson-select').selectedIndex].text); };
     
-    function updateAndDrawPopups() {
-        for (let i = popups.length-1; i>=0; i--) {
-            let p = popups[i]; p.y -= 1; p.life -= 0.02;
-            if (p.life <= 0) popups.splice(i, 1);
-            else { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.font = "bold 20px Noto Sans TC"; ctx.fillText(p.text, p.x, p.y); ctx.globalAlpha = 1; }
-        }
-    }
-    
-    function updateAndDrawParticles() {
-        for (let i = particles.length-1; i>=0; i--) {
-            let p = particles[i]; p.x += p.vx; p.y += p.vy; p.life -= 0.03; // Slower fade
-            if (p.life <= 0) particles.splice(i, 1);
-            else { 
-                ctx.globalAlpha = p.life; 
-                if (p.content) {
-                    ctx.font = "20px Arial";
-                    ctx.fillText(p.content, p.x, p.y);
-                } else {
-                    ctx.fillStyle = p.color; 
-                    ctx.beginPath(); 
-                    ctx.arc(p.x, p.y, 4, 0, Math.PI*2); 
-                    ctx.fill(); 
-                }
-                ctx.globalAlpha = 1; 
-            }
-        }
-    }
-
-    window.startGame = function() {
-        playerName = document.getElementById('player-name').value.trim() || "小勇士";
-        localStorage.setItem('snake_player_name', playerName);
-        let lesson = document.getElementById('lesson-select').value === 'all' ? '全冊' : `第${document.getElementById('lesson-select').value}課`;
-        window.sendHeartbeat(playerName, lesson);
-        if (heartbeatInterval) clearInterval(heartbeatInterval);
-        heartbeatInterval = setInterval(() => window.sendHeartbeat(playerName, lesson), 30000);
-        startScreen.classList.add('hidden'); gameOverScreen.classList.add('hidden'); lessonCompleteScreen.classList.add('hidden');
-
-        // Ensure UI is reset
-        document.getElementById('pause-btn').innerText = "⏸️";
-        document.getElementById('pause-overlay').classList.add('hidden');
-        
-        initGame(); 
-        isGameRunning = true; 
-        gameLoop = setInterval(drawGame, 1000 / speed);
-    };
-
-    window.resetGame = () => window.startGame();
-    window.showStartScreen = () => { gameOverScreen.classList.add('hidden'); lessonCompleteScreen.classList.add('hidden'); reviveModal.classList.add('hidden'); startScreen.classList.remove('hidden'); isGameRunning = false; clearInterval(heartbeatInterval); };
-    window.toggleSound = () => { isSoundOn = !isSoundOn; document.getElementById('sound-btn').innerText = isSoundOn ? "🔊" : "🔇"; };
-    window.togglePause = () => { if (!isGameRunning) return; isPaused = !isPaused; document.getElementById('pause-btn').innerText = isPaused ? "▶️" : "⏸️"; document.getElementById('pause-overlay').classList.toggle('hidden'); };
-    window.triggerQuit = () => { if (isGameRunning && !isPaused) window.togglePause(); quitModal.classList.remove('hidden'); };
-    window.cancelQuit = () => quitModal.classList.add('hidden');
-    window.confirmQuit = () => { reviveModal.classList.add('hidden'); quitModal.classList.add('hidden'); isGameRunning = false; clearInterval(gameLoop); clearInterval(heartbeatInterval); window.showStartScreen(); };
-    window.hideLeaderboardModal = () => { modalBackdrop.classList.add('hidden'); leaderboardModal.classList.add('hidden'); };
-    window.showLeaderboardModal = () => { modalBackdrop.classList.remove('hidden'); leaderboardModal.classList.remove('hidden'); };
-
-    function speakText(t) { if (!isSoundOn) return; window.speechSynthesis.cancel(); 
-        let cleanText = t.replace(/都/g, '兜').replace(/什/g, '神'); // Fix: Force '都' -> '兜', '什' -> '神'
-        const u = new SpeechSynthesisUtterance(cleanText); u.lang = 'zh-TW'; u.rate = 0.85; window.speechSynthesis.speak(u); }
+    function speakText(t) { if (!isSoundOn) return; window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'zh-TW'; u.rate = 0.85; window.speechSynthesis.speak(u); }
     function isPunctuation(c) { return /[，。、？！：；「」『』\s,.?!:;"'()（）]/.test(c); }
     function updateSentenceDisplay() {
+        const display = document.getElementById('current-sentence-display');
         let h = ''; for (let i = 0; i < currentSentence.length; i++) {
             if (i < charIndex) h += `<span class="char-eaten">${currentSentence[i]}</span>`;
             else if (i === charIndex) h += `<span class="char-current">${currentSentence[i]}</span>`;
             else h += `<span class="char-pending">${currentSentence[i]}</span>`;
         }
-        h += `<button id="replay-btn" onclick="replayCurrentAudio()">🔊</button>`; sentenceDisplay.innerHTML = h;
+        h += `<button id="replay-btn" onclick="window.replayCurrentAudio()" style="position: absolute; right: -12px; top: -12px; background: var(--secondary-color); border-radius: 50%; width: 40px; height: 40px; padding: 0; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.15); border: 2px solid #fff; cursor: pointer; color: white;">🔊</button>`; if(display) display.innerHTML = h;
     }
     window.replayCurrentAudio = () => speakText(currentSentence);
 
-    // --- Controls ---
+    function showLessonComplete() {
+        isGameRunning = false; stopGameLoop(); playLevelUpSound();
+        const sel = document.getElementById('lesson-select');
+        const lessonText = sel.options[sel.selectedIndex].text;
+        document.getElementById('complete-lesson-name').innerText = lessonText;
+        document.getElementById('complete-score').innerText = score;
+        if(window.saveScoreToCloud) window.saveScoreToCloud(playerName, score, lessonText);
+        document.getElementById('lesson-complete-screen').classList.remove('hidden');
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById("toast"); t.innerText = msg; t.className = "show";
+        setTimeout(() => t.className = t.className.replace("show", ""), 3000);
+    }
+
+    window.shareLesson = function() {
+        const lessonVal = document.getElementById('lesson-select').value;
+        const url = new URL(window.location.href); url.searchParams.set('lesson', lessonVal);
+        const temp = document.createElement("textarea"); temp.value = url.toString();
+        document.body.appendChild(temp); temp.select(); document.execCommand("copy");
+        document.body.removeChild(temp); showToast("已複製課程連結！");
+    };
+
+    window.showStartScreen = () => { stopGameLoop(); isGameRunning = false; isPaused = false; document.getElementById('game-over-screen').classList.add('hidden'); document.getElementById('lesson-complete-screen').classList.add('hidden'); document.getElementById('start-screen').classList.remove('hidden'); document.getElementById('pause-overlay').classList.add('hidden'); };
+
     document.addEventListener('keydown', e => {
-        if (isPaused) return;
-        // Left: ArrowLeft (37) or KeyA
-        if ((e.keyCode === 37 || e.code === 'KeyA') && dx !== 1) { dx = -1; dy = 0; }
-        // Up: ArrowUp (38) or KeyW
-        if ((e.keyCode === 38 || e.code === 'KeyW') && dy !== 1) { dx = 0; dy = -1; }
-        // Right: ArrowRight (39) or KeyD
-        if ((e.keyCode === 39 || e.code === 'KeyD') && dx !== -1) { dx = 1; dy = 0; }
-        // Down: ArrowDown (40) or KeyS
-        if ((e.keyCode === 40 || e.code === 'KeyS') && dy !== -1) { dx = 0; dy = 1; }
-        
-        if (e.code === 'KeyP') window.togglePause();
+        if (!isGameRunning || isPaused) return;
+        if (e.keyCode === 37 && dx !== 1) { dx = -1; dy = 0; }
+        else if (e.keyCode === 38 && dy !== 1) { dx = 0; dy = -1; }
+        else if (e.keyCode === 39 && dx !== -1) { dx = 1; dy = 0; }
+        else if (e.keyCode === 40 && dy !== -1) { dx = 0; dy = 1; }
     });
     let tsX, tsY;
-    document.addEventListener('touchstart', e => { if (!['BUTTON','INPUT','SELECT'].includes(e.target.tagName)) e.preventDefault(); tsX = e.touches[0].screenX; tsY = e.touches[0].screenY; }, {passive: false});
+    document.addEventListener('touchstart', e => { tsX = e.touches[0].screenX; tsY = e.touches[0].screenY; }, {passive: false});
     document.addEventListener('touchend', e => {
         if (isPaused || !isGameRunning) return;
         let dx_s = e.changedTouches[0].screenX - tsX, dy_s = e.changedTouches[0].screenY - tsY;
@@ -1188,14 +877,7 @@
         else { if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } }
     });
     window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); });
-    function getCorrectAudioText(c, i, s) { 
-        if (c==='覺' && s[i-1]==='睡') return '叫'; 
-        if (c==='樂' && (s[i-1]==='音'||s[i+1]==='隊')) return '月';
-        if (c==='都') return '兜'; // Fix: Force '都' to be pronounced as 'dōu' (兜)
-        if (c==='什') return '神'; // Fix: Force '什' to be pronounced as 'shén' (神)
-        if (c==='興' && s[i-1]==='高') return '幸'; // Fix: Force '興' in '高興' to be pronounced as 'xìng' (幸)
-        return c; 
-    }
+    function getCorrectAudioText(c, i, s) { if (c==='覺' && s[i-1]==='睡') return '叫'; if (c==='樂' && (s[i-1]==='音'||s[i+1]==='隊')) return '月'; return c; }
 </script>
 </body>
 </html>
