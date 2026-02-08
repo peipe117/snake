@@ -35,7 +35,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* 一般模式從頂部排列 */
+            justify-content: flex-start; /* 從頂部排列 */
             gap: 1.5vh;
             user-select: none;
             background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
@@ -182,67 +182,6 @@
             box-sizing: border-box;
         }
 
-        /* --- 全螢幕模式設定 (新增) --- */
-        :fullscreen {
-            background-color: var(--bg-color);
-            padding: 2vmin;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            /* 全螢幕時改為置中對齊，讓畫面緊湊 */
-            justify-content: center;
-            gap: 2vmin; /* 使用相對單位控制間距 */
-            overflow: hidden; /* 全螢幕時通常不需要卷軸 */
-        }
-
-        /* 全螢幕下的字體與尺寸放大策略 (使用 vmin) */
-        :fullscreen h1 { font-size: 5vmin; margin: 0; }
-        :fullscreen #score-info { font-size: 2.5vmin; }
-        :fullscreen #lives { font-size: 3vmin; }
-        :fullscreen button.control-btn { font-size: 3vmin; padding: 0.5vmin 1.5vmin; }
-        
-        :fullscreen #top-controls, 
-        :fullscreen #game-controls-container, 
-        :fullscreen #online-status-bar,
-        :fullscreen #bottom-area { 
-            width: 90vw; 
-            max-width: 120vh; /* 避免在超寬螢幕過寬 */
-        }
-
-        :fullscreen .speed-slider-container { padding: 1vmin 2vmin; border-radius: 2vmin; }
-        :fullscreen .speed-slider-container label, :fullscreen #speed-val { font-size: 2.5vmin; }
-        :fullscreen #online-status-bar { font-size: 2vmin; padding: 1vmin 2vmin; }
-
-        /* 全螢幕下的遊戲區塊：佔據剩餘空間 */
-        :fullscreen #game-wrapper-flex {
-            flex: 1; /* 自動填滿高度 */
-            width: 100%;
-            min-height: 0; /* 防止溢出 */
-            padding: 0;
-        }
-
-        :fullscreen #game-container {
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 100%;
-            aspect-ratio: 1/1; /* 強制保持正方形 */
-            
-            border-width: 0.5vmin;
-            border-radius: 2vmin;
-        }
-
-        :fullscreen #current-sentence-display { 
-            font-size: 3.5vmin; 
-            min-height: 8vmin; 
-            padding: 1.5vmin; 
-            border-width: 0.5vmin; 
-            border-radius: 2vmin; 
-        }
-        
-        :fullscreen .footer { display: none; }
-
-
         /* 通用 UI 樣式 */
         .char-eaten { color: var(--secondary-color); text-shadow: 0 0 1px rgba(42, 157, 143, 0.2); transition: color 0.3s; }
         .char-current { color: var(--accent-color); text-decoration: underline; text-underline-offset: 4px; animation: pulseTarget 1.5s infinite; }
@@ -289,8 +228,7 @@
             <div id="lives">❤️❤️❤️</div>
         </div>
         <div style="display: flex; gap: 5px;">
-            <!-- 加回全螢幕按鈕 -->
-            <button class="control-btn" id="full-btn" onclick="window.toggleFullscreen()" title="全螢幕">⛶</button>
+            <!-- 已移除全螢幕按鈕 -->
             <button class="control-btn" id="sound-btn" onclick="window.toggleSound()">🔊</button>
             <button class="control-btn" id="pause-btn" onclick="window.togglePause()">⏸️</button>
             <button class="control-btn" id="exit-btn" onclick="window.triggerQuit()">🏠</button>
@@ -310,7 +248,7 @@
     <!-- 移回上方：在線狀態 -->
     <div id="online-status-bar">🟡 連線中...</div>
 
-    <!-- 中間遊戲區：自動彈性伸縮 -->
+    <!-- 中間遊戲區 -->
     <div id="game-wrapper-flex">
         <div id="game-container">
             <canvas id="gameCanvas" width="600" height="600"></canvas>
@@ -724,6 +662,7 @@
     window.updateSpeedFromSlider = function(val) { speed = parseInt(val); document.getElementById('speed-val').innerText = speed; if (isGameRunning && !isPaused) { stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); } };
     window.toggleFullscreen = function() { 
         if (!document.fullscreenElement) { 
+            // 修正：全螢幕現在會作用於整個文件，而不僅僅是遊戲容器
             document.documentElement.requestFullscreen().catch((err) => {
                 console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
             }); 
