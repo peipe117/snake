@@ -20,54 +20,128 @@
             --locked-score: #999;       
         }
 
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* 禁止網頁滾動 */
+            overscroll-behavior: none; 
+        }
+
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh; 
-            overflow: hidden;
+            /* 改回 center，讓所有元素往中間靠，不要分太開 */
+            justify-content: center; 
+            /* 使用 gap 控制元素間距 */
+            gap: 1.5vh;
             touch-action: none; 
             user-select: none;
             background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
             background-size: 20px 20px;
+            padding: 10px 0;
+            box-sizing: border-box;
         }
 
+        /* --- 標題區域 (Header) --- */
         h1 {
             color: var(--secondary-color);
-            margin: 5px 0 10px 0;
-            font-size: 2.2rem; 
+            margin: 0;
+            font-size: 2rem; 
             text-align: center;
             font-family: 'Gaegu', cursive, 'Noto Sans TC', sans-serif;
+            flex-shrink: 0; 
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            transition: font-size 0.3s;
         }
 
-        /* 全螢幕時隱藏不必要的元素，讓空間留給遊戲 */
-        :fullscreen h1, :fullscreen .footer {
-            display: none;
+        /* --- 頂部控制與資訊區 (Top Area) --- */
+        #top-controls, #game-controls-container, #online-status-bar {
+            width: 95%;
+            max-width: 600px;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            margin: 0; /* 移除額外 margin，由 body gap 控制 */
         }
 
-        :fullscreen #game-container {
-            margin: 10px 0;
+        #top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5px;
+        }
+
+        #score-info {
+            font-weight: bold;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            font-size: 1rem; 
+            line-height: 1.3;
+        }
+        
+        #lives { color: var(--accent-color); font-size: 1.2rem; letter-spacing: 2px; }
+
+        .speed-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f0f0f0;
+            padding: 6px 15px;
+            border-radius: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #online-status-bar {
+            font-size: 0.9rem;
+            color: #555;
+            background: rgba(255,255,255,0.9);
+            padding: 6px 15px;
+            border-radius: 20px;
+            text-align: left;
+            border: 2px solid #FFF;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* --- 遊戲主體區域 (Main) --- */
+        #game-wrapper-flex {
+            /* 關鍵：改回 flex: 0 1 auto */
+            /* 不要強制佔滿空間，而是根據內容大小縮放，這樣就不會推開上下介面 */
+            flex: 0 1 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 0; 
+            padding: 0 5px; /* 左右留一點縫隙 */
+            box-sizing: border-box;
         }
 
         #game-container {
             position: relative;
             background: var(--card-bg);
-            padding: 12px;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(38, 70, 83, 0.15);
-            border: 6px solid #FFF;
-            width: 95%;
-            max-width: 600px; 
-            box-sizing: border-box;
-            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(38, 70, 83, 0.15);
+            border: 4px solid #FFF;
+            
+            /* 一般模式設定 */
+            width: 100%;
+            max-width: 600px;
+            
+            /* 保持正方形 */
+            aspect-ratio: 1 / 1;
+            
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            box-sizing: border-box;
         }
 
         canvas {
@@ -77,224 +151,109 @@
             display: block;
             touch-action: none;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
-            width: 100%; 
-            height: auto; 
-            aspect-ratio: 1 / 1; 
-        }
-
-        #ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            object-fit: contain;
+        }
+
+        /* --- 底部區域 (Footer) --- */
+        #bottom-area {
+            width: 95%;
+            max-width: 600px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            z-index: 3000;
+            flex-shrink: 0;
         }
-
-        .screen {
-            background: rgba(255, 255, 255, 0.98);
-            padding: 20px; 
-            border-radius: 20px;
-            text-align: center;
-            pointer-events: auto;
-            width: 90%; 
-            max-width: 450px; 
-            max-height: 90%; 
-            overflow-y: auto; 
-            box-shadow: 0 15px 30px rgba(38, 70, 83, 0.2);
-            border: 4px solid var(--primary-color);
-            display: flex;
-            flex-direction: column;
-            gap: 10px; 
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            align-items: center; 
-            position: relative;
-            z-index: 3100;
-        }
-        
-        .modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(38, 70, 83, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 2500;
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .hidden { display: none !important; }
-
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 24px; 
-            font-size: 1.1rem; 
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'Noto Sans TC', sans-serif;
-            font-weight: bold;
-            margin: 5px; 
-            transition: all 0.1s;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-            white-space: nowrap;
-        }
-
-        button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
-        button.secondary { background-color: var(--secondary-color); }
-        button.danger { background-color: var(--accent-color); }
-
-        .speed-slider-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #f0f0f0;
-            padding: 8px 15px;
-            border-radius: 15px;
-            margin: 5px 0;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        
-        .speed-slider-container label { font-weight: bold; font-size: 0.9rem; white-space: nowrap; }
-        input[type="range"] { flex: 1; cursor: pointer; accent-color: var(--primary-color); }
-
-        button.control-btn {
-            background: #fff;
-            color: var(--text-color);
-            border: 2px solid var(--text-color);
-            padding: 8px 14px;
-            font-size: 1.4rem; 
-            min-width: 50px;
-            box-shadow: none;
-        }
-        
-        #top-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 600px; 
-            margin-bottom: 8px;
-            padding: 0 5px;
-            box-sizing: border-box;
-        }
-
-        #score-info {
-            font-weight: bold;
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            font-size: 1.1rem; 
-            line-height: 1.4;
-        }
-        
-        #lives { color: var(--accent-color); font-size: 1.4rem; letter-spacing: 3px; }
 
         #current-sentence-display {
-            margin-top: 15px; 
-            margin-bottom: 5px;
-            min-height: 70px; 
-            padding: 12px 20px;
+            margin: 0; /* 由 gap 控制 */
+            min-height: 60px; 
+            padding: 10px 15px;
             background: #fff;
             border-radius: 15px;
             border: 3px dashed var(--secondary-color);
-            width: 95%; 
-            max-width: 600px; 
+            width: 100%; 
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem; 
+            font-size: 1.3rem; 
             color: #ccc; 
             font-weight: bold;
-            line-height: 1.5;
+            line-height: 1.4;
             flex-wrap: wrap;
             position: relative;
             box-shadow: 0 5px 10px rgba(0,0,0,0.08);
             box-sizing: border-box;
         }
 
+        /* --- 全螢幕模式 (Auto Scaling + Compact) --- */
+        :fullscreen {
+            background-color: var(--bg-color);
+            padding: 2vmin;
+            /* 確保全螢幕也是緊湊置中 */
+            justify-content: center;
+            gap: 2vmin; /* 稍微加大一點間距，適應大畫面 */
+        }
+
+        :fullscreen h1 { font-size: 5vmin; }
+        :fullscreen #score-info { font-size: 2.5vmin; }
+        :fullscreen #lives { font-size: 3vmin; }
+        :fullscreen button.control-btn { font-size: 3vmin; padding: 0.5vmin 1.5vmin; }
+        :fullscreen #top-controls, :fullscreen #game-controls-container, :fullscreen #online-status-bar { width: 90vw; max-width: none; }
+        :fullscreen .speed-slider-container { padding: 1vmin 2vmin; border-radius: 2vmin; }
+        :fullscreen .speed-slider-container label, :fullscreen #speed-val { font-size: 2.5vmin; }
+        :fullscreen #online-status-bar { font-size: 2vmin; padding: 1vmin 2vmin; }
+
+        :fullscreen #game-container {
+            max-width: none; 
+            max-height: none;
+            
+            /* 核心修正：動態計算大小 */
+            /* 寬度不超過 95vw，高度不超過 65vh (預留 35% 給上下介面) */
+            /* 這樣遊戲會盡可能大，但永遠不會把介面推出去 */
+            width: min(95vw, 65vh);
+            height: min(95vw, 65vh);
+            
+            border-width: 0.5vmin;
+            border-radius: 2vmin;
+        }
+
+        :fullscreen #bottom-area { width: 90vw; max-width: none; }
+        :fullscreen #current-sentence-display { font-size: 3.5vmin; min-height: 8vmin; padding: 1.5vmin; border-width: 0.5vmin; border-radius: 2vmin; }
+        :fullscreen .footer { display: none; }
+
+        /* 通用 UI 樣式 */
         .char-eaten { color: var(--secondary-color); text-shadow: 0 0 1px rgba(42, 157, 143, 0.2); transition: color 0.3s; }
         .char-current { color: var(--accent-color); text-decoration: underline; text-underline-offset: 4px; animation: pulseTarget 1.5s infinite; }
         .char-pending { color: #ccc; }
-
-        @keyframes pulseTarget {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.02); }
-        }
-        
-        input[type="text"], select {
-            padding: 12px 16px; 
-            font-size: 1.1rem; 
-            border-radius: 12px;
-            border: 2px solid var(--secondary-color);
-            margin-bottom: 5px; 
-            width: 100%;
-            box-sizing: border-box;
-            background: #F4F1DE; 
-            outline: none;
-        }
-
-        #online-status-bar {
-            width: 100%;
-            max-width: 600px; 
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-            color: #555;
-            background: rgba(255,255,255,0.9);
-            padding: 10px 15px;
-            border-radius: 20px;
-            text-align: left;
-            border: 2px solid #FFF;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        #toast {
-            visibility: hidden;
-            background-color: var(--text-color);
-            color: #fff;
-            text-align: center;
-            border-radius: 25px;
-            padding: 15px 25px;
-            position: fixed;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 30px;
-            z-index: 4000;
-        }
-
+        @keyframes pulseTarget { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.02); } }
+        button { background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 30px; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; font-weight: bold; margin: 5px; transition: all 0.1s; box-shadow: 0 3px 0 rgba(0,0,0,0.1); white-space: nowrap; }
+        button:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.1); }
+        button.secondary { background-color: var(--secondary-color); }
+        button.danger { background-color: var(--accent-color); }
+        button.control-btn { background: #fff; color: var(--text-color); border: 2px solid var(--text-color); padding: 6px 10px; font-size: 1.2rem; min-width: 44px; box-shadow: none; }
+        input[type="range"] { flex: 1; cursor: pointer; accent-color: var(--primary-color); }
+        input[type="text"], select { padding: 10px 14px; font-size: 1rem; border-radius: 12px; border: 2px solid var(--secondary-color); margin-bottom: 5px; width: 100%; box-sizing: border-box; background: #F4F1DE; outline: none; }
+        .footer { font-size: 0.8rem; color: #888; margin-top: 5px; flex-shrink: 0; }
+        #toast { visibility: hidden; background-color: var(--text-color); color: #fff; text-align: center; border-radius: 25px; padding: 10px 20px; position: fixed; left: 50%; transform: translateX(-50%); bottom: 30px; z-index: 4000; }
         #toast.show { visibility: visible; opacity: 1; bottom: 50px; transition: all 0.3s;}
         .locked-score { color: #999 !important; text-decoration: line-through; opacity: 0.7; }
-
-        .leaderboard-container {
-            width: 100%;
-            min-height: 150px; 
-            max-height: 300px; 
-            overflow-y: auto;
-            margin: 15px 0;
-            border: 1px solid #eee;
-            border-radius: 10px;
-        }
-        
-        table.leaderboard-table { width: 100%; border-collapse: collapse; font-size: 1.05rem; }
-        table.leaderboard-table th { background-color: var(--secondary-color); color: white; padding: 12px; position: sticky; top: 0; }
-        table.leaderboard-table td { padding: 12px 10px; border-bottom: 1px solid #eee; text-align: center; }
+        .leaderboard-container { width: 100%; min-height: 100px; max-height: 250px; overflow-y: auto; margin: 10px 0; border: 1px solid #eee; border-radius: 10px; -webkit-overflow-scrolling: touch; }
+        table.leaderboard-table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+        table.leaderboard-table th { background-color: var(--secondary-color); color: white; padding: 10px; position: sticky; top: 0; }
+        table.leaderboard-table td { padding: 10px 8px; border-bottom: 1px solid #eee; text-align: center; }
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3000; }
+        .screen { background: rgba(255, 255, 255, 0.98); padding: 20px; border-radius: 20px; text-align: center; pointer-events: auto; width: 90%; max-width: 450px; max-height: 85%; overflow-y: auto; box-shadow: 0 15px 30px rgba(38, 70, 83, 0.2); border: 4px solid var(--primary-color); display: flex; flex-direction: column; gap: 10px; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); align-items: center; position: relative; z-index: 3100; }
+        .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(38, 70, 83, 0.5); backdrop-filter: blur(4px); z-index: 2500; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .hidden { display: none !important; }
 
         @media (max-width: 600px) {
-            h1 { font-size: 1.5rem; }
-            #current-sentence-display { font-size: 1.3rem; }
+            h1 { font-size: 1.4rem; }
+            #current-sentence-display { font-size: 1.2rem; min-height: 50px; }
+            button { padding: 8px 16px; }
         }
     </style>
 </head>
@@ -318,7 +277,8 @@
         </div>
     </div>
 
-    <div id="game-controls" style="width: 95%; max-width: 600px; display: flex; flex-direction: column; align-items: center;">
+    <!-- 移回上方：速度控制 -->
+    <div id="game-controls-container">
         <div class="speed-slider-container">
             <label>🐢 慢</label>
             <input type="range" id="speed-slider" min="2" max="15" value="5" oninput="window.updateSpeedFromSlider(this.value)">
@@ -327,92 +287,99 @@
         </div>
     </div>
 
+    <!-- 移回上方：在線狀態 -->
     <div id="online-status-bar">🟡 連線中...</div>
 
-    <div id="game-container">
-        <canvas id="gameCanvas" width="600" height="600"></canvas>
-        
-        <div id="pause-overlay" class="hidden" style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:rgba(255,255,255,0.7); border-radius:12px; z-index: 10; backdrop-filter: blur(2px);">
-            <div style="background:white; padding:20px 40px; border-radius:20px; font-size:3rem; font-weight:bold; border:4px solid var(--primary-color); color: var(--text-color); box-shadow: 0 10px 25px rgba(0,0,0,0.1);">暫停</div>
-        </div>
-
-        <div id="ui-layer">
-            <div id="start-screen" class="screen">
-                <h2 id="start-title" style="margin: 0 0 5px 0; color: var(--primary-color); font-size: 1.8rem;">準備好了嗎？</h2>
-                <input type="text" id="player-name" placeholder="請輸入名字" maxlength="8">
-                
-                <label style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">選擇課程：</label>
-                <div style="display: flex; gap: 5px; width: 100%; margin-bottom: 10px;">
-                    <select id="lesson-select">
-                        <option value="1">第 1 課：新同學</option>
-                        <option value="2">第 2 課：我爸爸做生意</option>
-                        <option value="3">第 3 課：去超級市場</option>
-                        <option value="4">第 4 課：我想吃漢堡</option>
-                        <option value="5">第 5 課：春天快到了</option>
-                        <option value="6">第 6 課：農曆新年</option>
-                        <option value="7">第 7 課：早一點睡覺</option>
-                        <option value="8">第 8 課：我的寵物</option>
-                        <option value="9">第 9 課：音樂教室在北方</option>
-                        <option value="10">第 10 課：外公外婆住臺灣</option>
-                        <option value="11">第 11 課：去動物園</option>
-                        <option value="12">第 12 課：打網路電話</option>
-                        <option value="all">📚 全部複習 (1-12課)</option>
-                    </select>
-                    <button class="secondary" onclick="window.shareLesson()" style="margin: 0; padding: 0 20px;">🔗</button>
-                </div>
-                
-                <div style="display: flex; gap: 10px; width: 100%;">
-                    <button onclick="window.startGame()" style="flex:2;">開始遊戲 ▶️</button>
-                    <button class="secondary" onclick="window.showLeaderboardModal()" style="flex:1;">🏆 排行榜</button>
-                </div>
+    <!-- 中間遊戲區：自動彈性伸縮 -->
+    <div id="game-wrapper-flex">
+        <div id="game-container">
+            <canvas id="gameCanvas" width="600" height="600"></canvas>
+            
+            <div id="pause-overlay" class="hidden" style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:rgba(255,255,255,0.7); border-radius:12px; z-index: 10; backdrop-filter: blur(2px);">
+                <div style="background:white; padding:20px 40px; border-radius:20px; font-size:3rem; font-weight:bold; border:4px solid var(--primary-color); color: var(--text-color); box-shadow: 0 10px 25px rgba(0,0,0,0.1);">暫停</div>
             </div>
 
-            <div id="revive-modal" class="screen hidden">
-                <h2 style="color: var(--accent-color); margin: 0 0 10px 0; font-size: 1.6rem;">💔 愛心用光了！</h2>
-                <p style="margin: 5px 0; font-size: 1.1rem;">別氣餒，我們把剩下的練習做完吧！</p>
-                <div style="margin-bottom: 15px; color: #555;">(還有 <span id="revive-remaining">0</span> 個句子)</div>
-                <button onclick="window.reviveGame()" style="font-size: 1.2rem; padding: 12px 30px; width: 100%;">💪 復活繼續</button>
-                <button class="secondary" onclick="window.showStartScreen()">結束練習</button>
-            </div>
-
-            <div id="lesson-complete-screen" class="screen hidden">
-                <h2 style="margin: 0; color: var(--primary-color);">🎉 恭喜完成！</h2>
-                <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
-                    <p id="complete-lesson-name" style="font-size: 1.2rem; font-weight: bold; margin: 5px 0;"></p>
-                    <p style="margin: 10px 0; font-size: 1.4rem;">總得分：<span id="complete-score" style="color: var(--accent-color); font-weight: 900;">0</span></p>
+            <div id="ui-layer">
+                <div id="start-screen" class="screen">
+                    <h2 id="start-title" style="margin: 0 0 5px 0; color: var(--primary-color); font-size: 1.8rem;">準備好了嗎？</h2>
+                    <input type="text" id="player-name" placeholder="請輸入名字" maxlength="8">
+                    
+                    <label style="font-size: 1rem; font-weight: bold; color:#555; align-self: start; margin-left: 5px; margin-top: 5px;">選擇課程：</label>
+                    <div style="display: flex; gap: 5px; width: 100%; margin-bottom: 10px;">
+                        <select id="lesson-select">
+                            <option value="1">第 1 課：新同學</option>
+                            <option value="2">第 2 課：我爸爸做生意</option>
+                            <option value="3">第 3 課：去超級市場</option>
+                            <option value="4">第 4 課：我想吃漢堡</option>
+                            <option value="5">第 5 課：春天快到了</option>
+                            <option value="6">第 6 課：農曆新年</option>
+                            <option value="7">第 7 課：早一點睡覺</option>
+                            <option value="8">第 8 課：我的寵物</option>
+                            <option value="9">第 9 課：音樂教室在北方</option>
+                            <option value="10">第 10 課：外公外婆住臺灣</option>
+                            <option value="11">第 11 課：去動物園</option>
+                            <option value="12">第 12 課：打網路電話</option>
+                            <option value="all">📚 全部複習 (1-12課)</option>
+                        </select>
+                        <button class="secondary" onclick="window.shareLesson()" style="margin: 0; padding: 0 20px;">🔗</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; width: 100%;">
+                        <button onclick="window.startGame()" style="flex:2;">開始遊戲 ▶️</button>
+                        <button class="secondary" onclick="window.showLeaderboardModal()" style="flex:1;">🏆 排行榜</button>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
-                    <button onclick="window.resetGame()" style="flex: 1;">再複習一次 🔄</button>
-                    <button class="secondary" onclick="window.showStartScreen()" style="flex: 1;">回首頁 🏠</button>
-                </div>
-            </div>
 
-            <div id="leaderboard-modal" class="screen hidden" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3500;">
-                <h2 style="color: var(--secondary-color); margin: 0 0 10px 0; font-size: 1.8rem;">🏆 歷史榮譽榜</h2>
-                <div class="leaderboard-container">
-                    <table class="leaderboard-table">
-                        <thead>
-                            <tr><th>名次</th><th>名字</th><th>分數</th><th>課程</th></tr>
-                        </thead>
-                        <tbody id="leaderboard-body-modal"></tbody>
-                    </table>
+                <div id="revive-modal" class="screen hidden">
+                    <h2 style="color: var(--accent-color); margin: 0 0 10px 0; font-size: 1.6rem;">💔 愛心用光了！</h2>
+                    <p style="margin: 5px 0; font-size: 1.1rem;">別氣餒，我們把剩下的練習做完吧！</p>
+                    <div style="margin-bottom: 15px; color: #555;">(還有 <span id="revive-remaining">0</span> 個句子)</div>
+                    <button onclick="window.reviveGame()" style="font-size: 1.2rem; padding: 12px 30px; width: 100%;">💪 復活繼續</button>
+                    <button class="secondary" onclick="window.showStartScreen()">結束練習</button>
                 </div>
-                <button class="secondary" onclick="window.hideLeaderboardModal()">關閉</button>
-            </div>
 
-            <div id="quit-modal" class="screen hidden">
-                <h2 style="color: var(--accent-color); margin: 0 0 10px 0;">確定要離開嗎？</h2>
-                <p style="margin: 10px 0;">目前的遊戲進度會消失喔！</p>
-                <div style="display: flex; gap: 10px; justify-content: center; width: 100%;">
-                    <button class="danger" onclick="window.confirmQuit()" style="flex: 1;">確定離開</button>
-                    <button class="secondary" onclick="window.cancelQuit()" style="flex: 1;">取消</button>
+                <div id="lesson-complete-screen" class="screen hidden">
+                    <h2 style="margin: 0; color: var(--primary-color);">🎉 恭喜完成！</h2>
+                    <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
+                        <p id="complete-lesson-name" style="font-size: 1.2rem; font-weight: bold; margin: 5px 0;"></p>
+                        <p style="margin: 10px 0; font-size: 1.4rem;">總得分：<span id="complete-score" style="color: var(--accent-color); font-weight: 900;">0</span></p>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
+                        <button onclick="window.resetGame()" style="flex: 1;">再複習一次 🔄</button>
+                        <button class="secondary" onclick="window.showStartScreen()" style="flex: 1;">回首頁 🏠</button>
+                    </div>
+                </div>
+
+                <div id="leaderboard-modal" class="screen hidden" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3500;">
+                    <h2 style="color: var(--secondary-color); margin: 0 0 10px 0; font-size: 1.8rem;">🏆 歷史榮譽榜</h2>
+                    <div class="leaderboard-container">
+                        <table class="leaderboard-table">
+                            <thead>
+                                <tr><th>名次</th><th>名字</th><th>分數</th><th>課程</th></tr>
+                            </thead>
+                            <tbody id="leaderboard-body-modal"></tbody>
+                        </table>
+                    </div>
+                    <button class="secondary" onclick="window.hideLeaderboardModal()">關閉</button>
+                </div>
+
+                <div id="quit-modal" class="screen hidden">
+                    <h2 style="color: var(--accent-color); margin: 0 0 10px 0;">確定要離開嗎？</h2>
+                    <p style="margin: 10px 0;">目前的遊戲進度會消失喔！</p>
+                    <div style="display: flex; gap: 10px; justify-content: center; width: 100%;">
+                        <button class="danger" onclick="window.confirmQuit()" style="flex: 1;">確定離開</button>
+                        <button class="secondary" onclick="window.cancelQuit()" style="flex: 1;">取消</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="current-sentence-display">準備開始...<button id="replay-btn" onclick="window.replayCurrentAudio()">🔊</button></div>
-    <div class="footer">Design by Sophia Wong</div>
+    <!-- 底部只剩下句子和版權資訊 -->
+    <div id="bottom-area">
+        <div id="current-sentence-display">準備開始...<button id="replay-btn" onclick="window.replayCurrentAudio()">🔊</button></div>
+        <div class="footer">Design by Sophia Wong</div>
+    </div>
     <div id="toast"></div>
 
 <!-- Firebase Logic -->
@@ -794,6 +761,16 @@
     };
     
     let tsX, tsY; document.addEventListener('touchstart', e => { tsX = e.touches[0].screenX; tsY = e.touches[0].screenY; }, {passive: false}); document.addEventListener('touchmove', e => { if(isGameRunning && !isPaused) e.preventDefault(); }, {passive: false}); document.addEventListener('touchend', e => { if (isPaused || !isGameRunning) return; let dx_s = e.changedTouches[0].screenX - tsX, dy_s = e.changedTouches[0].screenY - tsY; if (Math.abs(dx_s) > Math.abs(dy_s)) { if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } } else { if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } } });
+    
+    // 全域禁止手機滾動，但允許 .leaderboard-container 和 .screen 內部滾動
+    document.body.addEventListener('touchmove', function(e) {
+        if (e.target.closest('.leaderboard-container') || e.target.closest('.screen')) {
+            // 允許這兩個容器滾動
+            return;
+        }
+        e.preventDefault();
+    }, { passive: false });
+
     window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); if (!isGameRunning || isPaused) return; if (e.keyCode === 37 && dx !== 1) { dx = -1; dy = 0; } else if (e.keyCode === 38 && dy !== 1) { dx = 0; dy = -1; } else if (e.keyCode === 39 && dx !== -1) { dx = 1; dy = 0; } else if (e.keyCode === 40 && dy !== -1) { dx = 0; dy = 1; } });
 </script>
 </body>
