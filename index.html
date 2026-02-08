@@ -20,14 +20,12 @@
             --locked-score: #999;       
         }
 
-        html, body {
+        html {
             width: 100%;
-            height: 100%;
+            min-height: 100vh;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* 禁止網頁滾動 */
-            overscroll-behavior: none; /* 關鍵：防止下拉重新整理或回彈 */
-            touch-action: none; /* 關鍵：全域禁止預設觸控行為 */
+            overflow-y: auto; /* 一般模式允許滾動 */
         }
 
         body {
@@ -37,14 +35,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; 
+            justify-content: flex-start; /* 一般模式從頂部排列 */
             gap: 1.5vh;
-            touch-action: none; 
             user-select: none;
             background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
             background-size: 20px 20px;
-            padding: 10px 0;
+            padding: 20px 0;
             box-sizing: border-box;
+            min-height: 100vh;
         }
 
         /* 確保互動元素恢復正常的觸控反應 */
@@ -61,7 +59,6 @@
             font-family: 'Gaegu', cursive, 'Noto Sans TC', sans-serif;
             flex-shrink: 0; 
             text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-            transition: font-size 0.3s;
         }
 
         /* --- 頂部控制與資訊區 (Top Area) --- */
@@ -185,35 +182,66 @@
             box-sizing: border-box;
         }
 
-        /* --- 全螢幕模式 (Auto Scaling + Compact) --- */
+        /* --- 全螢幕模式設定 (新增) --- */
         :fullscreen {
             background-color: var(--bg-color);
             padding: 2vmin;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* 全螢幕時改為置中對齊，讓畫面緊湊 */
             justify-content: center;
-            gap: 2vmin;
+            gap: 2vmin; /* 使用相對單位控制間距 */
+            overflow: hidden; /* 全螢幕時通常不需要卷軸 */
         }
 
-        :fullscreen h1 { font-size: 5vmin; }
+        /* 全螢幕下的字體與尺寸放大策略 (使用 vmin) */
+        :fullscreen h1 { font-size: 5vmin; margin: 0; }
         :fullscreen #score-info { font-size: 2.5vmin; }
         :fullscreen #lives { font-size: 3vmin; }
         :fullscreen button.control-btn { font-size: 3vmin; padding: 0.5vmin 1.5vmin; }
-        :fullscreen #top-controls, :fullscreen #game-controls-container, :fullscreen #online-status-bar { width: 90vw; max-width: none; }
+        
+        :fullscreen #top-controls, 
+        :fullscreen #game-controls-container, 
+        :fullscreen #online-status-bar,
+        :fullscreen #bottom-area { 
+            width: 90vw; 
+            max-width: 120vh; /* 避免在超寬螢幕過寬 */
+        }
+
         :fullscreen .speed-slider-container { padding: 1vmin 2vmin; border-radius: 2vmin; }
         :fullscreen .speed-slider-container label, :fullscreen #speed-val { font-size: 2.5vmin; }
         :fullscreen #online-status-bar { font-size: 2vmin; padding: 1vmin 2vmin; }
 
+        /* 全螢幕下的遊戲區塊：佔據剩餘空間 */
+        :fullscreen #game-wrapper-flex {
+            flex: 1; /* 自動填滿高度 */
+            width: 100%;
+            min-height: 0; /* 防止溢出 */
+            padding: 0;
+        }
+
         :fullscreen #game-container {
-            max-width: none; 
-            max-height: none;
-            width: min(95vw, 65vh);
-            height: min(95vw, 65vh);
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            aspect-ratio: 1/1; /* 強制保持正方形 */
+            
             border-width: 0.5vmin;
             border-radius: 2vmin;
         }
 
-        :fullscreen #bottom-area { width: 90vw; max-width: none; }
-        :fullscreen #current-sentence-display { font-size: 3.5vmin; min-height: 8vmin; padding: 1.5vmin; border-width: 0.5vmin; border-radius: 2vmin; }
+        :fullscreen #current-sentence-display { 
+            font-size: 3.5vmin; 
+            min-height: 8vmin; 
+            padding: 1.5vmin; 
+            border-width: 0.5vmin; 
+            border-radius: 2vmin; 
+        }
+        
         :fullscreen .footer { display: none; }
+
 
         /* 通用 UI 樣式 */
         .char-eaten { color: var(--secondary-color); text-shadow: 0 0 1px rgba(42, 157, 143, 0.2); transition: color 0.3s; }
@@ -261,6 +289,7 @@
             <div id="lives">❤️❤️❤️</div>
         </div>
         <div style="display: flex; gap: 5px;">
+            <!-- 加回全螢幕按鈕 -->
             <button class="control-btn" id="full-btn" onclick="window.toggleFullscreen()" title="全螢幕">⛶</button>
             <button class="control-btn" id="sound-btn" onclick="window.toggleSound()">🔊</button>
             <button class="control-btn" id="pause-btn" onclick="window.togglePause()">⏸️</button>
@@ -695,7 +724,6 @@
     window.updateSpeedFromSlider = function(val) { speed = parseInt(val); document.getElementById('speed-val').innerText = speed; if (isGameRunning && !isPaused) { stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); } };
     window.toggleFullscreen = function() { 
         if (!document.fullscreenElement) { 
-            // 修正：全螢幕現在會作用於整個文件，而不僅僅是遊戲容器
             document.documentElement.requestFullscreen().catch((err) => {
                 console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
             }); 
@@ -751,52 +779,42 @@
         }
     };
     
-    // 新的觸控邏輯：精細化控制，防止全螢幕跳出
+    // --- 強化版觸控鎖定邏輯 ---
     let tsX, tsY;
     
-    // 判斷是否為需要互動的 UI 元素
-    const isInteractive = (target) => {
-        return target.tagName === 'BUTTON' || 
-               target.tagName === 'INPUT' || 
-               target.tagName === 'SELECT' || 
-               target.closest('.leaderboard-container') || 
-               target.closest('.screen') ||
-               target.closest('.speed-slider-container');
-    };
+    // 1. 強制鎖定遊戲畫布，阻止所有預設行為 (包含下拉、滾動)
+    const gameCanvasElement = document.getElementById('gameCanvas');
+    if (gameCanvasElement) {
+        gameCanvasElement.addEventListener('touchstart', function(e) {
+            // 只要摸到畫布，就絕對禁止瀏覽器預設行為
+            e.preventDefault(); 
+            tsX = e.touches[0].screenX;
+            tsY = e.touches[0].screenY;
+        }, { passive: false });
 
-    document.addEventListener('touchstart', e => {
-        tsX = e.touches[0].screenX;
-        tsY = e.touches[0].screenY;
-        
-        // 如果觸摸的不是介面元素（即觸摸的是遊戲背景），則阻止預設行為
-        // 這能防止瀏覽器將滑動解釋為「拉動網頁」或「切換分頁/全螢幕」
-        if (!isInteractive(e.target)) {
+        gameCanvasElement.addEventListener('touchmove', function(e) {
+            // 禁止在畫布上滑動時觸發網頁滾動或重新整理
+            e.preventDefault(); 
+        }, { passive: false });
+
+        gameCanvasElement.addEventListener('touchend', function(e) {
+            // 禁止在畫布上點擊時觸發模擬滑鼠點擊
             e.preventDefault();
-        }
-    }, {passive: false});
+            
+            if (isPaused || !isGameRunning) return;
 
-    document.addEventListener('touchmove', e => {
-        // 同樣，如果不是在滑動排行榜或視窗內容，就完全禁止移動事件
-        if (!isInteractive(e.target)) {
-            e.preventDefault();
-        }
-    }, {passive: false});
+            let dx_s = e.changedTouches[0].screenX - tsX;
+            let dy_s = e.changedTouches[0].screenY - tsY;
+            
+            if (Math.abs(dx_s) > Math.abs(dy_s)) { 
+                if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } 
+            } else { 
+                if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } 
+            } 
+        }, { passive: false });
+    }
 
-    document.addEventListener('touchend', e => {
-        // 如果是介面操作，不處理貪食蛇轉向
-        if (isInteractive(e.target)) return;
-        
-        if (isPaused || !isGameRunning) return;
-
-        let dx_s = e.changedTouches[0].screenX - tsX;
-        let dy_s = e.changedTouches[0].screenY - tsY;
-        
-        if (Math.abs(dx_s) > Math.abs(dy_s)) { 
-            if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } 
-        } else { 
-            if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } 
-        } 
-    });
+    // 移除了全域的 touchmove 禁止，現在可以正常捲動頁面了
 
     window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); if (!isGameRunning || isPaused) return; if (e.keyCode === 37 && dx !== 1) { dx = -1; dy = 0; } else if (e.keyCode === 38 && dy !== 1) { dx = 0; dy = -1; } else if (e.keyCode === 39 && dx !== -1) { dx = 1; dy = 0; } else if (e.keyCode === 40 && dy !== -1) { dx = 0; dy = 1; } });
 </script>
