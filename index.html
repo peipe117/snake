@@ -391,7 +391,6 @@
                 <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
                     <p id="complete-lesson-name" style="font-size: 1.2rem; font-weight: bold; margin: 5px 0;"></p>
                     <p style="margin: 10px 0; font-size: 1.4rem;">總得分：<span id="complete-score" style="color: var(--accent-color); font-weight: 900;">0</span></p>
-                    <p id="revive-note" class="hidden" style="color: #888; font-size: 0.85rem;">(曾使用復活機制，得分已鎖定)</p>
                 </div>
                 <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
                     <button onclick="window.resetGame()" style="flex: 1;">再複習一次 🔄</button>
@@ -447,7 +446,7 @@
         } catch (e) { 
             isOffline = true; 
             const bar = document.getElementById('online-status-bar');
-            if(bar) bar.innerText = "🔴 單機模式";
+            if(bar) bar.innerText = "🔴 單機模式 (連線失敗)";
         }
     };
 
@@ -501,7 +500,7 @@
 </script>
 
 <script>
-    // --- 核心變數與具名函數定義 ---
+    // --- 變數與資料 (Variables & Data) ---
     const gridSize = 50, tileCount = 12; 
     const fruitIcons = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍉', '🍒', '🍑', '🍍', '🥝'];
     
@@ -532,7 +531,7 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx; try { audioCtx = new AudioContext(); } catch(e) {}
 
-    // --- 標準函數 (Hoisted) ---
+    // --- 工具函式 (必須置頂) ---
     function stopGameLoop() { if(gameLoop) { clearInterval(gameLoop); gameLoop = null; } }
     function resetSnakePos() { snake = [{ x: 5, y: 5 }, { x: 4, y: 5 }, { x: 3, y: 5 }]; dx = 1; dy = 0; }
     function updateLivesDisplay() { let h = ""; for(let i=0; i<lives; i++) h += "❤️"; for(let i=lives; i<3; i++) h += "🖤"; const el = document.getElementById('lives'); if(el) el.innerText = h; }
@@ -577,6 +576,7 @@
     function playErrorSound() { playTone(150, 0.2); }
     function playHealSound() { playTone(400, 0.1); setTimeout(() => playTone(600, 0.2), 100); }
 
+    // --- 遊戲邏輯 ---
     function loadSentences() {
         const val = document.getElementById('lesson-select').value;
         currentLessonSentences = val === "all" ? [].concat(...Object.values(lessonData)) : (lessonData[val] || lessonData["1"]);
@@ -625,10 +625,6 @@
         bonusItem.active = false; bombItem.active = false; heartItem.active = false;
         const sld = document.getElementById('speed-slider'); if(sld) speed = parseInt(sld.value);
         document.getElementById('score').innerText = score;
-        const scoreWrapper = document.getElementById('score-display-wrapper');
-        if(scoreWrapper) scoreWrapper.classList.remove('locked-score');
-        const rNote = document.getElementById('revive-note');
-        if(rNote) rNote.classList.add('hidden');
         updateLivesDisplay(); loadSentences(); startNewSentence();
         document.getElementById('pause-overlay').classList.add('hidden');
         document.getElementById('pause-btn').innerText = "⏸️";
@@ -641,6 +637,11 @@
         if (ny < 0) ny = tileCount - 1; else if (ny >= tileCount) ny = 0;
         const head = { x: nx, y: ny }; snake.unshift(head);
         
+        // Items
+        if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) { score += 100; document.getElementById('score').innerText = score; bonusItem.active = false; playBonusSound(); spawnParticles(head.x, head.y, "#FFD166", ['🎉', '💰']); spawnPopup(head.x, head.y, "+100", "#F4A261"); }
+        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) { score = Math.max(0, score - 50); document.getElementById('score').innerText = score; bombItem.active = false; ouchTimer = 30; playErrorSound(); spawnParticles(head.x, head.y, "#555", ['💣', '💥', '💢']); spawnPopup(head.x, head.y, "-50", "#555"); }
+        if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) { lives = Math.min(3, lives + 1); updateLivesDisplay(); heartItem.active = false; playHealSound(); spawnParticles(head.x, head.y, "#FF6B6B", ['❤️', '💖', '✨']); spawnPopup(head.x, head.y, "+1❤️", "#E76F51"); }
+
         let fIdx = foodItems.findIndex(f => f.x === head.x && f.y === head.y);
         if (fIdx !== -1 && !isTransitioning) {
             const eatenChar = foodItems[fIdx].char;
@@ -665,14 +666,9 @@
 
         if (ouchTimer > 0) ouchTimer--; if (happyTimer > 0) happyTimer--;
         if (snake.slice(1).some(p => p.x === snake[0].x && p.y === snake[0].y)) { handleCollision(); return; }
-        
-        // Item Hits
-        if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) { score += 100; document.getElementById('score').innerText = score; bonusItem.active = false; playBonusSound(); spawnParticles(head.x, head.y, "#FFD166", ['🎉', '💰']); spawnPopup(head.x, head.y, "+100", "#F4A261"); }
-        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) { score = Math.max(0, score - 50); document.getElementById('score').innerText = score; bombItem.active = false; ouchTimer = 30; playErrorSound(); spawnParticles(head.x, head.y, "#555", ['💣', '💥', '💢']); spawnPopup(head.x, head.y, "-50", "#555"); }
-        if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) { lives = Math.min(3, lives + 1); updateLivesDisplay(); heartItem.active = false; playHealSound(); spawnParticles(head.x, head.y, "#FF6B6B", ['❤️', '💖', '✨']); spawnPopup(head.x, head.y, "+1❤️", "#E76F51"); }
     }
 
-    // --- 4. 繪圖函式 (Draw) ---
+    // --- 繪圖函式 (Draw) ---
     function drawGame() {
         if (!isGameRunning || isPaused || !ctx) return;
         moveSnake(); manageItems(); 
@@ -718,16 +714,6 @@
     function showToast(msg) { const t = document.getElementById("toast"); if(!t) return; t.innerText = msg; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
     // --- UI Control Methods ---
-    window.reviveGame = function() { 
-        lives = 3; isRevived = true; 
-        const scoreWrapper = document.getElementById('score-display-wrapper');
-        if(scoreWrapper) scoreWrapper.classList.add('locked-score');
-        const rNote = document.getElementById('revive-note');
-        if(rNote) rNote.classList.remove('hidden');
-        document.getElementById('revive-modal').classList.add('hidden'); 
-        document.getElementById('backdrop').classList.add('hidden'); 
-        resetSnakePos(); spawnFoods(); isGameRunning = true; stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); 
-    };
     window.showLeaderboardModal = function() { if (isGameRunning && !isPaused) window.togglePause(); document.getElementById('backdrop').classList.remove('hidden'); document.getElementById('leaderboard-modal').classList.remove('hidden'); };
     window.hideLeaderboardModal = function() { document.getElementById('backdrop').classList.add('hidden'); document.getElementById('leaderboard-modal').classList.add('hidden'); if (isGameRunning && isPaused) window.togglePause(); };
     window.updateSpeedFromSlider = function(val) { speed = parseInt(val); document.getElementById('speed-val').innerText = speed; if (isGameRunning && !isPaused) { stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); } };
@@ -756,6 +742,7 @@
     };
     window.resetGame = function() { window.startGame(); };
     window.showStartScreen = function() { stopGameLoop(); isGameRunning = false; document.getElementById('start-screen').classList.remove('hidden'); document.getElementById('leaderboard-modal').classList.add('hidden'); document.getElementById('backdrop').classList.add('hidden'); document.getElementById('quit-modal').classList.add('hidden'); document.getElementById('revive-modal').classList.add('hidden'); document.getElementById('pause-overlay').classList.add('hidden'); document.getElementById('lesson-complete-screen').classList.add('hidden'); };
+    window.reviveGame = function() { lives = 3; isRevived = true; document.getElementById('score-display-wrapper').classList.add('locked-score'); document.getElementById('revive-note').classList.remove('hidden'); document.getElementById('revive-modal').classList.add('hidden'); document.getElementById('backdrop').classList.add('hidden'); resetSnakePos(); spawnFoods(); isGameRunning = true; stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); };
     window.gameOver = function() { document.getElementById('revive-modal').classList.add('hidden'); isGameRunning = false; stopGameLoop(); document.getElementById('final-score').innerText = score; document.getElementById('game-over-screen').classList.remove('hidden'); if(window.saveScoreToCloud) window.saveScoreToCloud(playerName, score, document.getElementById('lesson-select').options[document.getElementById('lesson-select').selectedIndex].text); };
     window.shareLesson = function() { const v = document.getElementById('lesson-select').value; const url = new URL(window.location.href); url.searchParams.set('lesson', v); const temp = document.createElement("textarea"); temp.value = url.toString(); document.body.appendChild(temp); temp.select(); document.execCommand("copy"); document.body.removeChild(temp); showToast("已複製課程連結！"); };
     window.replayCurrentAudio = function() { speakText(currentSentence); };
