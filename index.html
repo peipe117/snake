@@ -128,23 +128,14 @@
             z-index: 3100;
         }
         
-        /* 排行榜強制懸浮置中 */
-        #leaderboard-modal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 3500;
-        }
-        
         .modal-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(38, 70, 83, 0.6);
-            backdrop-filter: blur(5px);
+            background: rgba(38, 70, 83, 0.5);
+            backdrop-filter: blur(4px);
             z-index: 2500;
         }
 
@@ -442,21 +433,23 @@
     import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     let firebaseConfig;
-    try {
-        // 在預覽環境中自動讀取
-        firebaseConfig = JSON.parse(__firebase_config);
-    } catch (e) {
-        // 如果下載到本地執行，請填入您的 Firebase 設定
-const firebaseConfig = {
-  apiKey: "AIzaSyBQI17CXEhD5mJhDCid-mt0cAL6qvdcAiA",
-  authDomain: "chinses-snake-game.firebaseapp.com",
-  projectId: "chinses-snake-game",
-  storageBucket: "chinses-snake-game.firebasestorage.app",
-  messagingSenderId: "239140560404",
-  appId: "1:239140560404:web:dd5ead9018a0f0e5ad5101"
-};
-       
-        console.log("切換至手動 Firebase 設定模式");
+    // 使用雙重配置：預覽環境變數 或 手動設定
+    if (typeof __firebase_config !== 'undefined') {
+        try {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } catch (e) { console.warn("Environment config parse error"); }
+    }
+    
+    // 如果沒有環境變數（下載後執行），則使用此備用配置
+    if (!firebaseConfig) {
+        firebaseConfig = {
+            apiKey: "AIzaSyBQI17CXEhD5mJhDCid-mt0cAL6qvdcAiA",
+            authDomain: "chinses-snake-game.firebaseapp.com",
+            projectId: "chinses-snake-game",
+            storageBucket: "chinses-snake-game.firebasestorage.app",
+            messagingSenderId: "239140560404",
+            appId: "1:239140560404:web:dd5ead9018a0f0e5ad5101"
+        };
     }
 
     const appId = (typeof __app_id !== 'undefined' ? __app_id : 'default-app').replace(/\//g, '_');
@@ -490,13 +483,14 @@ const firebaseConfig = {
             startFirebaseListeners();
             const bar = document.getElementById('online-status-bar');
             if(bar) bar.innerText = "🟢 已連線";
-            window.sendHeartbeat(localStorage.getItem('snake_player_name') || "訪客", "首頁");
+            // 初始心跳
+            const savedName = localStorage.getItem('snake_player_name') || "訪客";
+            window.sendHeartbeat(savedName, "首頁");
         }
     });
 
     function startFirebaseListeners() {
         if (!auth.currentUser) return;
-        
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'presence'), (snap) => {
             const now = Date.now(), online = [];
             snap.forEach(doc => {
@@ -536,7 +530,7 @@ const firebaseConfig = {
 </script>
 
 <script>
-    // --- 核心變數與函數 (Hoisted) ---
+    // --- 1. 變數與資料 (Variables & Data) ---
     const gridSize = 50, tileCount = 12; 
     const fruitIcons = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍉', '🍒', '🍑', '🍍', '🥝'];
     
@@ -567,7 +561,7 @@ const firebaseConfig = {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx; try { audioCtx = new AudioContext(); } catch(e) {}
 
-    // --- 標準函數 (Hoisted) ---
+    // --- 2. 工具函式 (Utility Functions) ---
     function stopGameLoop() { if(gameLoop) { clearInterval(gameLoop); gameLoop = null; } }
     function resetSnakePos() { snake = [{ x: 5, y: 5 }, { x: 4, y: 5 }, { x: 3, y: 5 }]; dx = 1; dy = 0; }
     function updateLivesDisplay() { let h = ""; for(let i=0; i<lives; i++) h += "❤️"; for(let i=lives; i<3; i++) h += "🖤"; const el = document.getElementById('lives'); if(el) el.innerText = h; }
@@ -671,19 +665,19 @@ const firebaseConfig = {
         if (nx < 0) nx = tileCount - 1; else if (nx >= tileCount) nx = 0;
         if (ny < 0) ny = tileCount - 1; else if (ny >= tileCount) ny = 0;
         const head = { x: nx, y: ny }; snake.unshift(head);
-        const addScore = (pts) => { if (!isRevived) { score += pts; document.getElementById('score').innerText = score; } };
-
-        if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) { addScore(100); bonusItem.active = false; playBonusSound(); spawnParticles(head.x, head.y, "#FFD166", ['🎉', '💰']); spawnPopup(head.x, head.y, "+100", "#F4A261"); }
-        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) { if(!isRevived) { score=Math.max(0, score-50); document.getElementById('score').innerText = score; } bombItem.active = false; playErrorSound(); ouchTimer = 30; spawnParticles(head.x, head.y, "#555", ['💣', '💥', '💢']); spawnPopup(head.x, head.y, "-50", "#555"); }
-        if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) { lives++; heartItem.active = false; updateLivesDisplay(); playHealSound(); spawnParticles(head.x, head.y, "#FF6B6B", ['❤️', '💖', '✨']); spawnPopup(head.x, head.y, "+1❤️", "#E76F51"); }
+        
+        // Item Hits
+        if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) { score += 100; document.getElementById('score').innerText = score; bonusItem.active = false; playBonusSound(); spawnParticles(head.x, head.y, "#FFD166", ['🎉', '💰']); spawnPopup(head.x, head.y, "+100", "#F4A261"); }
+        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) { score = Math.max(0, score - 50); document.getElementById('score').innerText = score; bombItem.active = false; ouchTimer = 30; playErrorSound(); spawnParticles(head.x, head.y, "#555", ['💣', '💥', '💢']); spawnPopup(head.x, head.y, "-50", "#555"); }
+        if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) { lives = Math.min(3, lives + 1); updateLivesDisplay(); heartItem.active = false; playHealSound(); spawnParticles(head.x, head.y, "#FF6B6B", ['❤️', '💖', '✨']); spawnPopup(head.x, head.y, "+1❤️", "#E76F51"); }
 
         let fIdx = foodItems.findIndex(f => f.x === head.x && f.y === head.y);
         if (fIdx !== -1 && !isTransitioning) {
             const eatenChar = foodItems[fIdx].char;
             if (foodItems[fIdx].isCorrect) {
                 if(!isRevived) score += 10; document.getElementById('score').innerText = score;
-                eatenSentenceChars.push(eatenChar); speakText(eatenChar); 
-                happyTimer = 25; spawnParticles(head.x, head.y, "#2A9D8F", ['✨', '⭐', '🌈']);
+                eatenSentenceChars.push(eatenChar); speakText(eatenChar); happyTimer = 25;
+                spawnParticles(head.x, head.y, "#2A9D8F", ['✨', '⭐', '🌈']);
                 spawnPopup(head.x, head.y, "+10", "#2A9D8F"); 
                 charIndex++; while (charIndex < currentSentence.length && isPunctuation(currentSentence[charIndex])) charIndex++;
                 updateSentenceDisplay();
@@ -703,7 +697,7 @@ const firebaseConfig = {
         if (snake.slice(1).some(p => p.x === snake[0].x && p.y === snake[0].y)) { handleCollision(); return; }
     }
 
-    // --- 繪圖函式 (Draw) ---
+    // --- 4. 繪圖函式 (Draw) ---
     function drawGame() {
         if (!isGameRunning || isPaused || !ctx) return;
         moveSnake(); manageItems(); 
@@ -782,9 +776,25 @@ const firebaseConfig = {
     window.shareLesson = function() { const v = document.getElementById('lesson-select').value; const url = new URL(window.location.href); url.searchParams.set('lesson', v); const temp = document.createElement("textarea"); temp.value = url.toString(); document.body.appendChild(temp); temp.select(); document.execCommand("copy"); document.body.removeChild(temp); showToast("已複製課程連結！"); };
     window.replayCurrentAudio = function() { speakText(currentSentence); };
 
-    window.onload = function() { const savedName = localStorage.getItem('snake_player_name'); if (savedName) document.getElementById('player-name').value = savedName; };
+    window.onload = function() {
+        const savedName = localStorage.getItem('snake_player_name'); 
+        if (savedName) document.getElementById('player-name').value = savedName; 
+        const urlParams = new URLSearchParams(window.location.search);
+        const lessonParam = urlParams.get('lesson');
+        if (lessonParam) {
+            const select = document.getElementById('lesson-select');
+            if (select) {
+                const optionExists = [...select.options].some(o => o.value === lessonParam);
+                if (optionExists) {
+                    select.value = lessonParam;
+                    showToast("已載入分享的課程進度");
+                }
+            }
+        }
+    };
+    
+    let tsX, tsY; document.addEventListener('touchstart', e => { tsX = e.touches[0].screenX; tsY = e.touches[0].screenY; }, {passive: false}); document.addEventListener('touchmove', e => { if(isGameRunning && !isPaused) e.preventDefault(); }, {passive: false}); document.addEventListener('touchend', e => { if (isPaused || !isGameRunning) return; let dx_s = e.changedTouches[0].screenX - tsX, dy_s = e.changedTouches[0].screenY - tsY; if (Math.abs(dx_s) > Math.abs(dy_s)) { if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } } else { if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } } });
     window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); if (!isGameRunning || isPaused) return; if (e.keyCode === 37 && dx !== 1) { dx = -1; dy = 0; } else if (e.keyCode === 38 && dy !== 1) { dx = 0; dy = -1; } else if (e.keyCode === 39 && dx !== -1) { dx = 1; dy = 0; } else if (e.keyCode === 40 && dy !== -1) { dx = 0; dy = 1; } });
-    let tsX, tsY; document.addEventListener('touchstart', e => { tsX = e.touches[0].screenX; tsY = e.touches[0].screenY; }, {passive: false}); document.addEventListener('touchend', e => { if (isPaused || !isGameRunning) return; let dx_s = e.changedTouches[0].screenX - tsX, dy_s = e.changedTouches[0].screenY - tsY; if (Math.abs(dx_s) > Math.abs(dy_s)) { if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } } else { if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } } });
 </script>
 </body>
 </html>
