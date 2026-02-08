@@ -26,7 +26,8 @@
             margin: 0;
             padding: 0;
             overflow: hidden; /* 禁止網頁滾動 */
-            overscroll-behavior: none; 
+            overscroll-behavior: none; /* 關鍵：防止下拉重新整理或回彈 */
+            touch-action: none; /* 關鍵：全域禁止預設觸控行為 */
         }
 
         body {
@@ -36,9 +37,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* 改回 center，讓所有元素往中間靠，不要分太開 */
             justify-content: center; 
-            /* 使用 gap 控制元素間距 */
             gap: 1.5vh;
             touch-action: none; 
             user-select: none;
@@ -46,6 +45,11 @@
             background-size: 20px 20px;
             padding: 10px 0;
             box-sizing: border-box;
+        }
+
+        /* 確保互動元素恢復正常的觸控反應 */
+        button, input, select, .screen, .leaderboard-container, .speed-slider-container {
+            touch-action: manipulation;
         }
 
         /* --- 標題區域 (Header) --- */
@@ -66,7 +70,7 @@
             max-width: 600px;
             flex-shrink: 0;
             box-sizing: border-box;
-            margin: 0; /* 移除額外 margin，由 body gap 控制 */
+            margin: 0;
         }
 
         #top-controls {
@@ -111,15 +115,13 @@
 
         /* --- 遊戲主體區域 (Main) --- */
         #game-wrapper-flex {
-            /* 關鍵：改回 flex: 0 1 auto */
-            /* 不要強制佔滿空間，而是根據內容大小縮放，這樣就不會推開上下介面 */
             flex: 0 1 auto;
             display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
             min-height: 0; 
-            padding: 0 5px; /* 左右留一點縫隙 */
+            padding: 0 5px; 
             box-sizing: border-box;
         }
 
@@ -130,14 +132,9 @@
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(38, 70, 83, 0.15);
             border: 4px solid #FFF;
-            
-            /* 一般模式設定 */
             width: 100%;
             max-width: 600px;
-            
-            /* 保持正方形 */
             aspect-ratio: 1 / 1;
-            
             display: flex;
             justify-content: center;
             align-items: center;
@@ -167,7 +164,7 @@
         }
 
         #current-sentence-display {
-            margin: 0; /* 由 gap 控制 */
+            margin: 0;
             min-height: 60px; 
             padding: 10px 15px;
             background: #fff;
@@ -192,9 +189,8 @@
         :fullscreen {
             background-color: var(--bg-color);
             padding: 2vmin;
-            /* 確保全螢幕也是緊湊置中 */
             justify-content: center;
-            gap: 2vmin; /* 稍微加大一點間距，適應大畫面 */
+            gap: 2vmin;
         }
 
         :fullscreen h1 { font-size: 5vmin; }
@@ -209,13 +205,8 @@
         :fullscreen #game-container {
             max-width: none; 
             max-height: none;
-            
-            /* 核心修正：動態計算大小 */
-            /* 寬度不超過 95vw，高度不超過 65vh (預留 35% 給上下介面) */
-            /* 這樣遊戲會盡可能大，但永遠不會把介面推出去 */
             width: min(95vw, 65vh);
             height: min(95vw, 65vh);
-            
             border-width: 0.5vmin;
             border-radius: 2vmin;
         }
@@ -760,16 +751,52 @@
         }
     };
     
-    let tsX, tsY; document.addEventListener('touchstart', e => { tsX = e.touches[0].screenX; tsY = e.touches[0].screenY; }, {passive: false}); document.addEventListener('touchmove', e => { if(isGameRunning && !isPaused) e.preventDefault(); }, {passive: false}); document.addEventListener('touchend', e => { if (isPaused || !isGameRunning) return; let dx_s = e.changedTouches[0].screenX - tsX, dy_s = e.changedTouches[0].screenY - tsY; if (Math.abs(dx_s) > Math.abs(dy_s)) { if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } } else { if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } } });
+    // 新的觸控邏輯：精細化控制，防止全螢幕跳出
+    let tsX, tsY;
     
-    // 全域禁止手機滾動，但允許 .leaderboard-container 和 .screen 內部滾動
-    document.body.addEventListener('touchmove', function(e) {
-        if (e.target.closest('.leaderboard-container') || e.target.closest('.screen')) {
-            // 允許這兩個容器滾動
-            return;
+    // 判斷是否為需要互動的 UI 元素
+    const isInteractive = (target) => {
+        return target.tagName === 'BUTTON' || 
+               target.tagName === 'INPUT' || 
+               target.tagName === 'SELECT' || 
+               target.closest('.leaderboard-container') || 
+               target.closest('.screen') ||
+               target.closest('.speed-slider-container');
+    };
+
+    document.addEventListener('touchstart', e => {
+        tsX = e.touches[0].screenX;
+        tsY = e.touches[0].screenY;
+        
+        // 如果觸摸的不是介面元素（即觸摸的是遊戲背景），則阻止預設行為
+        // 這能防止瀏覽器將滑動解釋為「拉動網頁」或「切換分頁/全螢幕」
+        if (!isInteractive(e.target)) {
+            e.preventDefault();
         }
-        e.preventDefault();
-    }, { passive: false });
+    }, {passive: false});
+
+    document.addEventListener('touchmove', e => {
+        // 同樣，如果不是在滑動排行榜或視窗內容，就完全禁止移動事件
+        if (!isInteractive(e.target)) {
+            e.preventDefault();
+        }
+    }, {passive: false});
+
+    document.addEventListener('touchend', e => {
+        // 如果是介面操作，不處理貪食蛇轉向
+        if (isInteractive(e.target)) return;
+        
+        if (isPaused || !isGameRunning) return;
+
+        let dx_s = e.changedTouches[0].screenX - tsX;
+        let dy_s = e.changedTouches[0].screenY - tsY;
+        
+        if (Math.abs(dx_s) > Math.abs(dy_s)) { 
+            if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } 
+        } else { 
+            if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } 
+        } 
+    });
 
     window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); if (!isGameRunning || isPaused) return; if (e.keyCode === 37 && dx !== 1) { dx = -1; dy = 0; } else if (e.keyCode === 38 && dy !== 1) { dx = 0; dy = -1; } else if (e.keyCode === 39 && dx !== -1) { dx = 1; dy = 0; } else if (e.keyCode === 40 && dy !== -1) { dx = 0; dy = 1; } });
 </script>
