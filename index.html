@@ -25,7 +25,7 @@
             min-height: 100vh;
             margin: 0;
             padding: 0;
-            overflow-y: auto; /* 一般模式允許滾動 */
+            overflow-y: auto;
         }
 
         body {
@@ -35,7 +35,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* 從頂部排列 */
+            justify-content: flex-start;
             gap: 1.5vh;
             user-select: none;
             background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
@@ -45,12 +45,10 @@
             min-height: 100vh;
         }
 
-        /* 確保互動元素恢復正常的觸控反應 */
         button, input, select, .screen, .leaderboard-container, .speed-slider-container {
             touch-action: manipulation;
         }
 
-        /* --- 標題區域 (Header) --- */
         h1 {
             color: var(--secondary-color);
             margin: 0;
@@ -61,7 +59,6 @@
             text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         }
 
-        /* --- 頂部控制與資訊區 (Top Area) --- */
         #top-controls, #game-controls-container, #online-status-bar {
             width: 95%;
             max-width: 600px;
@@ -110,7 +107,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* --- 遊戲主體區域 (Main) --- */
         #game-wrapper-flex {
             flex: 0 1 auto;
             display: flex;
@@ -150,7 +146,6 @@
             object-fit: contain;
         }
 
-        /* --- 底部區域 (Footer) --- */
         #bottom-area {
             width: 95%;
             max-width: 600px;
@@ -182,7 +177,6 @@
             box-sizing: border-box;
         }
 
-        /* 通用 UI 樣式 */
         .char-eaten { color: var(--secondary-color); text-shadow: 0 0 1px rgba(42, 157, 143, 0.2); transition: color 0.3s; }
         .char-current { color: var(--accent-color); text-decoration: underline; text-underline-offset: 4px; animation: pulseTarget 1.5s infinite; }
         .char-pending { color: #ccc; }
@@ -228,14 +222,12 @@
             <div id="lives">❤️❤️❤️</div>
         </div>
         <div style="display: flex; gap: 5px;">
-            <!-- 已移除全螢幕按鈕 -->
             <button class="control-btn" id="sound-btn" onclick="window.toggleSound()">🔊</button>
             <button class="control-btn" id="pause-btn" onclick="window.togglePause()">⏸️</button>
             <button class="control-btn" id="exit-btn" onclick="window.triggerQuit()">🏠</button>
         </div>
     </div>
 
-    <!-- 移回上方：速度控制 -->
     <div id="game-controls-container">
         <div class="speed-slider-container">
             <label>🐢 慢</label>
@@ -245,10 +237,8 @@
         </div>
     </div>
 
-    <!-- 移回上方：在線狀態 -->
     <div id="online-status-bar">🟡 連線中...</div>
 
-    <!-- 中間遊戲區 -->
     <div id="game-wrapper-flex">
         <div id="game-container">
             <canvas id="gameCanvas" width="600" height="600"></canvas>
@@ -282,10 +272,28 @@
                         <button class="secondary" onclick="window.shareLesson()" style="margin: 0; padding: 0 20px;">🔗</button>
                     </div>
                     
-                    <div style="display: flex; gap: 10px; width: 100%;">
-                        <button onclick="window.startGame()" style="flex:2;">開始遊戲 ▶️</button>
-                        <button class="secondary" onclick="window.showLeaderboardModal()" style="flex:1;">🏆 排行榜</button>
+                    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                        <button onclick="window.startGame()" style="width: 100%;">開始遊戲 ▶️</button>
+                        <div style="display: flex; gap: 10px; width: 100%;">
+                            <button class="secondary" onclick="window.showLeaderboardModal()" style="flex:1;">🏆 排行榜</button>
+                            <button class="secondary" onclick="window.showHelpModal()" style="flex:1;">❓ 遊戲說明</button>
+                        </div>
                     </div>
+                </div>
+
+                <div id="help-modal" class="screen hidden" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3500; text-align: left;">
+                    <h2 style="color: var(--secondary-color); margin: 0 0 10px 0; font-size: 1.8rem; text-align: center;">🐍 遊戲說明</h2>
+                    <div style="font-size: 1.05rem; line-height: 1.6; color: var(--text-color);">
+                        <p style="margin: 8px 0;">🎯 <b>任務：</b>照順序吃掉出現的字，完成課文句子。吃對加分，吃錯扣分！</p>
+                        <p style="margin: 8px 0;">🎮 <b>操作：</b><br>💻 電腦：<code>W A S D</code> 或 <code>⬆️⬇️⬅️➡️</code><br>📱 手機：在畫面上 👆 滑動方向</p>
+                        <p style="margin: 8px 0;">✨ <b>道具：</b><br>
+                            🍎 <b>水果：</b>好運加 100 分！<br>
+                            💣 <b>炸彈：</b>扣 50 分，還會眼冒金星！<br>
+                            ❤️ <b>愛心：</b>補血 1 滴（上限 3 滴血）。
+                        </p>
+                        <p style="margin: 8px 0; color: var(--accent-color);">⚠️ <b>注意：</b>撞到自己的身體會扣血喔！</p>
+                    </div>
+                    <button class="secondary" onclick="window.hideHelpModal()" style="width: 100%; margin-top: 15px;">我知道了</button>
                 </div>
 
                 <div id="revive-modal" class="screen hidden">
@@ -329,11 +337,23 @@
                         <button class="secondary" onclick="window.cancelQuit()" style="flex: 1;">取消</button>
                     </div>
                 </div>
+                
+                <div id="game-over-screen" class="screen hidden">
+                    <h2 id="game-over-title" style="margin: 0; color: var(--text-color);">😲 遊戲結束！</h2>
+                    <div style="background: #f0f0f0; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box;">
+                        <p id="game-over-lesson" style="font-size: 1.1rem; color: #555; margin: 5px 0;"></p>
+                        <p style="margin: 5px 0; font-size: 1.3rem;"><span id="game-over-name">你</span>的最終得分</p>
+                        <p style="margin: 0; font-size: 3rem; color: var(--accent-color); font-weight: 900; line-height: 1;"><span id="final-score">0</span></p>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 10px;">
+                        <button onclick="window.resetGame()" style="flex: 1;">再玩一次 🔄</button>
+                        <button class="secondary" onclick="window.showStartScreen()" style="flex: 1;">換課文 📖</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 底部只剩下句子和版權資訊 -->
     <div id="bottom-area">
         <div id="current-sentence-display">準備開始...<button id="replay-btn" onclick="window.replayCurrentAudio()">🔊</button></div>
         <div class="footer">Design by Sophia Wong</div>
@@ -347,14 +367,10 @@
     import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     let firebaseConfig;
-    // 使用雙重配置：預覽環境變數 或 手動設定
     if (typeof __firebase_config !== 'undefined') {
-        try {
-            firebaseConfig = JSON.parse(__firebase_config);
-        } catch (e) { console.warn("Environment config parse error"); }
+        try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) { console.warn("Environment config parse error"); }
     }
     
-    // 如果沒有環境變數（下載後執行），則使用此備用配置
     if (!firebaseConfig) {
         firebaseConfig = {
             apiKey: "AIzaSyBQI17CXEhD5mJhDCid-mt0cAL6qvdcAiA",
@@ -372,7 +388,6 @@
     const db = getFirestore(app);
     let isOffline = false;
 
-    // 連線逾時防呆
     setTimeout(() => {
         const bar = document.getElementById('online-status-bar');
         if (bar && bar.innerText.includes("連線中")) {
@@ -397,7 +412,6 @@
             startFirebaseListeners();
             const bar = document.getElementById('online-status-bar');
             if(bar) bar.innerText = "🟢 已連線";
-            // 初始心跳
             const savedName = localStorage.getItem('snake_player_name') || "訪客";
             window.sendHeartbeat(savedName, "首頁");
         }
@@ -444,7 +458,6 @@
 </script>
 
 <script>
-    // --- 1. 變數與資料 (Variables & Data) ---
     const gridSize = 50, tileCount = 12; 
     const fruitIcons = ['🍎', '🍌', '🍇', '🍊', '🍓', '🍉', '🍒', '🍑', '🍍', '🥝'];
     
@@ -493,18 +506,49 @@
         return p;
     }
     function spawnPopup(x, y, text, color) { popups.push({ x: x * gridSize + 25, y: y * gridSize, text, life: 1, color }); }
-    function spawnParticles(x, y, color, customEmojis = null) {
-        const emojis = customEmojis || ['✨', '⭐', '🎉', '🎊', '🌈'];
-        for(let i=0; i<8; i++) {
-            particles.push({ x: x * gridSize + 25, y: y * gridSize + 25, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*10, life: 1, emoji: emojis[Math.floor(Math.random() * emojis.length)] });
+    
+    // --- 強化版粒子特效函式 ---
+    function spawnParticles(gx, gy, color, customEmojis = null) {
+        let icons = customEmojis || ['✨', '⭐'];
+        let isExplosion = false;
+        let count = 4;
+
+        // 如果是炸彈，設定為爆炸模式
+        if (icons.includes('💥') || icons.includes('💀')) { 
+            isExplosion = true; 
+            count = 8; 
+        }
+
+        for(let i=0; i<count; i++) {
+            let vx, vy;
+            if (isExplosion) {
+                // 爆炸：向四面八方飛散
+                vx = (Math.random() - 0.5) * 12; 
+                vy = (Math.random() - 0.5) * 12;
+            } else {
+                // 飄動：主要向上飄
+                vx = (Math.random() - 0.5) * 4; 
+                vy = -Math.random() * 2 - 2; 
+            }
+            particles.push({ 
+                x: gx * gridSize + 25, 
+                y: gy * gridSize + 25, 
+                vx: vx, 
+                vy: vy, 
+                life: 1, 
+                emoji: icons[Math.floor(Math.random() * icons.length)] 
+            });
         }
     }
+
     function isPunctuation(c) { return /[，。、？！：；「」『』\s,.?!:;"'()（）]/.test(c); }
     function getCorrectAudioText(c, i, s) { 
         if (c === '長' && (s[i+1] === '大' || s[i+1] === '高')) return '掌'; 
         if (c === '覺' && s[i-1] === '睡') return '叫';
         if (c === '樂' && s[i-1] === '音') return '月';
         if (c === '都') return '兜'; 
+        if (c === '什') return '神';
+        if (c === '興' && s[i-1] === '高') return '幸';
         return c; 
     }
     function speakText(t) { 
@@ -566,7 +610,7 @@
         resetSnakePos(); score = 0; lives = 3; ouchTimer = 0; happyTimer = 0;
         eatenSentenceChars = []; foodItems = []; particles = []; popups = [];
         bonusItem.active = false; bombItem.active = false; heartItem.active = false;
-        const sld = document.getElementById('speed-slider'); if(sld) speed = parseInt(sld.value);
+        const sld = document.getElementById('speed-slider'); if(sld) speed = parseInt(sld.value) || 2.5;
         document.getElementById('score').innerText = score;
         updateLivesDisplay(); loadSentences(); startNewSentence();
         document.getElementById('pause-overlay').classList.add('hidden');
@@ -581,9 +625,27 @@
         const head = { x: nx, y: ny }; snake.unshift(head);
         
         // Item Hits
-        if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) { score += 100; document.getElementById('score').innerText = score; bonusItem.active = false; playBonusSound(); spawnParticles(head.x, head.y, "#FFD166", ['🎉', '💰']); spawnPopup(head.x, head.y, "+100", "#F4A261"); }
-        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) { score = Math.max(0, score - 50); document.getElementById('score').innerText = score; bombItem.active = false; ouchTimer = 30; playErrorSound(); spawnParticles(head.x, head.y, "#555", ['💣', '💥', '💢']); spawnPopup(head.x, head.y, "-50", "#555"); }
-        if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) { lives = Math.min(3, lives + 1); updateLivesDisplay(); heartItem.active = false; playHealSound(); spawnParticles(head.x, head.y, "#FF6B6B", ['❤️', '💖', '✨']); spawnPopup(head.x, head.y, "+1❤️", "#E76F51"); }
+        if (bonusItem.active && head.x === bonusItem.x && head.y === bonusItem.y) { 
+            score += 100; document.getElementById('score').innerText = score; 
+            bonusItem.active = false; playBonusSound(); 
+            // 水果特效：星星
+            spawnParticles(head.x, head.y, "#FFD166", ['⭐', '✨', '🌟', '💫']); 
+            spawnPopup(head.x, head.y, "+100", "#F4A261"); 
+        }
+        if (bombItem.active && head.x === bombItem.x && head.y === bombItem.y) { 
+            score = Math.max(0, score - 50); document.getElementById('score').innerText = score; 
+            bombItem.active = false; ouchTimer = 30; playErrorSound(); 
+            // 炸彈特效：爆炸
+            spawnParticles(head.x, head.y, "#555", ['💥', '🔥', '💨', '💀']); 
+            spawnPopup(head.x, head.y, "-50", "#555"); 
+        }
+        if (heartItem.active && head.x === heartItem.x && head.y === heartItem.y) { 
+            lives = Math.min(3, lives + 1); updateLivesDisplay(); 
+            heartItem.active = false; playHealSound(); 
+            // 愛心特效
+            spawnParticles(head.x, head.y, "#FF6B6B", ['❤️', '💖', '✨']); 
+            spawnPopup(head.x, head.y, "+1❤️", "#E76F51"); 
+        }
 
         let fIdx = foodItems.findIndex(f => f.x === head.x && f.y === head.y);
         if (fIdx !== -1 && !isTransitioning) {
@@ -591,7 +653,8 @@
             if (foodItems[fIdx].isCorrect) {
                 if(!isRevived) score += 10; document.getElementById('score').innerText = score;
                 eatenSentenceChars.push(eatenChar); speakText(eatenChar); happyTimer = 25;
-                spawnParticles(head.x, head.y, "#2A9D8F", ['✨', '⭐', '🌈']);
+                // 正確字特效：愛心
+                spawnParticles(head.x, head.y, "#2A9D8F", ['❤️', '💖', '🥰', '😍']); 
                 spawnPopup(head.x, head.y, "+10", "#2A9D8F"); 
                 charIndex++; while (charIndex < currentSentence.length && isPunctuation(currentSentence[charIndex])) charIndex++;
                 updateSentenceDisplay();
@@ -602,7 +665,9 @@
                 } else spawnFoods();
             } else {
                 if (!isRevived) score = Math.max(0, score - 20); document.getElementById('score').innerText = score;
-                ouchTimer = 30; playErrorSound(); spawnParticles(head.x, head.y, "#D32F2F", ['❌', '💥', '❕']);
+                ouchTimer = 30; playErrorSound(); 
+                // 錯誤字特效：暈眩/叉叉
+                spawnParticles(head.x, head.y, "#D32F2F", ['❌', '❓', '🌀', '😵']); 
                 spawnPopup(head.x, head.y, "-20", "#D32F2F"); spawnFoods();
             }
         } else snake.pop();
@@ -657,12 +722,13 @@
     function showToast(msg) { const t = document.getElementById("toast"); if(!t) return; t.innerText = msg; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
     // --- UI Control Methods ---
+    window.showHelpModal = function() { document.getElementById('backdrop').classList.remove('hidden'); document.getElementById('help-modal').classList.remove('hidden'); };
+    window.hideHelpModal = function() { document.getElementById('backdrop').classList.add('hidden'); document.getElementById('help-modal').classList.add('hidden'); };
     window.showLeaderboardModal = function() { if (isGameRunning && !isPaused) window.togglePause(); document.getElementById('backdrop').classList.remove('hidden'); document.getElementById('leaderboard-modal').classList.remove('hidden'); };
     window.hideLeaderboardModal = function() { document.getElementById('backdrop').classList.add('hidden'); document.getElementById('leaderboard-modal').classList.add('hidden'); if (isGameRunning && isPaused) window.togglePause(); };
     window.updateSpeedFromSlider = function(val) { speed = parseInt(val); document.getElementById('speed-val').innerText = speed; if (isGameRunning && !isPaused) { stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); } };
     window.toggleFullscreen = function() { 
         if (!document.fullscreenElement) { 
-            // 修正：全螢幕現在會作用於整個文件，而不僅僅是遊戲容器
             document.documentElement.requestFullscreen().catch((err) => {
                 console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
             }); 
@@ -695,7 +761,7 @@
         if (window.sendHeartbeat) window.sendHeartbeat(playerName, sel.options[sel.selectedIndex].text);
     };
     window.resetGame = function() { window.startGame(); };
-    window.showStartScreen = function() { stopGameLoop(); isGameRunning = false; document.getElementById('start-screen').classList.remove('hidden'); document.getElementById('leaderboard-modal').classList.add('hidden'); document.getElementById('backdrop').classList.add('hidden'); document.getElementById('quit-modal').classList.add('hidden'); document.getElementById('revive-modal').classList.add('hidden'); document.getElementById('pause-overlay').classList.add('hidden'); document.getElementById('lesson-complete-screen').classList.add('hidden'); };
+    window.showStartScreen = function() { stopGameLoop(); isGameRunning = false; document.getElementById('start-screen').classList.remove('hidden'); document.getElementById('leaderboard-modal').classList.add('hidden'); document.getElementById('help-modal').classList.add('hidden'); document.getElementById('backdrop').classList.add('hidden'); document.getElementById('quit-modal').classList.add('hidden'); document.getElementById('revive-modal').classList.add('hidden'); document.getElementById('pause-overlay').classList.add('hidden'); document.getElementById('lesson-complete-screen').classList.add('hidden'); };
     window.reviveGame = function() { lives = 3; isRevived = true; document.getElementById('score-display-wrapper').classList.add('locked-score'); document.getElementById('revive-note').classList.remove('hidden'); document.getElementById('revive-modal').classList.add('hidden'); document.getElementById('backdrop').classList.add('hidden'); resetSnakePos(); spawnFoods(); isGameRunning = true; stopGameLoop(); gameLoop = setInterval(drawGame, 1000 / speed); };
     window.gameOver = function() { document.getElementById('revive-modal').classList.add('hidden'); isGameRunning = false; stopGameLoop(); document.getElementById('final-score').innerText = score; document.getElementById('game-over-screen').classList.remove('hidden'); if(window.saveScoreToCloud) window.saveScoreToCloud(playerName, score, document.getElementById('lesson-select').options[document.getElementById('lesson-select').selectedIndex].text); };
     window.shareLesson = function() { const v = document.getElementById('lesson-select').value; const url = new URL(window.location.href); url.searchParams.set('lesson', v); const temp = document.createElement("textarea"); temp.value = url.toString(); document.body.appendChild(temp); temp.select(); document.execCommand("copy"); document.body.removeChild(temp); showToast("已複製課程連結！"); };
@@ -720,42 +786,35 @@
     
     // --- 強化版觸控鎖定邏輯 ---
     let tsX, tsY;
-    
-    // 1. 強制鎖定遊戲畫布，阻止所有預設行為 (包含下拉、滾動)
     const gameCanvasElement = document.getElementById('gameCanvas');
     if (gameCanvasElement) {
         gameCanvasElement.addEventListener('touchstart', function(e) {
-            // 只要摸到畫布，就絕對禁止瀏覽器預設行為
             e.preventDefault(); 
             tsX = e.touches[0].screenX;
             tsY = e.touches[0].screenY;
         }, { passive: false });
 
         gameCanvasElement.addEventListener('touchmove', function(e) {
-            // 禁止在畫布上滑動時觸發網頁滾動或重新整理
             e.preventDefault(); 
         }, { passive: false });
 
         gameCanvasElement.addEventListener('touchend', function(e) {
-            // 禁止在畫布上點擊時觸發模擬滑鼠點擊
             e.preventDefault();
-            
             if (isPaused || !isGameRunning) return;
-
             let dx_s = e.changedTouches[0].screenX - tsX;
             let dy_s = e.changedTouches[0].screenY - tsY;
-            
-            if (Math.abs(dx_s) > Math.abs(dy_s)) { 
-                if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } 
-            } else { 
-                if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } 
-            } 
+            if (Math.abs(dx_s) > Math.abs(dy_s)) { if (Math.abs(dx_s)>20) { dx = dx_s > 0 ? 1 : -1; dy = 0; } } else { if (Math.abs(dy_s)>20) { dy = dy_s > 0 ? 1 : -1; dx = 0; } } 
         }, { passive: false });
     }
 
-    // 移除了全域的 touchmove 禁止，現在可以正常捲動頁面了
-
-    window.addEventListener("keydown", e => { if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); if (!isGameRunning || isPaused) return; if (e.keyCode === 37 && dx !== 1) { dx = -1; dy = 0; } else if (e.keyCode === 38 && dy !== 1) { dx = 0; dy = -1; } else if (e.keyCode === 39 && dx !== -1) { dx = 1; dy = 0; } else if (e.keyCode === 40 && dy !== -1) { dx = 0; dy = 1; } });
+    window.addEventListener("keydown", e => { 
+        if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault(); 
+        if (!isGameRunning || isPaused) return; 
+        if ((e.keyCode === 37 || e.code === 'KeyA') && dx !== 1) { dx = -1; dy = 0; } 
+        else if ((e.keyCode === 38 || e.code === 'KeyW') && dy !== 1) { dx = 0; dy = -1; } 
+        else if ((e.keyCode === 39 || e.code === 'KeyD') && dx !== -1) { dx = 1; dy = 0; } 
+        else if ((e.keyCode === 40 || e.code === 'KeyS') && dy !== -1) { dx = 0; dy = 1; } 
+    });
 </script>
 </body>
 </html>
